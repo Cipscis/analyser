@@ -1,13 +1,13 @@
 {
 	"name": "analyser",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "For analysing data",
 	"private": true,
 	"browser": "./analyser.js",
 	"author": "Mark Hanna",
 	"license": "Hippocratic-2.1",
 	"dependencies": {
-		"csv": "github:cipscis/csv#semver:1.0.0",
-		"fileio": "github:cipscis/fileio#semver:1.1.0"
+		"csv": "github:cipscis/csv#semver:^1.0.0",
+		"fileio": "github:cipscis/fileio#semver:^1.2.0"
 	}
 }
