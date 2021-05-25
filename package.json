@@ -1,9 +1,9 @@
 {
-	"name": "base-package",
+	"name": "analyser",
 	"version": "0.1.0",
-	"description": "This is my base project to use when creating new packages.",
+	"description": "For analysing data",
 	"private": true,
-	"browser": "./main.js",
+	"browser": "./analyser.js",
 	"author": "Mark Hanna",
 	"license": "Hippocratic-2.1"
 }
