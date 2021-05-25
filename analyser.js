@@ -13,56 +13,263 @@ class AnalyserRows extends Array {
 	}
 
 
+	//////////////////////
+	// HELPER FUNCTIONS //
+	//////////////////////
 	getCol(colNum) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getCol.apply(this, args);
+		let col = this.map((row) => row[colNum]);
+		return col;
 	}
 
 
+	//////////////////////////////
+	// TRANSFORMING INFORMATION //
+	//////////////////////////////
 	addCol(col) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.addCol.apply(this, args);
+		// Edits the passed rows array to add an extra column
+		// to it, then returns the index of that new column
+
+		if (this.length !== col.length) {
+			throw new Error(`Cannot add col of length ${col.length} to rows of length ${this.length}`);
+		}
+
+		let colIndex = this[0].length;
+
+		for (let [i, row] of this.entries()) {
+			row.push(col[i]);
+		}
+
+		return colIndex;
 	}
 
 	getDerivedCol(processFn, ...cols) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getDerivedCol.apply(this, args);
+		// Creates an array analogous to a column as returns
+		// by the getCol function, where its output is the
+		// result of applying the processFn function to the row
+		// any number of values from optional column arguments
+
+		let derivedCol = this.map((row, i) => {
+			let derivedValues = [row];
+
+			for (let col of cols) {
+				derivedValues.push(col[i]);
+			}
+
+			return processFn.apply(this, derivedValues);
+		});
+
+		return derivedCol;
 	}
 
 	addDerivedCol(callback, ...cols) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.addDerivedCol.apply(this, args);
+		// Works like getDerivedCol, but instead of returning
+		// the derived column directly it uses addCol to add
+		// it to rows and returns the new column index.
+
+		let derivedCol = this.getDerivedCol.apply(this, arguments);
+
+		return this.addCol(derivedCol);
 	}
 
 
+	///////////////////
+	// SUMMARY TOOLS //
+	///////////////////
 	createSubTable(cols, arraySeparator) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.createSubTable.apply(this, args);
+		// Takes in a set of rows and a cols object formatted like this:
+		// {
+		// 	ETHNICITY: 3,
+		// 	AGE: 6
+		// }
+
+		// Outputs an array of objects,
+		// each of which has the same indices as cols and represents a row
+		// The output can be used with console.table
+
+		arraySeparator = arraySeparator || ', ';
+
+		let table = this.map((row) => {
+			let newRow = {};
+
+			for (let colName in cols) {
+				let col = cols[colName];
+				let cell = row[col]
+				// Join arrays so they display in console.table
+				if (cell instanceof Array) {
+					newRow[colName] = cell.join(arraySeparator);
+				} else {
+					newRow[colName] = cell;
+				}
+			}
+
+			return newRow;
+		});
+
+		return table;
 	}
 
 	createSubTableString(cols) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.createSubTableString.apply(this, args);
+		let table = this.createSubTable(cols, ',');
+		let tableString = Analyser._convertTableToString(table);
+
+		return tableString;
 	}
 
 	getColSummary(cols, aliasList) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getColSummary.apply(this, args);
+		// Takes in a set of rows and one or more column numbers, and optionally
+		// a list of aliases - an array of arrays of strings to be grouped together
+
+		// Outputs an object summarising the number of times each value
+		// appeared in the given column of the given rows
+
+
+		// Allow the passing of a single number or an array of column indices
+		if (!(cols instanceof Array)) {
+			cols = [cols];
+		}
+
+		let summary = {};
+		for (let row of this) {
+			for (let col of cols) {
+				let cellValue = row[col];
+
+				if (typeof cellValue !== 'undefined' && cellValue !== '') {
+
+					let values;
+					if (cellValue instanceof Array) {
+						values = cellValue;
+					} else {
+						values = [cellValue];
+					}
+
+					for (let value of values) {
+						if (value in summary) {
+							summary[value]++;
+						} else {
+							summary[value] = 1;
+						}
+					}
+
+				}
+
+			}
+		}
+
+		if (typeof aliasList !== 'undefined') {
+			summary = Analyser._groupColSummaryByAliases(summary, aliasList);
+		}
+
+		return summary;
 	}
 
 	getColAsDataSeries(col, labels) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getColAsDataSeries.apply(this, args);
+		// Takes in a set of rows and a column number,
+		// and an array of labels. Outputs an array where
+		// each element is the count of the values matching
+		// the element of labels at the same index
+
+		let colSummary = this.getColSummary(col);
+
+		let dataSeries = [];
+
+		for (let i = 0; i < labels.length; i++) {
+			dataSeries[i] = 0;
+		}
+
+		for (let i in colSummary) {
+			let value = colSummary[i];
+			let index = labels.indexOf(i);
+			if (index === -1) {
+				// Couldn't find index, try forcing it to be a number
+				index = labels.indexOf(parseInt(i, 10));
+			}
+
+			if (index !== -1) {
+				dataSeries[index] = value;
+			}
+		}
+
+		return dataSeries;
 	}
 
 	getComparisonSummary(headerCol, headerAliases, varCol, varAliases) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getComparisonSummary.apply(this, args);
+		// Takes in a set of rows and two column numbers
+		// Creates an object that can be used with console.table
+		// with the values of headerCol used in the header, and
+		// the values of varCol used for each row, with the cells
+		// denoting the number of times these values coincided
+		// using filterRows with the passed sets of aliases
+
+		// Also optionally takes a set of aliases for one or both columns
+
+		if (arguments.length === 2) {
+			// No aliases specified
+			varCol = headerAliases;
+			headerAliases = undefined;
+		} else if (arguments.length === 3) {
+			// One alias specified
+			if (!(headerAliases instanceof Array)) {
+				// headerAliases was not passed
+				varAliases = varCol;
+				varCol = headerAliases;
+				headerAliases = undefined;
+			}
+		}
+
+		console.log(this);
+		console.trace();
+		let headerSummary = this.getColSummary(headerCol, headerAliases);
+		let varSummary = this.getColSummary(varCol, varAliases);
+
+		let aliases = {};
+		if (headerAliases) {
+			aliases.HEADERS = headerAliases;
+		}
+		if (varAliases) {
+			aliases.VARS = varAliases;
+		}
+		let filters = Analyser._getAliasFilters(aliases);
+
+		let comparisonSummary = {};
+		for (let i in varSummary) {
+			comparisonSummary[i] = {};
+			for (let j in headerSummary) {
+				comparisonSummary[i][j] = filters.filterRows(this,
+					varCol, Analyser._extractValue(i),
+					headerCol, Analyser._extractValue(j)
+				).length;
+			}
+		}
+
+		return comparisonSummary;
 	}
 
 	getComparisonSummaryString(headerCol, headerAliases, varCol, varAliases) {
-		let args = [this].concat(Array.from(arguments));
-		return Analyser.getComparisonSummaryString.apply(this, args);
+		// Calls getComparisonSummary with all arguments passed,
+		// then returns a string of the data that can be copy/pasted
+		// into a spreadsheet
+
+		let comparisonSummary = this.getComparisonSummary.apply(this, arguments);
+		let comparisonSummaryString = Analyser._convertTableToString(comparisonSummary, true);
+
+		return comparisonSummaryString;
+	}
+
+	saveComparisonSummaryCsv(filename, headerCol, headerAliases, varCol, varAliases) {
+		// Calls getComparisonSummary with all arguments passed,
+		// then returns a string of the data that can be copy/pasted
+		// into a spreadsheet
+		let args = Array.prototype.slice.call(arguments, 1);
+
+		let comparisonSummary = this.getComparisonSummary.apply(this, args);
+		let comparisonSummaryCsv = Analyser._convertTableToString(comparisonSummary, true, ',', '\n');
+
+		let options = {
+			filename,
+			type: 'text/csv',
+		};
+
+		fileio.save(comparisonSummaryCsv, options);
 	}
 }
 
@@ -70,83 +277,26 @@ const Analyser = {
 	/////////////////////
 	// FILE PROCESSING //
 	/////////////////////
-	_loadFile: function (fileInfo, fileConfig, callback) {
-		if (fileInfo instanceof File) {
-			Analyser._fileToString(fileInfo, fileConfig, callback);
-		}
+	_loadFile: async function (fileConfig) {
+		let response = await fetch(fileConfig.path);
 
-		let xhr = new XMLHttpRequest();
-		xhr.open('GET', fileInfo);
-		xhr.onload = function () {
-			if (xhr.status === 200) {
-				Analyser._fileLoaded(xhr.responseText, fileConfig, callback);
-			}
-		};
-		xhr.send();
-	},
+		if (response.ok) {
+			let data = await response.text();
 
-	loadFile: function (fileInfo1, fileConfig1, fileInfo2, fileConfig2, fileInfoN, fileConfigN, callbackArg) {
-		// options should be an array containing objects which each have
-		// a fileInfo, and fileConfig. These will be passed into loadFile
-		// for each item in the array
-		const filesToLoad = (arguments.length - 1) / 2;
-		let filesLoaded = 0;
-
-		if (arguments.length < 3) {
-			console.error('Insufficient arguments provided to loadFile:', arguments);
-		} else if ((arguments.length % 2) === 0) {
-			console.error('Incorrect number of arguments provided to loadFile:', arguments);
-		}
-
-		let callback = arguments[arguments.length-1];
-
-		let dataConfigArray = [];
-		const onFileLoad = function (i) {
-			return function (dataConfig) {
-				dataConfigArray[i] = dataConfig;
-
-				filesLoaded += 1;
-				if (filesLoaded >= filesToLoad) {
-					callback.apply(undefined, dataConfigArray);
-				}
-			};
-		};
-
-		let fileInfo;
-		let fileConfig;
-		for (let i = 0; i < filesToLoad; i++) {
-			fileInfo = arguments[i*2];
-			fileConfig = arguments[i*2+1];
-
-			Analyser._loadFile(fileInfo, fileConfig, onFileLoad(i));
+			let rows = Analyser._parseCsv(data);
+			let dataConfig = Analyser._processData(rows, fileConfig);
+			return dataConfig;
+		} else {
+			throw new Error(`Failed to fetch file at ${fileConfig.path}: ${response.status}`);
 		}
 	},
 
-	_fileToString: function (file, fileConfig, callback) {
-		// Takes in a File object and converts it to a string,
-		// then passes it to _fileLoaded
-
-		let reader = new FileReader();
-		reader.onload = function (evt) {
-			if (reader.readyState === 2) { // DONE
-				Analyser._fileLoaded(reader.result, fileConfig, callback);
-			}
-		};
-
-		reader.readAsText(file);
-	},
-
-	_fileLoaded: function (csv, fileConfig, callback) {
-		// Clear any empty lines at the end
-		csv = csv.replace(/(\n\s*)+$/, '');
-
-		Analyser._parseCsv(csv, Analyser._fileParsed(fileConfig, callback));
-	},
-
-	_fileParsed: function (fileConfig, callback) {
-		return function (rows) {
-			callback(Analyser._processData(rows, fileConfig));
-		};
+	loadFile: function (...fileConfigArr) {
+		return new Promise((resolve, reject) => {
+			// Load each file, then resolve the wrapping promise once all are loaded
+			let promises = fileConfigArr.map((fileConfig) => Analyser._loadFile(fileConfig))
+			Promise.all(promises).then(resolve);
+		});
 	},
 
 	_processData: function (rows, fileConfig) {
@@ -498,28 +648,21 @@ const Analyser = {
 	/////////////////
 	// CSV PARSING //
 	/////////////////
-	_parseCsv: function (csv, callback) {
+	_parseCsv: function (csv) {
 		// Parse a CSV file then process the data
 		// Convert strings to numbers where appropriate,
 		// then pass the data to a callback function
 
 		let data = parse(csv);
+		data = Analyser._extractCellValues(data);
 
-		Analyser._extractCellValues(data);
-
-		if (callback && typeof callback === 'function') {
-			callback(data);
-		}
+		return data;
 	},
 
-	_extractCellValues: function (csv) {
+	_extractCellValues: function (rawRows) {
 		// Use _extractValue on each cell
-
-		for (let i = 0; i < csv.length; i++) {
-			for (let j = 0; j < csv[i].length; j++) {
-				csv[i][j] = Analyser._extractValue(csv[i][j]);
-			}
-		}
+		let rows = rawRows.map((row) => row.map(Analyser._extractValue));
+		return rows;
 	},
 
 	_extractValue: function (string) {
@@ -786,111 +929,9 @@ const Analyser = {
 		return newCols;
 	},
 
-	getCol: function (rows, colNum) {
-		let col = [];
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-			col.push(row[colNum]);
-		}
-
-		return col;
-	},
-
-	//////////////////////////////
-	// TRANSFORMING INFORMATION //
-	//////////////////////////////
-	addCol: function (rows, col) {
-		// Edits the passed rows array to add an extra column
-		// to it, then returns the index of that new column
-
-		if (rows.length !== col.length) {
-			console.error('Cannot add col to rows unless their length matches');
-		}
-
-		let colIndex = rows[0].length;
-
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-			row.push(col[i]);
-		}
-
-		return colIndex;
-	},
-
-	getDerivedCol: function (rows, processFn, ...cols) {
-		// Creates an array analogous to a column as returns
-		// by the getCol function, where its output is the
-		// result of applying the processFn function to the row
-		// any number of values from optional column arguments
-
-		let derivedCol = [];
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-			let derivedValues = [row];
-
-			for (let j = 0; j < cols.length; j++) {
-				let col = cols[j];
-				derivedValues.push(col[i]);
-			}
-
-			derivedCol.push(processFn.apply(this, derivedValues));
-		}
-
-		return derivedCol;
-	},
-
-	addDerivedCol: function (rows, callback, ...cols) {
-		// Works like getDerivedCol, but instead of returning
-		// the derived column directly it uses addCol to add
-		// it to rows and returns the new column index.
-
-		let derivedCol = Analyser.getDerivedCol.apply(this, arguments);
-
-		return Analyser.addCol(rows, derivedCol);
-	},
-
 	///////////////////
 	// SUMMARY TOOLS //
 	///////////////////
-	createSubTable: function (rows, cols, arraySeparator) {
-		// Takes in a set of rows and a cols object formatted like this:
-		// {
-		// 	ETHNICITY: 3,
-		// 	AGE: 6
-		// }
-
-		// Outputs an array of objects,
-		// each of which has the same indices as cols and represents a row
-		// The output can be used with console.table
-
-		arraySeparator = arraySeparator || ', ';
-
-		let table = [];
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-			let newRow = {};
-
-			for (let colName in cols) {
-				// Join arrays so they display in console.table
-				if (row[cols[colName]] instanceof Array) {
-					newRow[colName] = row[cols[colName]].join(arraySeparator);
-				} else {
-					newRow[colName] = row[cols[colName]];
-				}
-			}
-			table.push(newRow);
-		}
-
-		return table;
-	},
-
-	createSubTableString: function (rows, cols) {
-		let table = Analyser.createSubTable(rows, cols, ',');
-		let tableString = Analyser._convertTableToString(table);
-
-		return tableString;
-	},
-
 	_convertTableToString: function (table, useKeys, cellSeparatorOption, rowSeparatorOption) {
 		const cellSeparator = cellSeparatorOption || '\t';
 		const rowSeparator = rowSeparatorOption || '\n';
@@ -954,82 +995,6 @@ const Analyser = {
 		return tableString;
 	},
 
-	getColSummary: function (rows, cols, aliasList) {
-		// Takes in a set of rows and one or more column numbers, and optionally
-		// a list of aliases - an array of arrays of strings to be grouped together
-
-		// Outputs an object summarising the number of times each value
-		// appeared in the given column of the given rows
-
-
-		// Allow the passing of a single number or an array of column indices
-		if (!(cols instanceof Array)) {
-			cols = [cols];
-		}
-
-		let summary = {};
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-
-			for (let j = 0; j < cols.length; j++) {
-				let col = cols[j];
-				let values = row[col];
-
-				if (typeof values !== 'undefined' && values !== '') {
-					if (!(values instanceof Array)) {
-						values = [values];
-					}
-
-					for (let k = 0; k < values.length; k++) {
-						let value = values[k];
-
-						if (value in summary) {
-							summary[value]++;
-						} else {
-							summary[value] = 1;
-						}
-					}
-				}
-			}
-		}
-
-		if (typeof aliasList !== 'undefined') {
-			summary = Analyser._groupColSummaryByAliases(summary, aliasList);
-		}
-
-		return summary;
-	},
-
-	getColAsDataSeries: function (rows, col, labels) {
-		// Takes in a set of rows and a column number,
-		// and an array of labels. Outputs an array where
-		// each element is the count of the values matching
-		// the element of labels at the same index
-
-		let colSummary = Analyser.getColSummary(rows, col);
-
-		let dataSeries = [];
-
-		for (let i = 0; i < labels.length; i++) {
-			dataSeries[i] = 0;
-		}
-
-		for (let i in colSummary) {
-			let value = colSummary[i];
-			let index = labels.indexOf(i);
-			if (index === -1) {
-				// Couldn't find index, try forcing it to be a number
-				index = labels.indexOf(parseInt(i, 10));
-			}
-
-			if (index !== -1) {
-				dataSeries[index] = value;
-			}
-		}
-
-		return dataSeries;
-	},
-
 	_groupColSummaryByAliases: function (summary, aliasList) {
 		// Takes a summary object like the output from getColSummary, and
 		// a list of aliases - an array of arrays of strings to be grouped together
@@ -1058,84 +1023,6 @@ const Analyser = {
 		}
 
 		return newSummary;
-	},
-
-	getComparisonSummary: function (rows, headerCol, headerAliases, varCol, varAliases) {
-		// Takes in a set of rows and two column numbers
-		// Creates an object that can be used with console.table
-		// with the values of headerCol used in the header, and
-		// the values of varCol used for each row, with the cells
-		// denoting the number of times these values coincided
-		// using filterRows with the passed sets of aliases
-
-		// Also optionally takes a set of aliases for one or both columns
-
-		if (arguments.length === 3) {
-			// No aliases specified
-			varCol = headerAliases;
-			headerAliases = undefined;
-		} else if (arguments.length === 4) {
-			// One alias specified
-			if (!(headerAliases instanceof Array)) {
-				// headerAliases was not passed
-				varAliases = varCol;
-				varCol = headerAliases;
-				headerAliases = undefined;
-			}
-		}
-
-		let headerSummary = Analyser.getColSummary(rows, headerCol, headerAliases);
-		let varSummary = Analyser.getColSummary(rows, varCol, varAliases);
-
-		let aliases = {};
-		if (headerAliases) {
-			aliases.HEADERS = headerAliases;
-		}
-		if (varAliases) {
-			aliases.VARS = varAliases;
-		}
-		let filters = Analyser._getAliasFilters(aliases);
-
-		let comparisonSummary = {};
-		for (let i in varSummary) {
-			comparisonSummary[i] = {};
-			for (let j in headerSummary) {
-				comparisonSummary[i][j] = filters.filterRows(rows,
-					varCol, Analyser._extractValue(i),
-					headerCol, Analyser._extractValue(j)
-				).length;
-			}
-		}
-
-		return comparisonSummary;
-	},
-
-	getComparisonSummaryString: function (rows, headerCol, headerAliases, varCol, varAliases) {
-		// Calls getComparisonSummary with all arguments passed,
-		// then returns a string of the data that can be copy/pasted
-		// into a spreadsheet
-
-		let comparisonSummary = Analyser.getComparisonSummary.apply(this, arguments);
-		let comparisonSummaryString = Analyser._convertTableToString(comparisonSummary, true);
-
-		return comparisonSummaryString;
-	},
-
-	saveComparisonSummaryCsv: function (filename, rows, headerCol, headerAliases, varCol, varAliases) {
-		// Calls getComparisonSummary with all arguments passed,
-		// then returns a string of the data that can be copy/pasted
-		// into a spreadsheet
-		let args = Array.prototype.slice.call(arguments, 1);
-
-		let comparisonSummary = Analyser.getComparisonSummary.apply(this, args);
-		let comparisonSummaryCsv = Analyser._convertTableToString(comparisonSummary, true, ',', '\n');
-
-		let options = {
-			filename,
-			type: 'text/csv',
-		};
-
-		fileio.save(comparisonSummaryCsv, options);
 	}
 };
 
@@ -1145,17 +1032,5 @@ export default {
 
 	getColNumber: Analyser.getColNumber,
 	getColNumbers: Analyser.getColNumbers,
-	getCol: Analyser.getCol,
-
-	addCol: Analyser.addCol,
-	getDerivedCol: Analyser.getDerivedCol,
-	addDerivedCol: Analyser.addDerivedCol,
-
-	createSubTable: Analyser.createSubTable,
-	createSubTableString: Analyser.createSubTableString,
-	getColSummary: Analyser.getColSummary,
-	getColAsDataSeries: Analyser.getColAsDataSeries,
-	getComparisonSummary: Analyser.getComparisonSummary,
-	getComparisonSummaryString: Analyser.getComparisonSummaryString,
-	saveComparisonSummaryCsv: Analyser.saveComparisonSummaryCsv
+	getCol: Analyser.getCol
 };
