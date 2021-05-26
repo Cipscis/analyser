@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Analyser 2.0.0</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<link rel="stylesheet" href="/analyser/assets/css/main.css" />
+</head>
+<body>
+	<main class="layout">
+		<div class="content">
+			<h1>Analyser 2.0.0 - Promises and tidy</h1>
+
+			<p><a href="../">Back to changelog</a></p>
+
+			<p>The <code>loadFile</code> method was changed significantly to use the <code>Promise</code> API.</p>
+
+			<p>Also, old versions of functions that were previously able to be called on the <code>analyser</code> object itself but had also been made available as methods of the <code>AnalyserRows</code> class have now been moved entirely over to the class.</p>
+
+			<section id="breaking">
+				<h2>Breaking changes</h2>
+				<ul>
+					<li>The <code>loadFile</code> method now returns a <code>Promise</code> and takes an array of fileInfo objects that are expect to include a <code>path</code> string</li>
+					<li>Methods able to be called on <code>AnalyserRows</code> objects can no longer be called on the <code>analyser</code> object itself</li>
+				</ul>
+			</section>
+
+			<section id="non-breaking">
+				<h2>Non-breaking changes</h2>
+
+				<ul>
+					<li>None</li>
+				</ul>
+			</section>
+		</div>
+	</main>
+</body>
+
+</html>
