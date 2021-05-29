@@ -1,6 +1,6 @@
 {
 	"name": "analyser",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "For analysing data",
 	"private": true,
 	"browser": "./analyser.js",
