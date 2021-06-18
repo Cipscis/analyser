@@ -4,15 +4,22 @@
 	"description": "For analysing data",
 	"private": true,
 	"browser": "./analyser.js",
+	"type": "module",
 	"files": [
 		"analyser.js"
 	],
 	"scripts": {
 		"server": "node server/server.js",
+		"build": "gulp build",
 		"watch": "gulp",
-		"start": "concurrently --kill-others \"npm run server\" \"npm run watch\""
+		"start": "concurrently --kill-others \"npm run server\" \"npm run watch\"",
+		"test": "jasmine"
 	},
 	"author": "Mark Hanna",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/cipscis/analyser.git"
+	},
 	"license": "Hippocratic-2.1",
 	"devDependencies": {
 		"concurrently": "^6.1.0",
@@ -20,6 +27,8 @@
 		"express": "^4.17.1",
 		"gulp": "^4.0.2",
 		"gulp-sass": "^4.1.0",
+		"jasmine": "^3.7.0",
+		"sass": "^1.34.1",
 		"webpack-stream": "^6.1.2"
 	},
 	"dependencies": {
