@@ -21,11 +21,11 @@ Change log entries should have a version number, a date, and subsections detaili
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.3] - 2021-06-19
+## Unreleased
 
 ### Added
 
-* Added a [Jasmine](https://jasmine.github.io/) test suite.
+* Added framework for a [Jasmine](https://jasmine.github.io/) test suite.
 
 ### Changed
 
