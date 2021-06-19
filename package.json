@@ -32,7 +32,6 @@
 		"webpack-stream": "^6.1.2"
 	},
 	"dependencies": {
-		"csv": "github:cipscis/csv#semver:^1.0.0",
-		"fileio": "github:cipscis/fileio#semver:^1.2.0"
+		"csv": "github:cipscis/csv#semver:1.x"
 	}
 }

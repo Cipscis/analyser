@@ -1,5 +1,4 @@
 import { parse } from 'csv';
-import fileio from 'fileio';
 
 class AnalyserRows extends Array {
 	constructor(sourceArray) {
@@ -253,23 +252,6 @@ class AnalyserRows extends Array {
 		let comparisonSummaryString = Analyser._convertTableToString(comparisonSummary, true);
 
 		return comparisonSummaryString;
-	}
-
-	saveComparisonSummaryCsv(filename, headerCol, headerAliases, varCol, varAliases) {
-		// Calls getComparisonSummary with all arguments passed,
-		// then returns a string of the data that can be copy/pasted
-		// into a spreadsheet
-		let args = Array.prototype.slice.call(arguments, 1);
-
-		let comparisonSummary = this.getComparisonSummary.apply(this, args);
-		let comparisonSummaryCsv = Analyser._convertTableToString(comparisonSummary, true, ',', '\n');
-
-		let options = {
-			filename,
-			type: 'text/csv',
-		};
-
-		fileio.save(comparisonSummaryCsv, options);
 	}
 }
 
@@ -653,16 +635,9 @@ const Analyser = {
 		// Convert strings to numbers where appropriate,
 		// then pass the data to a callback function
 
-		let data = parse(csv);
-		data = Analyser._extractCellValues(data);
+		let data = parse(csv, { mapper: Analyser._extractValue });
 
 		return data;
-	},
-
-	_extractCellValues: function (rawRows) {
-		// Use _extractValue on each cell
-		let rows = rawRows.map((row) => row.map(Analyser._extractValue));
-		return rows;
 	},
 
 	_extractValue: function (string) {

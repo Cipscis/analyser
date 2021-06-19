@@ -23,12 +23,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
+### Removed
+
+* Removed `saveComparisonSummaryCsv` method so [FileIO](https://github.com/cipscis/fileio) no longer needs to be a dependency.
+
 ### Added
 
 * Added framework for a [Jasmine](https://jasmine.github.io/) test suite.
 
 ### Changed
 
+* Use the new `mapper` option for the `parse` method in [CSV](https://github.com/cipscis/csv) v1.1.0 instead of replicating its behaviour.
 * Moved change log into `CHANGELOG.md`.
 * Updated build system to use module syntax.
 

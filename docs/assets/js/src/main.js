@@ -76,7 +76,7 @@ const analyse = async function () {
 	let comparisonSummaryString = rows.getComparisonSummaryString(cols.TACTICAL_OPTION, cols.MAORI);
 	console.log(comparisonSummaryString);
 
-	rows.saveComparisonSummaryCsv('test', cols.TACTICAL_OPTION, cols.MAORI);
+	console.log(rows.getComparisonSummaryString(cols.TACTICAL_OPTION, cols.MAORI));
 };
 
 analyse();
