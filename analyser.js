@@ -1001,11 +1001,11 @@ const Analyser = {
 	}
 };
 
-export default {
-	loadFile: Analyser.loadFile,
-	combineData: Analyser.combineData,
+export const {
+	loadFile,
+	combineData,
 
-	getColNumber: Analyser.getColNumber,
-	getColNumbers: Analyser.getColNumbers,
-	getCol: Analyser.getCol
-};
+	getColNumber,
+	getColNumbers,
+	getCol,
+} = Analyser;
