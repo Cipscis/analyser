@@ -29,7 +29,7 @@
 		"gulp-sass": "^4.1.0",
 		"jasmine": "^3.7.0",
 		"sass": "^1.34.1",
-		"webpack-stream": "^6.1.2"
+		"webpack": "^5.40.0"
 	},
 	"dependencies": {
 		"csv": "github:cipscis/csv#semver:1.x"

@@ -23,7 +23,7 @@ This project creates five npm tasks:
 
 * `npm run server` runs a Node.js server on the port specified in the [`.env`](#env) file, using [Express](https://expressjs.com/).
 
-* `npm run build` compiles CSS files using [gulp-sass](https://www.npmjs.com/package/gulp-sass) and bundles JavaScript using [webpack-stream](https://www.npmjs.com/package/webpack-stream).
+* `npm run build` compiles CSS files using [gulp-sass](https://www.npmjs.com/package/gulp-sass) and bundles JavaScript using [Webpack](https://webpack.js.org/).
 
 * `npm run watch` first runs the `build` task, then watches the relevant directories and reruns the `build` task if it sees any changes.
 
@@ -81,7 +81,7 @@ These dependencies are used when working on the project locally.
 
 * [gulp-sass](https://www.npmjs.com/package/gulp-sass): Using the `sass` compiler with Gulp
 
-* [webpack-stream](https://www.npmjs.com/package/webpack-stream): Using [Webpack](https://webpack.js.org/) (for JavaScript dependency management) with Gulp
+* [Webpack](https://webpack.js.org/): For JavaScript dependency management, used with Gulp
 
 * [Express](https://expressjs.com/): Running a Node.js server, accessed at `http://localhost:<PORT>`
 

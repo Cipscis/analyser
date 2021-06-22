@@ -5,17 +5,33 @@ import gulp from 'gulp';
 //////////////////////
 // Webpack bundling //
 //////////////////////
-import webpack from 'webpack-stream';
+import webpack from 'webpack';
 import webpackConfig from './webpack.config.js';
 
-const jsEntryPoints = 'docs/assets/js/src/main.js';
 const jsSrcDir = 'docs/assets/js/src';
-const jsOutputDir = 'docs/assets/js/dist';
 
 const buildJs = function () {
-	return gulp.src(jsEntryPoints)
-		.pipe(webpack(webpackConfig))
-		.pipe(gulp.dest(jsOutputDir));
+	return new Promise((resolve, reject) => {
+		webpack(webpackConfig, (err, stats) => {
+			if (err) {
+				console.error(err);
+				reject();
+				return;
+			} else if (stats.hasErrors()) {
+				const error = new Error(stats.toString({ colors: true }));
+				console.error(error);
+				reject();
+				return;
+			} else {
+				const statsString = stats.toString({
+					chunks: false,
+					colors: true,
+				});
+				console.log(statsString);
+				resolve();
+			}
+		});
+	});
 };
 
 const watchJs = function () {
