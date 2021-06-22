@@ -16,7 +16,7 @@ class AnalyserRows extends Array {
 	// HELPER FUNCTIONS //
 	//////////////////////
 	getCol(colNum) {
-		let col = this.map((row) => row[colNum]);
+		const col = this.map((row) => row[colNum]);
 		return col;
 	}
 
@@ -32,7 +32,7 @@ class AnalyserRows extends Array {
 			throw new Error(`Cannot add col of length ${col.length} to rows of length ${this.length}`);
 		}
 
-		let colIndex = this[0].length;
+		const colIndex = this[0].length;
 
 		for (let [i, row] of this.entries()) {
 			row.push(col[i]);
@@ -47,8 +47,8 @@ class AnalyserRows extends Array {
 		// result of applying the processFn function to the row
 		// any number of values from optional column arguments
 
-		let derivedCol = this.map((row, i) => {
-			let derivedValues = [row];
+		const derivedCol = this.map((row, i) => {
+			const derivedValues = [row];
 
 			for (let col of cols) {
 				derivedValues.push(col[i]);
@@ -65,7 +65,7 @@ class AnalyserRows extends Array {
 		// the derived column directly it uses addCol to add
 		// it to rows and returns the new column index.
 
-		let derivedCol = this.getDerivedCol.apply(this, arguments);
+		const derivedCol = this.getDerivedCol.apply(this, arguments);
 
 		return this.addCol(derivedCol);
 	}
@@ -87,12 +87,12 @@ class AnalyserRows extends Array {
 
 		arraySeparator = arraySeparator || ', ';
 
-		let table = this.map((row) => {
-			let newRow = {};
+		const table = this.map((row) => {
+			const newRow = {};
 
 			for (let colName in cols) {
-				let col = cols[colName];
-				let cell = row[col]
+				const col = cols[colName];
+				const cell = row[col]
 				// Join arrays so they display in console.table
 				if (cell instanceof Array) {
 					newRow[colName] = cell.join(arraySeparator);
@@ -108,8 +108,8 @@ class AnalyserRows extends Array {
 	}
 
 	createSubTableString(cols) {
-		let table = this.createSubTable(cols, ',');
-		let tableString = Analyser._convertTableToString(table);
+		const table = this.createSubTable(cols, ',');
+		const tableString = Analyser._convertTableToString(table);
 
 		return tableString;
 	}
@@ -127,14 +127,14 @@ class AnalyserRows extends Array {
 			cols = [cols];
 		}
 
-		let summary = {};
+		const summary = {};
 		for (let row of this) {
 			for (let col of cols) {
-				let cellValue = row[col];
+				const cellValue = row[col];
 
 				if (typeof cellValue !== 'undefined' && cellValue !== '') {
-
 					let values;
+
 					if (cellValue instanceof Array) {
 						values = cellValue;
 					} else {
@@ -167,16 +167,16 @@ class AnalyserRows extends Array {
 		// each element is the count of the values matching
 		// the element of labels at the same index
 
-		let colSummary = this.getColSummary(col);
+		const colSummary = this.getColSummary(col);
 
-		let dataSeries = [];
+		const dataSeries = [];
 
 		for (let i = 0; i < labels.length; i++) {
 			dataSeries[i] = 0;
 		}
 
 		for (let i in colSummary) {
-			let value = colSummary[i];
+			const value = colSummary[i];
 			let index = labels.indexOf(i);
 			if (index === -1) {
 				// Couldn't find index, try forcing it to be a number
@@ -215,25 +215,25 @@ class AnalyserRows extends Array {
 			}
 		}
 
-		let headerSummary = this.getColSummary(headerCol, headerAliases);
-		let varSummary = this.getColSummary(varCol, varAliases);
+		const headerSummary = this.getColSummary(headerCol, headerAliases);
+		const varSummary = this.getColSummary(varCol, varAliases);
 
-		let aliases = {};
+		const aliases = {};
 		if (headerAliases) {
 			aliases.HEADERS = headerAliases;
 		}
 		if (varAliases) {
 			aliases.VARS = varAliases;
 		}
-		let filters = Analyser._getAliasFilters(aliases);
+		const by = Analyser._getAliasFilters(aliases);
 
-		let comparisonSummary = {};
+		const comparisonSummary = {};
 		for (let i in varSummary) {
 			comparisonSummary[i] = {};
 			for (let j in headerSummary) {
-				comparisonSummary[i][j] = filters.filterRows(this,
-					varCol, Analyser._extractValue(i),
-					headerCol, Analyser._extractValue(j)
+				comparisonSummary[i][j] = this.filter(
+					by(varCol, Analyser._extractValue(i))
+					.andBy(headerCol, Analyser._extractValue(j))
 				).length;
 			}
 		}
@@ -246,8 +246,8 @@ class AnalyserRows extends Array {
 		// then returns a string of the data that can be copy/pasted
 		// into a spreadsheet
 
-		let comparisonSummary = this.getComparisonSummary.apply(this, arguments);
-		let comparisonSummaryString = Analyser._convertTableToString(comparisonSummary, true);
+		const comparisonSummary = this.getComparisonSummary.apply(this, arguments);
+		const comparisonSummaryString = Analyser._convertTableToString(comparisonSummary, true);
 
 		return comparisonSummaryString;
 	}
@@ -257,23 +257,9 @@ const Analyser = {
 	/////////////////////
 	// FILE PROCESSING //
 	/////////////////////
-	_loadFile: async function (fileConfig) {
-		let response = await fetch(fileConfig.path);
-
-		if (response.ok) {
-			let data = await response.text();
-
-			let rows = parse(data, { mapper: Analyser._extractValue });
-			let dataConfig = Analyser._processData(rows, fileConfig);
-			return dataConfig;
-		} else {
-			throw new Error(`Failed to fetch file at ${fileConfig.path}: ${response.status}`);
-		}
-	},
-
 	loadFile: async function (...fileConfigArr) {
 		// Load each file, then resolve the wrapping promise once all are loaded
-		let promises = fileConfigArr.map((fileConfig) => Analyser._loadFile(fileConfig))
+		const promises = fileConfigArr.map((fileConfig) => Analyser._loadFile(fileConfig))
 
 		if (fileConfigArr.length > 1) {
 			// This returns an array matching fileConfigArr
@@ -283,7 +269,25 @@ const Analyser = {
 		}
 	},
 
+	_loadFile: async function (fileConfig) {
+		const response = await fetch(fileConfig.path);
+
+		if (response.ok) {
+			const data = await response.text();
+
+			const rows = parse(data, { mapper: Analyser._extractValue });
+			const dataConfig = Analyser._processData(rows, fileConfig);
+			return dataConfig;
+		} else {
+			throw new Error(`Failed to fetch file at ${fileConfig.path}: ${response.status}`);
+		}
+	},
+
 	_processData: function (rows, fileConfig) {
+		// TODO: Either rewrite comment or move it entirely into documentation
+		// TODO: Rewrite defaultCols and defaultColValues behaviour
+		// TODO: Make building nums have to be explicit, instead of default
+
 		// Takes in fileConfig with the following properties:
 		// The number of header rows to remove from rows
 		// A fileConfig object for column names
@@ -338,10 +342,10 @@ const Analyser = {
 		fileConfig.enumsMap = fileConfig.enumsMap || {};
 		fileConfig.uniqueCols = fileConfig.uniqueCols || [];
 
-		let dataConfig = {};
+		const dataConfig = {};
 		dataConfig.cols = fileConfig.cols;
 		dataConfig.aliases = fileConfig.aliases;
-		dataConfig.filters = Analyser._getAliasFilters(fileConfig.aliases);
+		dataConfig.by = Analyser._getAliasFilters(fileConfig.aliases);
 		dataConfig.enumsMap = fileConfig.enumsMap; // Keep this for combining data
 
 		if (fileConfig.headerRows !== 0) {
@@ -357,7 +361,7 @@ const Analyser = {
 		// Convert cells that are lists into arrays
 		dataConfig.rows = new AnalyserRows(rows);
 		for (let i = 0; i < dataConfig.rows.length; i++) {
-			let row = dataConfig.rows[i];
+			const row = dataConfig.rows[i];
 
 			for (let j in fileConfig.arrayCols) {
 				row[j] = (row[j] + '').trim().split(fileConfig.arrayCols[j] || ' ');
@@ -384,9 +388,6 @@ const Analyser = {
 			}
 		}
 
-		// Set filters on rows object
-		Analyser._createRowFilterFunctions(dataConfig.rows, dataConfig.filters);
-
 		// Build enums
 		dataConfig.enums = Analyser._buildEnums(rows, fileConfig);
 
@@ -394,7 +395,7 @@ const Analyser = {
 	},
 
 	_buildEnums: function (rows, config) {
-		let enums = {};
+		const enums = {};
 
 		for (let col in config.cols) {
 
@@ -429,20 +430,19 @@ const Analyser = {
 
 		enumsArr = enumsArr || [];
 
-		for (let i = 0; i < rows.length; i++) {
-			let row = rows[i];
-			for (let j = 0; j < cols.length; j++) {
-				let col = cols[j];
+		for (let row of rows) {
+			for (let col of cols) {
+				const cell = row[col];
 
-				if (row[col] instanceof Array) {
-					for (let k = 0; k < row[col].length; k++) {
-						if ((row[col][k] !== '') && (enumsArr.indexOf(row[col][k]) === -1)) {
-							enumsArr.push(row[col][k]);
+				if (cell instanceof Array) {
+					for (let value of cell) {
+						if ((value !== '') && (enumsArr.indexOf(value) === -1)) {
+							enumsArr.push(value);
 						}
 					}
 				} else {
-					if ((row[col] !== '') && (enumsArr.indexOf(row[col]) === -1)) {
-						enumsArr.push(row[col]);
+					if ((cell !== '') && (enumsArr.indexOf(cell) === -1)) {
+						enumsArr.push(cell);
 					}
 				}
 			}
@@ -452,181 +452,182 @@ const Analyser = {
 	},
 
 	combineData: function (...dataConfigs) {
-		// Takes in any number of dataConfig objects from _processData
-		// Combines the rows and relevant dataConfig objects (e.g. aliases, enums)
-		// Keeps only columns shared by all dataConfig objects
+		// TODO: Rewrite
 
-		// Assumes there is no data shared between different sets,
-		// so duplicates will *not* be detected or removed
+		// // Takes in any number of dataConfig objects from _processData
+		// // Combines the rows and relevant dataConfig objects (e.g. aliases, enums)
+		// // Keeps only columns shared by all dataConfig objects
 
-		// The output is in the same format as for _processData
+		// // Assumes there is no data shared between different sets,
+		// // so duplicates will *not* be detected or removed
 
-		let combinedDataConfig = {
-			cols: {},
-			rows: new AnalyserRows([]),
-			aliases: {}
-		};
+		// // The output is in the same format as for _processData
 
-		if (!dataConfigs || dataConfigs.length < 2) {
-			console.error('Invalid inputs passed to combineData', arguments);
-		}
+		// let combinedDataConfig = {
+		// 	cols: {},
+		// 	rows: new AnalyserRows([]),
+		// 	aliases: {}
+		// };
 
-		// Combine cols first //
+		// if (!dataConfigs || dataConfigs.length < 2) {
+		// 	console.error('Invalid inputs passed to combineData', arguments);
+		// }
 
-		// Build base set from first cols object
-		for (let j in dataConfigs[0].cols) {
-			combinedDataConfig.cols[j] = true;
-		}
+		// // Combine cols first //
 
-		// Remove any cols not shared by every other cols object
-		for (let i = 1; i < dataConfigs.length; i++) {
-			let dataConfig = dataConfigs[i];
+		// // Build base set from first cols object
+		// for (let j in dataConfigs[0].cols) {
+		// 	combinedDataConfig.cols[j] = true;
+		// }
 
-			for (let j in combinedDataConfig.cols) {
-				if (!(j in dataConfig.cols)) {
-					delete combinedDataConfig.cols[j];
-				}
-			}
-		}
+		// // Remove any cols not shared by every other cols object
+		// for (let i = 1; i < dataConfigs.length; i++) {
+		// 	let dataConfig = dataConfigs[i];
 
-		let colIndex = 0;
-		for (let j in combinedDataConfig.cols) {
-			combinedDataConfig.cols[j] = colIndex;
-			colIndex++;
-		}
+		// 	for (let j in combinedDataConfig.cols) {
+		// 		if (!(j in dataConfig.cols)) {
+		// 			delete combinedDataConfig.cols[j];
+		// 		}
+		// 	}
+		// }
 
-		// Now that we have the combined cols object, combine rows and aliases
-		for (let i = 0; i < dataConfigs.length; i++) {
-			let dataConfig = dataConfigs[i];
-			// Combine rows //
+		// let colIndex = 0;
+		// for (let j in combinedDataConfig.cols) {
+		// 	combinedDataConfig.cols[j] = colIndex;
+		// 	colIndex++;
+		// }
 
-			for (let j = 0; j < dataConfig.rows.length; j++) {
-				let row = [];
-				for (let k in combinedDataConfig.cols) {
-					row[combinedDataConfig.cols[k]] = dataConfig.rows[j][dataConfig.cols[k]];
-				}
+		// // Now that we have the combined cols object, combine rows and aliases
+		// for (let i = 0; i < dataConfigs.length; i++) {
+		// 	let dataConfig = dataConfigs[i];
+		// 	// Combine rows //
 
-				combinedDataConfig.rows.push(row);
-			}
+		// 	for (let j = 0; j < dataConfig.rows.length; j++) {
+		// 		let row = [];
+		// 		for (let k in combinedDataConfig.cols) {
+		// 			row[combinedDataConfig.cols[k]] = dataConfig.rows[j][dataConfig.cols[k]];
+		// 		}
+
+		// 		combinedDataConfig.rows.push(row);
+		// 	}
 
 
-			// Combine aliases //
+		// 	// Combine aliases //
 
-			// Loop through each row's aliases to combine
-			for (let j in dataConfig.aliases) {
+		// 	// Loop through each row's aliases to combine
+		// 	for (let j in dataConfig.aliases) {
 
-				// If we don't have an alias for this column, make an empty placeholder
-				if (!(j in combinedDataConfig.aliases)) {
-					combinedDataConfig.aliases[j] = [];
-				}
+		// 		// If we don't have an alias for this column, make an empty placeholder
+		// 		if (!(j in combinedDataConfig.aliases)) {
+		// 			combinedDataConfig.aliases[j] = [];
+		// 		}
 
-				// Loop through each aliasSet for this column
-				for (let k = 0; k < dataConfig.aliases[j].length; k++) {
-					let aliasSet = dataConfig.aliases[j][k];
+		// 		// Loop through each aliasSet for this column
+		// 		for (let k = 0; k < dataConfig.aliases[j].length; k++) {
+		// 			let aliasSet = dataConfig.aliases[j][k];
 
-					// Combine aliasSets based off their first element, which is used as a label
-					let combinedAliasSet = [];
-					let l;
-					for (l = 0; l < combinedDataConfig.aliases[j].length; l++) {
-						if (combinedDataConfig.aliases[j][l][0] === aliasSet[0]) {
-							combinedAliasSet = combinedDataConfig.aliases[j][l];
-							break;
-						}
-					}
+		// 			// Combine aliasSets based off their first element, which is used as a label
+		// 			let combinedAliasSet = [];
+		// 			let l;
+		// 			for (l = 0; l < combinedDataConfig.aliases[j].length; l++) {
+		// 				if (combinedDataConfig.aliases[j][l][0] === aliasSet[0]) {
+		// 					combinedAliasSet = combinedDataConfig.aliases[j][l];
+		// 					break;
+		// 				}
+		// 			}
 
-					combinedAliasSet = combinedAliasSet.concat(aliasSet);
+		// 			combinedAliasSet = combinedAliasSet.concat(aliasSet);
 
-					// Remove duplicates
-					combinedAliasSet = combinedAliasSet.filter(function (alias, index, array) {
-						return array.indexOf(alias) === index;
-					});
+		// 			// Remove duplicates
+		// 			combinedAliasSet = combinedAliasSet.filter(function (alias, index, array) {
+		// 				return array.indexOf(alias) === index;
+		// 			});
 
-					// Append or replace aliasSet in combinedDataConfig
-					if (l < combinedDataConfig.aliases[j].length) {
-						combinedDataConfig.aliases[j][l] = combinedAliasSet;
-					} else {
-						combinedDataConfig.aliases[j].push(combinedAliasSet);
-					}
-				}
-			}
-		}
+		// 			// Append or replace aliasSet in combinedDataConfig
+		// 			if (l < combinedDataConfig.aliases[j].length) {
+		// 				combinedDataConfig.aliases[j][l] = combinedAliasSet;
+		// 			} else {
+		// 				combinedDataConfig.aliases[j].push(combinedAliasSet);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		// Create new filters using combined aliases
-		combinedDataConfig.filters = Analyser._getAliasFilters(combinedDataConfig.aliases);
-		Analyser._createRowFilterFunctions(combinedDataConfig.rows, combinedDataConfig.filters);
+		// // Create new filters using combined aliases
+		// combinedDataConfig.by = Analyser._getAliasFilters(combinedDataConfig.aliases);
 
-		// Combine uniqueCols
-		combinedDataConfig.uniqueCols = [];
-		for (let i = 0; i < dataConfigs.length; i++) {
-			let dataConfig = dataConfigs[i];
+		// // Combine uniqueCols
+		// combinedDataConfig.uniqueCols = [];
+		// for (let i = 0; i < dataConfigs.length; i++) {
+		// 	let dataConfig = dataConfigs[i];
 
-			for (let j in dataConfig.uniqueCols) {
-				let originalCol = dataConfig.uniqueCols[j];
-				let originalColName = undefined;
-				for (let k in dataConfig.cols) {
-					if (dataConfig.cols[l] === originalCol) {
-						originalColName = l;
-						break;
-					}
-				}
+		// 	for (let j in dataConfig.uniqueCols) {
+		// 		let originalCol = dataConfig.uniqueCols[j];
+		// 		let originalColName = undefined;
+		// 		for (let k in dataConfig.cols) {
+		// 			if (dataConfig.cols[l] === originalCol) {
+		// 				originalColName = l;
+		// 				break;
+		// 			}
+		// 		}
 
-				if (originalColName) {
-					let originalColIndex = combinedDataConfig.cols[originalColName];
+		// 		if (originalColName) {
+		// 			let originalColIndex = combinedDataConfig.cols[originalColName];
 
-					if (combinedDataConfig.uniqueCols.indexOf(originalColIndex) === -1) {
-						combinedDataConfig.uniqueCols.push(combinedDataConfig.cols[originalColName]);
-					}
-				}
-			}
-		}
+		// 			if (combinedDataConfig.uniqueCols.indexOf(originalColIndex) === -1) {
+		// 				combinedDataConfig.uniqueCols.push(combinedDataConfig.cols[originalColName]);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		// Combine the enumsMaps, then build combined enums
-		combinedDataConfig.enumsMap = {};
-		for (let i = 0; i < dataConfigs.length; i++) {
-			let dataConfig = dataConfigs[i];
+		// // Combine the enumsMaps, then build combined enums
+		// combinedDataConfig.enumsMap = {};
+		// for (let i = 0; i < dataConfigs.length; i++) {
+		// 	let dataConfig = dataConfigs[i];
 
-			for (let j in dataConfig.enumsMap) {
-				let originalEnumsMap = dataConfig.enumsMap[j];
+		// 	for (let j in dataConfig.enumsMap) {
+		// 		let originalEnumsMap = dataConfig.enumsMap[j];
 
-				if (!originalEnumsMap) {
-					// Mark this enumsMap as null to denote that it doesn't
-					// exist across all dataConfigs we are combining
-					combinedDataConfig.enumsMap[j] = null;
-				} else {
-					if (combinedDataConfig.enumsMap[j] !== null) {
-						combinedDataConfig.enumsMap[j] = combinedDataConfig.enumsMap[j] || [];
+		// 		if (!originalEnumsMap) {
+		// 			// Mark this enumsMap as null to denote that it doesn't
+		// 			// exist across all dataConfigs we are combining
+		// 			combinedDataConfig.enumsMap[j] = null;
+		// 		} else {
+		// 			if (combinedDataConfig.enumsMap[j] !== null) {
+		// 				combinedDataConfig.enumsMap[j] = combinedDataConfig.enumsMap[j] || [];
 
-						for (let k = 0; k < originalEnumsMap.length; k++) {
-							let originalCol = originalEnumsMap[k];
-							let originalColName = undefined;
-							for (let l in dataConfig.cols) {
-								if (dataConfig.cols[l] === originalCol) {
-									originalColName = l;
-									break;
-								}
-							}
+		// 				for (let k = 0; k < originalEnumsMap.length; k++) {
+		// 					let originalCol = originalEnumsMap[k];
+		// 					let originalColName = undefined;
+		// 					for (let l in dataConfig.cols) {
+		// 						if (dataConfig.cols[l] === originalCol) {
+		// 							originalColName = l;
+		// 							break;
+		// 						}
+		// 					}
 
-							if (originalColName) {
-								let originalColIndex = combinedDataConfig.cols[originalColName];
+		// 					if (originalColName) {
+		// 						let originalColIndex = combinedDataConfig.cols[originalColName];
 
-								if (combinedDataConfig.enumsMap[j].indexOf(originalColIndex) === -1) {
-									combinedDataConfig.enumsMap[j].push(combinedDataConfig.cols[originalColName]);
-								}
-							}
-						}
-					}
-				}
-			}
+		// 						if (combinedDataConfig.enumsMap[j].indexOf(originalColIndex) === -1) {
+		// 							combinedDataConfig.enumsMap[j].push(combinedDataConfig.cols[originalColName]);
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+		// 	}
 
-			for (let j in combinedDataConfig.enumsMap) {
-				if (combinedDataConfig.enumsMap[j] === null) {
-					delete combinedDataConfig[enumsMap[j]];
-				}
-			}
-		}
-		combinedDataConfig.enums = Analyser._buildEnums(combinedDataConfig.rows, combinedDataConfig);
+		// 	for (let j in combinedDataConfig.enumsMap) {
+		// 		if (combinedDataConfig.enumsMap[j] === null) {
+		// 			delete combinedDataConfig[enumsMap[j]];
+		// 		}
+		// 	}
+		// }
+		// combinedDataConfig.enums = Analyser._buildEnums(combinedDataConfig.rows, combinedDataConfig);
 
-		return combinedDataConfig;
+		// return combinedDataConfig;
 	},
 
 	/////////////////
@@ -650,7 +651,7 @@ const Analyser = {
 		let val = string.replace(/,|%$/g, '');
 
 		if (parseFloat(val) === +val) {
-			let isPercentage = string.match(/%$/);
+			const isPercentage = string.match(/%$/);
 
 			if (isPercentage) {
 				// If the value is a percentage, divide by 100
@@ -674,118 +675,39 @@ const Analyser = {
 	// FILTERING //
 	///////////////
 	_getAliasFilters: function (aliases) {
-		const filterRows = function (rows, orToggle, colIndex1, values1, colIndex2, values2, colIndexN, valuesN) {
-			// Takes in a rows object (imported from csv),
-			// a boolean specifying whether it's an "and" or an "or" filter,
-			// and any number of pairs (at least one) of
-			// the index of the column to consider, and an array of values
+		const by = function (colIndex, values) {
+			const filterFn = (row) => Analyser._applyFilter(row, colIndex, values, aliases);
 
-			// Returns an array of rows where the cell in the column
-			// specified contains a value in the array of values given
-			// for all column and value pairs
+			filterFn.andBy = (colIndex, values) => {
+				return (row) => filterFn(row) && Analyser._applyFilter(row, colIndex, values, aliases);
+			};
+			filterFn.orBy = (colIndex, values) => {
+				return (row) => filterFn(row) && Analyser._applyFilter(row, colIndex, values, aliases);
+			};
 
-			let and = !orToggle;
-			let startAt = 2;
+			Analyser._extendFilter(filterFn, aliases);
 
-			let filteredRows = [];
-
-			if ((arguments.length < 4) || (((arguments.length-2) % 2) !== 0)) {
-				// Assume "andToggle" has not been passed
-				and = true;
-				startAt = 1;
-				if ((arguments.length < 3) || (((arguments.length-1) % 2) !== 0)) {
-					console.error('An invalid set of arguments was passed to filterRows');
-					return [];
-				}
-			}
-
-			let filters = [];
-			for (let i = startAt; i < arguments.length-1; i += 2) {
-				let filter = {
-					colIndex: arguments[i],
-					values: arguments[i+1]
-				};
-
-				if (!(Array.isArray(filter.values) || filter.values instanceof Function)) {
-					filter.values = [filter.values];
-				}
-
-				filters.push(filter);
-			}
-
-			for (let i = 0; i < rows.length; i++) {
-				let row = rows[i];
-
-				let isMatch = !!and;
-
-				for (let j = 0; j < filters.length; j++) {
-					let filter = filters[j];
-
-					if (and) {
-						isMatch = isMatch && Analyser._applyFilter(row, filter.colIndex, filter.values, aliases);
-					} else {
-						isMatch = isMatch || Analyser._applyFilter(row, filter.colIndex, filter.values, aliases);
-					}
-				}
-
-				if (isMatch) {
-					filteredRows.push(row);
-				}
-			}
-
-			filteredRows = new AnalyserRows(filteredRows);
-			filteredRows.filter = rows.filter;
-			filteredRows.filterAnd = rows.filterAnd;
-			filteredRows.filterOr = rows.filterOr;
-
-			return filteredRows;
+			return filterFn;
 		};
 
-		const filterRowsAnd = function (rows, colIndex1, values1, colIndex2, values2, colIndexN, valuesN) {
-			let args = Array.prototype.slice.apply(arguments);
-
-			args = args.slice(1);
-			args.splice(0, 0, false);
-			args.splice(0, 0, rows);
-
-			return filterRows.apply(this, args);
-		};
-
-		const filterRowsOr = function (rows, colIndex1, values1, colIndex2, values2, colIndexN, valuesN) {
-			let args = Array.prototype.slice.apply(arguments);
-
-			args = args.slice(1);
-			args.splice(0, 0, true);
-			args.splice(0, 0, rows);
-
-			return filterRows.apply(this, args);
-		};
-
-		return {
-			filterRows: filterRows,
-			filterRowsAnd: filterRowsAnd,
-			filterRowsOr: filterRowsOr
-		};
+		return by;
 	},
 
-	_createRowFilterFunctions: function (rows, filters) {
-		rows.filter = function () {
-			var args = [this].concat(Array.from(arguments));
+	_extendFilter: function (filterFn, aliases) {
+		filterFn.andBy = (colIndex, values) => {
+			const newFilterFn = (row) => filterFn(row) && Analyser._applyFilter(row, colIndex, values, aliases);
 
-			return filters.filterRows.apply(this, args);
+			Analyser._extendFilter(newFilterFn, aliases);
+			return newFilterFn;
+		};
+		filterFn.orBy = (colIndex, values) => {
+			const newFilterFn = (row) => filterFn(row) || Analyser._applyFilter(row, colIndex, values, aliases);
+
+			Analyser._extendFilter(newFilterFn, aliases);
+			return newFilterFn;
 		};
 
-		rows.filterOr = function () {
-			var args = [this].concat(Array.from(arguments));
-
-			return filters.filterRowsOr.apply(this, args);
-		};
-
-		rows.filterAnd = function () {
-			var args = [this].concat(Array.from(arguments));
-
-			return filters.filterRowsAnd.apply(this, args);
-		};
+		return filterFn;
 	},
 
 	_applyFilter: function (row, colIndex, values, aliases) {
@@ -799,7 +721,7 @@ const Analyser = {
 			values = [values];
 		}
 
-		let cell = row[colIndex];
+		const cell = row[colIndex];
 		let cellValues;
 
 		if (cell instanceof Array) {
@@ -808,11 +730,9 @@ const Analyser = {
 			cellValues = [cell];
 		}
 
-		for (let i = 0; i < cellValues.length; i++) {
-			let cellValue = cellValues[i];
-
-			for (let k = 0; k < values.length; k++) {
-				if (Analyser._matchAlias(values[k], cellValue, aliases)) {
+		for (let cellValue of cellValues) {
+			for (let value of values) {
+				if (Analyser._matchAlias(value, cellValue, aliases)) {
 					return true;
 				}
 			}
@@ -834,9 +754,8 @@ const Analyser = {
 
 		// Could be array or object
 		for (let i in aliasSuperset) {
-			let aliasSet = aliasSuperset[i];
-			for (let j = 0; j < aliasSet.length; j++) {
-				let aliasList = aliasSet[j];
+			const aliasSet = aliasSuperset[i];
+			for (let aliasList of aliasSet) {
 
 				if (
 					(aliasList.indexOf(cell) !== -1) &&
@@ -867,12 +786,13 @@ const Analyser = {
 			return null;
 		}
 
-		let alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+		const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 		let rowNumber = -1; // Adjust for 0-based counting
 
-		for (let i = 0; i < colName.length; i++) {
-			let char = colName.toUpperCase()[i];
-			let charIndex = alphabet.indexOf(char);
+		const upperColName = colName.toUpperCase();
+		for (let i = 0; i < upperColName.length; i++) {
+			const char = upperColName[i];
+			const charIndex = alphabet.indexOf(char);
 
 			if (charIndex === -1) {
 				// String contains invalid character
@@ -887,7 +807,7 @@ const Analyser = {
 
 	getColNumbers: function (cols) {
 		// Takes in a flat object and runs each property through getColNumber
-		let newCols = {};
+		const newCols = {};
 
 		for (let key in cols) {
 			newCols[key] = Analyser.getColNumber(cols[key]);
@@ -905,7 +825,7 @@ const Analyser = {
 
 		let tableString = '';
 
-		let addCell = (cellString) => {
+		const addCell = (cellString) => {
 			if (typeof cellString !== 'string') {
 				cellString = '' + cellString;
 			}
@@ -918,7 +838,7 @@ const Analyser = {
 
 			tableString += cellString + cellSeparator;
 		};
-		let endLine = () => {
+		const endLine = () => {
 			// Trim off last cell separator, replace with newline
 			tableString = tableString.substr(0, tableString.length - cellSeparator.length) + rowSeparator;
 		};
@@ -944,9 +864,9 @@ const Analyser = {
 
 		for (let rowName in table) {
 			let isFirstRow = false;
-			let row = table[rowName];
+			const row = table[rowName];
 			for (let colName in row) {
-				let cell = row[colName];
+				const cell = row[colName];
 				if (useKeys) {
 					if (isFirstRow === false) {
 						addCell(rowName);
@@ -968,12 +888,10 @@ const Analyser = {
 
 		// Outputs a summary object where values within the same set of aliases are grouped
 
-		let newSummary = {};
+		const newSummary = {};
 		for (let i in summary) {
 			let inAlias = false;
-			for (let j = 0; j < aliasList.length; j++) {
-				let aliases = aliasList[j];
-
+			for (let aliases of aliasList) {
 				if (aliases.indexOf(i) !== -1) {
 					inAlias = true;
 					if (aliases[0] in newSummary) {
@@ -995,7 +913,7 @@ const Analyser = {
 
 export const {
 	loadFile,
-	combineData,
+	// combineData, // TODO: Rewrite
 
 	getColNumber,
 	getColNumbers,

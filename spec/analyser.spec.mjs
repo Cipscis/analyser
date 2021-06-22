@@ -67,33 +67,40 @@ describe('analyser', () => {
 	});
 
 	describe('loadFile', () => {
-		it('loads a file', async () => {
+		it('returns a Promise', () => {
 			let fileConfig = {
 				path: 'city example.csv',
-				headerRows: 1,
-				cols: {
-					NAME: 'A',
-					COUNTRY: 'B',
-					POPULATION: 'C',
-					CAPITAL: 'D',
-					PUBLIC_TRANSPORT: 'E',
-					MAYOR_2012: 'F',
-					MAYOR_2018: 'G',
-				},
-				arrayCols: {},
-				aliases: {
-					COUNTRY: [
-						['New Zealand', 'Aotearoa']
-					]
-				},
-				enumsMap: {}
 			};
-			fileConfig.arrayCols[fileConfig.cols.PUBLIC_TRANSPORT] = ',';
-			fileConfig.arrayCols[fileConfig.cols.MAYOR_2018] = ',';
+
+			let response = analyser.loadFile(fileConfig);
+
+			expect(response).toBeInstanceOf(Promise);
+		});
+
+		it('resolves to a single object when loading a single file', async () => {
+			let fileConfig = {
+				path: 'city example.csv',
+			};
 
 			let data = await analyser.loadFile(fileConfig);
 
-			console.log(data);
+			expect(data).not.toBeInstanceOf(Array);
+		});
+
+		it('resolves to an array of objects when loading multiple files', async () => {
+			let fileConfigs = [
+				{
+					path: 'city example.csv',
+				},
+				{
+					path: 'city example 2.csv',
+				},
+			];
+
+			let dataArr = await analyser.loadFile(...fileConfigs);
+
+			expect(dataArr).toBeInstanceOf(Array);
+			expect(dataArr.length).toBe(fileConfigs.length);
 		});
 	});
 });
