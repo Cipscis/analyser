@@ -1,82 +1,72 @@
 import * as analyser from '/analyser';
 
 const analyse = async function () {
-	const fileInfoA = {
-		path: '/assets/data/Prison Population - raw.csv',
+	let fileInfoA = {
+		path: '/analyser/assets/data/city example.csv',
 		headerRows: 1,
-		cols: analyser.getColNumbers({
-			DATE: 'A',
-			REMAND_MALE: 'B',
-			REMAND_FEMALE: 'C',
-			REMAND_TOTAL: 'D',
-			SENTENCED_MALE: 'E',
-			SENTENCED_FEMALE: 'F',
-			SENTENCED_TOTAL: 'G',
-			TOTAL_MALE: 'H',
-			TOTAL_MALE: 'I',
-			TOTAL_TOTAL: 'J',
-			ETHNICITY_MAORI: 'K',
-			ETHNICITY_EUROPEAN: 'L',
-			ETHNICITY_PACIFIC: 'M',
-			ETHNICITY_ASIAN: 'N',
-			ETHNICITY_OTHER: 'O',
-			ETHNICITY_UNKNOWN: 'P',
-			ETHNICITY_TOTAL: 'A',
-			PER_100_000_POPULATION: 'R',
-		}),
+		cols: {
+			NAME: analyser.getColNumber('A'),
+			COUNTRY: analyser.getColNumber('B'),
+			POPULATION: analyser.getColNumber('C'),
+			CAPITAL: analyser.getColNumber('D'),
+			PUBLIC_TRANSPORT: analyser.getColNumber('E'),
+			MAYOR_2012: analyser.getColNumber('F'),
+			MAYOR_2018: analyser.getColNumber('G')
+		},
+		arrayCols: {},
+		aliases: {
+			COUNTRY: [
+				['New Zealand', 'Aotearoa']
+			]
+		},
+		enumsMap: {},
+	};
+	fileInfoA.arrayCols[fileInfoA.cols.PUBLIC_TRANSPORT] = ',';
+	fileInfoA.arrayCols[fileInfoA.cols.MAYOR_2018] = ',';
+
+	let fileInfoB = {
+		path: '/analyser/assets/data/city example 2.csv',
+		headerRows: 1,
+		cols: {
+			NAME: analyser.getColNumber('A'),
+			COUNTRY: analyser.getColNumber('B'),
+			POPULATION: analyser.getColNumber('C')
+		}
+	};
+	let fileInfoC = {
+		path: '/analyser/assets/data/city example 3.csv',
+		headerRows: 1,
+		cols: {
+			YEAR: analyser.getColNumber('A'),
+			POPULATION: analyser.getColNumber('B')
+		}
 	};
 
-	const fileInfoB = {
-		path: '/assets/data/Tactical Options 2014 - raw.csv',
-		headerRows: 1,
-		cols: analyser.getColNumbers({
-			TACTICAL_OPTION: 'A',
-			EUROPEAN: 'B',
-			MAORI: 'C',
-			PACIFIC: 'D',
-			OTHER: 'E',
-		}),
-	};
+	let [cityData, cityData2, cityData3] = await analyser.loadFile(fileInfoA, fileInfoB, fileInfoC);
 
-	let dataConfigArr = await analyser.loadFile(fileInfoA, fileInfoB);
+	// console.log(cityData.rows);
+	// console.log(cityData.rows[0]);
 
-	for (let dataConfig of dataConfigArr) {
-		let { rows, cols } = dataConfig;
+	// console.log(cityData2.rows);
+	// console.log(cityData2.rows[0]);
 
-		console.log(rows);
-		console.log(rows.getCol(0));
-	}
+	// console.log(cityData3.rows);
+	// console.log(cityData3.rows[0]);
 
-	let { rows, cols } = dataConfigArr[0];
+	const {
+		rows,
+		cols,
+		by,
+	} = cityData;
 
-	let newCol = rows.getCol(cols.REMAND_MALE).map((num) => num/10);
+	console.log(rows);
+	console.log(cols);
 
-	let newColIndex = rows.addCol(newCol);
-	console.log(rows.getCol(newColIndex));
-
-	let derivedColIndex = rows.addDerivedCol((row, extraVal1) => {
-		return row[1] + row[2] - extraVal1;
-	}, newCol);
-	console.log(rows.getCol(derivedColIndex));
-
-	console.table(rows.createSubTable(cols));
-	console.log(rows.createSubTableString(cols));
-
-	rows = dataConfigArr[1].rows;
-	cols = dataConfigArr[1].cols;
-
-	console.log(rows.getColSummary(cols.TACTICAL_OPTION));
-
-	let dataSeries = rows.getColAsDataSeries(cols.TACTICAL_OPTION, Object.keys(rows.getColSummary(cols.TACTICAL_OPTION)));
-	console.log(dataSeries);
-
-	let comparisonSummary = rows.getComparisonSummary(cols.TACTICAL_OPTION, cols.MAORI);
-	console.log(comparisonSummary);
-
-	let comparisonSummaryString = rows.getComparisonSummaryString(cols.TACTICAL_OPTION, cols.MAORI);
-	console.log(comparisonSummaryString);
-
-	console.log(rows.getComparisonSummaryString(cols.TACTICAL_OPTION, cols.MAORI));
+	console.log(rows.filter(
+		by(cols.POPULATION, pop => pop > 1000)
+		.andBy(cols.PUBLIC_TRANSPORT, 'Train')
+		.orBy(cols.PUBLIC_TRANSPORT, 'Bus')
+	));
 };
 
 analyse();
