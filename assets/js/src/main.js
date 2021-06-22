@@ -1,4 +1,4 @@
-import * as analyser from '/analyser';
+import * as analyser from '/analyser.js';
 
 const analyse = async function () {
 	let fileInfoA = {
