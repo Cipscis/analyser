@@ -1,1 +1,16 @@
-// Styles go here
+@import "theme.scss";
+
+@import "reset.scss";
+
+@import "typography.scss";
+
+@import "content.scss";
+
+html {
+	font-family: Arial, sans-serif;
+}
+
+.layout {
+	max-width: 800px;
+	margin: 60px auto;
+}
