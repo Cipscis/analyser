@@ -215,8 +215,6 @@ class AnalyserRows extends Array {
 			}
 		}
 
-		console.log(this);
-		console.trace();
 		let headerSummary = this.getColSummary(headerCol, headerAliases);
 		let varSummary = this.getColSummary(varCol, varAliases);
 
@@ -265,7 +263,7 @@ const Analyser = {
 		if (response.ok) {
 			let data = await response.text();
 
-			let rows = Analyser._parseCsv(data);
+			let rows = parse(data, { mapper: Analyser._extractValue });
 			let dataConfig = Analyser._processData(rows, fileConfig);
 			return dataConfig;
 		} else {
@@ -273,12 +271,16 @@ const Analyser = {
 		}
 	},
 
-	loadFile: function (...fileConfigArr) {
-		return new Promise((resolve, reject) => {
-			// Load each file, then resolve the wrapping promise once all are loaded
-			let promises = fileConfigArr.map((fileConfig) => Analyser._loadFile(fileConfig))
-			Promise.all(promises).then(resolve);
-		});
+	loadFile: async function (...fileConfigArr) {
+		// Load each file, then resolve the wrapping promise once all are loaded
+		let promises = fileConfigArr.map((fileConfig) => Analyser._loadFile(fileConfig))
+
+		if (fileConfigArr.length > 1) {
+			// This returns an array matching fileConfigArr
+			return await Promise.all(promises);
+		} else {
+			return await promises[0];
+		}
 	},
 
 	_processData: function (rows, fileConfig) {
@@ -630,16 +632,6 @@ const Analyser = {
 	/////////////////
 	// CSV PARSING //
 	/////////////////
-	_parseCsv: function (csv) {
-		// Parse a CSV file then process the data
-		// Convert strings to numbers where appropriate,
-		// then pass the data to a callback function
-
-		let data = parse(csv, { mapper: Analyser._extractValue });
-
-		return data;
-	},
-
 	_extractValue: function (string) {
 		// Convert strings to booleans or numbers where possible
 
@@ -658,14 +650,16 @@ const Analyser = {
 		let val = string.replace(/,|%$/g, '');
 
 		if (parseFloat(val) === +val) {
-			if (string.match(/%$/)) {
+			let isPercentage = string.match(/%$/);
+
+			if (isPercentage) {
 				// If the value is a percentage, divide by 100
 
 				// Convert to string to see how many places after the point, to round after dividing
 				// Otherwise you'll get numbers like 0.10800000000000001
-				let length = (val + '');
-				length.replace(/^[^.]+/, '');
-				length = length.length;
+				let stringVal = val + '';
+				let truncatedStringVal = stringVal.replace(/^[^.]+/, '');
+				let length = truncatedStringVal.length;
 
 				val = val / 100;
 				val = val.toFixed(length+2);
@@ -862,8 +856,14 @@ const Analyser = {
 	getColNumber: function (colName) {
 		// Takes in a string like "CE" and converts it to a row number like 82
 
-		if (!(typeof colName === 'string' || colName instanceof String)) {
+		if (Number.isInteger(colName) && colName >= 0) {
+			// A positive integer
+			return colName;
+		} else if (!(typeof colName === 'string' || colName instanceof String)) {
 			// Not a string
+			return null;
+		} else if (colName.length === 0) {
+			// Empty string
 			return null;
 		}
 
@@ -890,15 +890,7 @@ const Analyser = {
 		let newCols = {};
 
 		for (let key in cols) {
-			let val = cols[key];
-
-			if (typeof val === 'string' || val instanceof String) {
-				val = Analyser.getColNumber(cols[key]);
-			}
-
-			if (Number.isInteger(val) && val >= 0) {
-				newCols[key] = val;
-			}
+			newCols[key] = Analyser.getColNumber(cols[key]);
 		}
 
 		return newCols;
@@ -1007,5 +999,4 @@ export const {
 
 	getColNumber,
 	getColNumbers,
-	getCol,
 } = Analyser;
