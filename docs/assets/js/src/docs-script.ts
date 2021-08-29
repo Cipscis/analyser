@@ -1,48 +1,56 @@
-import * as analyser from '@cipscis/analyser';
+// import * as analyser from '@cipscis/analyser';
+import * as analyser from '../../../../src/analyser';
 
 const analyse = async function () {
-	let fileInfoA = {
+	const fileInfoA: analyser.FileConfig = {
 		path: '/analyser/assets/data/city example.csv',
 		headerRows: 1,
-		cols: {
-			NAME: analyser.getColNumber('A'),
-			COUNTRY: analyser.getColNumber('B'),
-			POPULATION: analyser.getColNumber('C'),
-			CAPITAL: analyser.getColNumber('D'),
-			PUBLIC_TRANSPORT: analyser.getColNumber('E'),
-			MAYOR_2012: analyser.getColNumber('F'),
-			MAYOR_2018: analyser.getColNumber('G')
-		},
-		arrayCols: {},
+		cols: analyser.getColNumbers({
+			NAME: 'A',
+			COUNTRY: 'B',
+			POPULATION: 'C',
+			CAPITAL: 'D',
+			PUBLIC_TRANSPORT: 'E',
+			MAYOR_2012: 'F',
+			MAYOR_2018: 'G',
+		}),
+		// arrayCols: {},
 		aliases: {
-			COUNTRY: [
+			'COUNTRY': [
 				['New Zealand', 'Aotearoa']
-			]
+			],
 		},
-		enumsMap: {},
+		// aliases: {
+		// 	COUNTRY: [
+		// 		['New Zealand', 'Aotearoa']
+		// 	]
+		// },
+		// enumsMap: {},
 	};
-	fileInfoA.arrayCols[fileInfoA.cols.PUBLIC_TRANSPORT] = ',';
-	fileInfoA.arrayCols[fileInfoA.cols.MAYOR_2018] = ',';
+	// fileInfoA.arrayCols[fileInfoA.cols.PUBLIC_TRANSPORT] = ',';
+	// fileInfoA.arrayCols[fileInfoA.cols.MAYOR_2018] = ',';
 
-	let fileInfoB = {
+	const fileInfoB: analyser.FileConfig = {
 		path: '/analyser/assets/data/city example 2.csv',
 		headerRows: 1,
-		cols: {
-			NAME: analyser.getColNumber('A'),
-			COUNTRY: analyser.getColNumber('B'),
-			POPULATION: analyser.getColNumber('C')
-		}
+		cols: analyser.getColNumbers({
+			NAME: 'A',
+			COUNTRY: 'B',
+			POPULATION: 'C',
+		}),
 	};
-	let fileInfoC = {
+	const fileInfoC = {
 		path: '/analyser/assets/data/city example 3.csv',
 		headerRows: 1,
-		cols: {
-			YEAR: analyser.getColNumber('A'),
-			POPULATION: analyser.getColNumber('B')
-		}
+		cols: analyser.getColNumbers({
+			YEAR: 'A',
+			POPULATION: 'B',
+		}),
 	};
 
-	let [cityData, cityData2, cityData3] = await analyser.loadFile(fileInfoA, fileInfoB, fileInfoC);
+	const [cityData, cityData2, cityData3] = await analyser.loadFile(fileInfoA, fileInfoB, fileInfoC);
+
+	const cityDataA = await analyser.loadFile(fileInfoA);
 
 	// console.log(cityData.rows);
 	// console.log(cityData.rows[0]);
@@ -63,9 +71,9 @@ const analyse = async function () {
 	console.log(cols);
 
 	console.log(rows.filter(
-		by(cols.POPULATION, pop => pop > 1000)
-		.andBy(cols.PUBLIC_TRANSPORT, 'Train')
-		.orBy(cols.PUBLIC_TRANSPORT, 'Bus')
+		by(cols.POPULATION, (pop: number) => pop > 1000)
+	// 	.andBy(cols.PUBLIC_TRANSPORT, 'Train')
+	// 	.orBy(cols.PUBLIC_TRANSPORT, 'Bus')
 	));
 };
 
