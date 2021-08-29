@@ -1,4 +1,4 @@
-import * as analyser from '/analyser.js';
+import * as analyser from '@cipscis/analyser';
 
 const analyse = async function () {
 	let fileInfoA = {
