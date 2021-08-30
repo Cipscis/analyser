@@ -72,8 +72,8 @@ const analyse = async function () {
 
 	console.log(rows.filter(
 		by(cols.POPULATION, (pop: number) => pop > 1000)
-	// 	.andBy(cols.PUBLIC_TRANSPORT, 'Train')
-	// 	.orBy(cols.PUBLIC_TRANSPORT, 'Bus')
+		.orBy(cols.POPULATION, (pop: number) => pop < 300)
+		.andBy(cols.MAYOR_2012, 'Len Brown')
 	));
 };
 

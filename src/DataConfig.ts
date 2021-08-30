@@ -1,12 +1,12 @@
 import { AnalyserRows } from './AnalyserRows';
 import { Cols } from './Cols';
 import { Aliases } from './Aliases';
-import { FilterFunction } from './filtering';
+import { FilterResolverExtender } from './filtering';
 
 interface DataConfig {
 	rows: AnalyserRows,
 	cols: Cols,
-	by: FilterFunction,
+	by: FilterResolverExtender,
 
 	aliases?: Aliases,
 }

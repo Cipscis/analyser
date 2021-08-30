@@ -3,8 +3,26 @@ import { Aliases } from './Aliases';
 
 type FilterInput = ((value: any) => boolean) | any[] | Exclude<any, []>
 
-interface FilterFunction {
-	(colIndex: number, values: FilterInput): (row: any[]) => boolean
+/**
+ * A function used by Array.prototype.filter
+ */
+interface FilterResolver {
+	(val: any, index: number, arr: any[]): boolean,
+}
+
+/**
+ * A FilterResolver that can be extended using FilterResolverExtender methods
+ */
+interface ExtensibleFilterResolver extends FilterResolver {
+	andBy: FilterResolverExtender,
+	orBy: FilterResolverExtender,
+}
+
+/**
+ * A function that either creates a new FilterResolver or extends and existing one, embedding information about the column to look at and the values to match.
+ */
+interface FilterResolverExtender {
+	(colIndex: number, values: FilterInput): ExtensibleFilterResolver,
 }
 
 /**
@@ -14,18 +32,52 @@ interface FilterFunction {
  *
  * @param  {Aliases} aliases - The aliases to be embedded in this filter function.
  *
- * @return {FilterFunction} - A function that can be used with Array.prototype.filter.
+ * @return {FilterResolver} - A function that can be used with Array.prototype.filter.
  */
-function createFilterFn(aliases?: Aliases): FilterFunction {
+function createFilterFn(aliases?: Aliases): FilterResolverExtender {
 	const by = function (colIndex: number, values: FilterInput) {
-		const applyFilterToRow = function (row: any[]) {
+		const applyFilterToRow: FilterResolver = function (row, index, arr) {
 			return _applyFilter(row, colIndex, values, aliases);
 		};
 
-		return applyFilterToRow;
+		const extendedApplyFilterToRow = _extendFilterFn(applyFilterToRow, aliases);
+
+		return extendedApplyFilterToRow;
 	};
 
 	return by;
+}
+
+/**
+ * Extend a FilterResolver into an ExtensibleFilterResolver, including embedding an optional set of Aliases.
+ *
+ * @param  {FilterResolver} filterResolver - The FilterResolver function to extend.
+ * @param  {Aliases} [aliases] - The Aliases to embed in the ExtensibleFilterResolver being created.
+ *
+ * @return {ExtensibleFilterResolver} - An extended version of the initial FilterResolver.
+ */
+function _extendFilterFn(filterResolver: FilterResolver, aliases?: Aliases): ExtensibleFilterResolver {
+	const extendedFilterResolver = filterResolver as ExtensibleFilterResolver;
+
+	extendedFilterResolver.andBy = function (colIndex: number, values: FilterInput) {
+		const newFilterResolver: FilterResolver = function (row, index, arr) {
+			return filterResolver(row, index, arr) && _applyFilter(row, colIndex, values, aliases);
+		};
+
+		const newExtendedFilterResolver = _extendFilterFn(newFilterResolver, aliases);
+		return newExtendedFilterResolver;
+	};
+
+	extendedFilterResolver.orBy = function (colIndex: number, values: FilterInput) {
+		const newFilterResolver: FilterResolver = function (row, index, arr) {
+			return filterResolver(row, index, arr) || _applyFilter(row, colIndex, values, aliases);
+		};
+
+		const newExtendedFilterResolver = _extendFilterFn(newFilterResolver, aliases);
+		return newExtendedFilterResolver;
+	};
+
+	return extendedFilterResolver;
 }
 
 /**
@@ -108,5 +160,5 @@ function _matchAlias(cell: any, value: any, aliases?: Aliases): boolean {
 export {
 	createFilterFn,
 
-	FilterFunction,
+	FilterResolverExtender,
 };
