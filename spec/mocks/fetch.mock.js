@@ -1,4 +1,4 @@
-import { exampleA, exampleB, exampleC } from '../data/example.data.mjs';
+import { exampleA, exampleB, exampleC } from '../data/example.data.js';
 
 const urlMap = {
 	'city example.csv': exampleA,

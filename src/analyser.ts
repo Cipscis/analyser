@@ -1,13 +1,13 @@
-import { Cols } from './Cols';
-import { Aliases } from './Aliases';
+import { Cols } from './Cols.js';
+import { Aliases } from './Aliases.js';
 
-import { FileConfig } from './FileConfig';
-import { DataConfig } from './DataConfig';
+import { FileConfig } from './FileConfig.js';
+import { DataConfig } from './DataConfig.js';
 
 /////////////////////
 // FILE PROCESSING //
 /////////////////////
-import { loadFile } from './file-processing';
+import { loadFile } from './file-processing.js';
 
 
 ///////////////
@@ -35,6 +35,8 @@ function getColNumber(colName: number | string): number | null {
 			return null
 		}
 	} else if (colName === '') {
+		return null;
+	} else if (typeof colName !== 'string') {
 		return null;
 	}
 

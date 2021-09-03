@@ -1,5 +1,5 @@
-import { AnalyserRows } from './AnalyserRows';
-import { Aliases } from './Aliases';
+import { AnalyserRows } from './AnalyserRows.js';
+import { Aliases } from './Aliases.js';
 
 type FilterInput = ((value: any) => boolean) | any[] | Exclude<any, []>
 

@@ -1,5 +1,5 @@
-import { Cols } from './Cols';
-import { Aliases } from './Aliases';
+import { Cols } from './Cols.js';
+import { Aliases } from './Aliases.js';
 
 interface FileConfig {
 	path: string,

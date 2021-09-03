@@ -1,7 +1,7 @@
-import { AnalyserRows } from './AnalyserRows';
-import { Cols } from './Cols';
-import { Aliases } from './Aliases';
-import { FilterResolverExtender } from './filtering';
+import { AnalyserRows } from './AnalyserRows.js';
+import { Cols } from './Cols.js';
+import { Aliases } from './Aliases.js';
+import { FilterResolverExtender } from './filtering.js';
 
 interface DataConfig {
 	rows: AnalyserRows,

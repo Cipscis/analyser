@@ -1,10 +1,10 @@
 import { parse as parseCSV } from '@cipscis/csv';
 
-import { AnalyserRows } from './AnalyserRows';
-import { FileConfig } from './FileConfig';
-import { DataConfig } from './DataConfig';
+import { AnalyserRows } from './AnalyserRows.js';
+import { FileConfig } from './FileConfig.js';
+import { DataConfig } from './DataConfig.js';
 
-import { createFilterFn } from './filtering';
+import { createFilterFn } from './filtering.js';
 
 /**
  * Load one of more files, process the data they contain, and return it.

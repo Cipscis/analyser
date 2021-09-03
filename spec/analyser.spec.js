@@ -1,6 +1,6 @@
-import * as analyser from '../analyser.js';
+import * as analyser from '../dist/analyser.js';
 
-import { fetch } from './mocks/fetch.mock.mjs';
+import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
 
 describe('analyser', () => {
@@ -70,6 +70,7 @@ describe('analyser', () => {
 		it('returns a Promise', () => {
 			let fileConfig = {
 				path: 'city example.csv',
+				cols: {},
 			};
 
 			let response = analyser.loadFile(fileConfig);
