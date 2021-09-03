@@ -91,6 +91,8 @@ These dependencies are used when working on the project locally.
 
 * [ts-loader](https://github.com/TypeStrong/ts-loader): For compiling TypeScript using Webpack
 
+* [resolve-typescript-plugin](https://github.com/softwareventures/resolve-typescript-plugin): For using ES Module syntax with Webpack's `ts-loader`
+
 * [Express](https://expressjs.com/): Running a Node.js server, accessed at `http://localhost:<PORT>`
 
 * [Concurrently](https://www.npmjs.com/package/concurrently): Running server and development build tasks concurrently
