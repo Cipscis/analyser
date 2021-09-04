@@ -3,6 +3,9 @@ import * as analyser from '../dist/analyser.js';
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
 
+import { exampleAConfig, exampleBConfig, exampleCConfig } from
+'./data/example.config.mjs';
+
 describe(`analyser`, () => {
 	describe(`getColNumber`, () => {
 		it(`converts a column name string into a number`, () => {
@@ -73,16 +76,7 @@ describe(`analyser`, () => {
 				cols: {},
 			};
 
-			let response = analyser.loadFile(fileConfig);
-
-			expect(response).toBeInstanceOf(Promise);
-		});
-
-		it('resolves to a single object when loading a single file', async () => {
-			let fileConfig = {
-				path: 'city example.csv',
-			};
-
+			const data = await analyser.loadFile(fileConfig);
 
 			expect(data).not.toBeInstanceOf(Array);
 		});
@@ -104,5 +98,87 @@ describe(`analyser`, () => {
 			expect(dataArr).toBeInstanceOf(Array);
 			expect(dataArr.length).toBe(fileConfigs.length);
 		});
+
+		it(`reads all rows from a file`, async () => {
+			const fileConfig = {
+				path: 'city example.csv',
+				cols: {},
+			};
+
+			const { rows } = await analyser.loadFile(fileConfig);
+
+			expect(rows.length).toBe(10);
+		});
+
+		it(`trims header rows`, async () => {
+			const fileConfig = Object.assign({}, exampleAConfig);
+			fileConfig.headerRows = 1;
+			fileConfig.footerRows = 0;
+
+			const { rows, cols } = await analyser.loadFile(fileConfig);
+
+			expect(rows.length).toBe(9);
+			expect(rows[0][cols.NAME]).toBe('Auckland');
+		});
+
+		it(`trims footer rows`, async () => {
+			const fileConfig = Object.assign({}, exampleAConfig);
+			fileConfig.headerRows = 0;
+			fileConfig.footerRows = 1;
+
+			const { rows, cols } = await analyser.loadFile(fileConfig);
+
+			expect(rows.length).toBe(9);
+			expect(rows[rows.length-1][cols.NAME]).toBe('Dunedin');
+		});
+	});
+
+	describe(`filtering`, () => {
+		let rows;
+		let cols;
+		let by;
+
+		beforeEach(async () => {
+			const dataConfig = await analyser.loadFile(exampleAConfig);
+			rows = dataConfig.rows;
+			cols = dataConfig.cols;
+			by = dataConfig.by;
+		});
+
+		it(`lets you use the 'by' function`, async () => {
+			const filteredRows = rows.filter(by(cols.NAME, 'Auckland'));
+
+			expect(filteredRows.length).toBe(1);
+			expect(filteredRows[0][cols.NAME]).toBe('Auckland');
+		});
+
+		it(`lets you filter by an array of values`, async () => {
+			const filteredRows = rows.filter(by(cols.NAME, ['Taupō', 'Hamburg']));
+
+			expect(filteredRows.length).toBe(2);
+			expect(filteredRows[0][cols.NAME]).toBe('Taupō');
+			expect(filteredRows[1][cols.NAME]).toBe('Hamburg');
+		});
+
+		it(`lets you filter by a function`, async () => {
+			const filteredRows = rows.filter(by(cols.POPULATION, (pop) => pop > 1000));
+
+			expect(filteredRows.length).toBe(3);
+			expect(filteredRows[0][cols.NAME]).toBe('Auckland');
+			expect(filteredRows[1][cols.NAME]).toBe('Hamburg');
+			expect(filteredRows[2][cols.NAME]).toBe('Sydney');
+		});
+
+		// it(`lets you build an AND filter using 'andBy'`, async () => {
+		// 	throw new Error('Test not implemented');
+		// });
+
+		// it(`lets you build an OR filter using 'orBy'`, async () => {
+		// 	throw new Error('Test not implemented');
+		// });
+
+		// it(`lets you build a complex filter using both 'orBy' and 'andBy'`, async () => {
+		// 	throw new Error('Test not implemented');
+		// });
 	});
 });
