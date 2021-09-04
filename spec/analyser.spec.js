@@ -213,5 +213,11 @@ describe(`analyser`, () => {
 			expect(filteredRows[2][cols.NAME]).toBe('Dunedin');
 			expect(filteredRows[3][cols.NAME]).toBe('Tauranga');
 		});
+
+		it(`returns an empty AnalyserRows if nothing matches the filter`, async () => {
+			const filteredRows = rows.filter(by(cols.COUNTRY, 'COLOMBIA'));
+
+			expect(filteredRows.length).toBe(0);
+		});
 	});
 });

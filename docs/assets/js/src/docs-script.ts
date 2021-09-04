@@ -1,5 +1,5 @@
-// import * as analyser from '@cipscis/analyser';
-import * as analyser from '../../../../src/analyser';
+import * as analyser from '@cipscis/analyser';
+// import * as analyser from '../../../../src/analyser.js';
 
 const stringToBool = (value: any): boolean => {
 	if (typeof value === 'boolean') {
