@@ -5,6 +5,8 @@
  * @param {number | undefined} [limit]
  *
  * @throws {TypeError} - The array transformer requires a 'separator' argument
+ *
+ * @return {(value: string) => string[]}
  */
 function array(separator: string | RegExp, limit?: number): (value: string) => string[] {
 	return function (value: string): string[] {

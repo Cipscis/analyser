@@ -2,7 +2,6 @@ import * as analyser from '@cipscis/analyser';
 // import * as analyser from '../../../../src/analyser.js';
 
 const stringToBool = (value: string): boolean | null => {
-	console.log(value.trim().toLowerCase());
 	switch (value.trim().toLowerCase()) {
 		case 'true':
 			return true;

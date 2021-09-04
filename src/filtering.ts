@@ -30,7 +30,7 @@ interface FilterResolverExtender {
  * to create a function that can be used with Array.prototype.filter to
  * use that alias when filtering a set of data using _applyFilter.
  *
- * @param  {Aliases} aliases - The aliases to be embedded in this filter function.
+ * @param  {Aliases} [aliases] - The aliases to be embedded in this filter function.
  *
  * @return {FilterResolver} - A function that can be used with Array.prototype.filter.
  */
@@ -132,11 +132,11 @@ function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases
  * Checks if the value of a cell matches the value passed,
  * optionally taking one or more sets of aliases to match.
  *
- * @param  {any} cell [description]
- * @param  {any} value [description]
- * @param  {Aliases} aliases [description]
+ * @param  {any} cell - The value of a cell to check.
+ * @param  {any} value - The value being matched against.
+ * @param  {Aliases} aliases - The aliases to use when matching the value.
  *
- * @return {boolean} [description]
+ * @return {boolean} - Whether or not the value matched.
  */
 function _matchAlias(cell: any, value: any, aliases?: Aliases): boolean {
 	if (cell === value) {

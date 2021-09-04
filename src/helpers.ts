@@ -5,9 +5,9 @@ import { Cols } from './Cols.js';
  *
  * If a non-negative integer is passed, it will be returned untransformed. Any other value, including an invalid string, will return null.
  *
- * @param  {number | string} colName [description]
+ * @param  {number | string} colName
  *
- * @return {number} [description]
+ * @return {number | null}
  */
 function getColNumber(colName: number | string): number | null {
 	if (typeof colName === 'number') {
@@ -46,9 +46,9 @@ function getColNumber(colName: number | string): number | null {
  *
  * Any columns invalid identifiers will be removed from the result.
  *
- * @param  {Map<string, number | string>} cols - A map of column names to column identifiers.
+ * @param  {{ [key: string]: number | string }} cols - A map of column names to column identifiers.
  *
- * @return {Map<string, number>} - A map of column names to column identifiers where all column identifiers are integers.
+ * @return {Cols} - A map of column names to column identifiers where all column identifiers are integers.
  */
 function getColNumbers(cols: { [key: string]: number | string }): Cols {
 	const newCols: Cols = {};

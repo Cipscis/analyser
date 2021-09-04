@@ -33,7 +33,7 @@ async function loadFile(...fileConfigs: FileConfig[]): Promise<DataConfig | Data
  *
  * @param  {FileConfig} fileConfig - Details of how to load and process the file
  *
- * @return {DataConfig} - The processed data from the file.
+ * @return {Promise<DataConfig>} - The processed data from the file.
  */
 async function _loadSingleFile(fileConfig: FileConfig): Promise<DataConfig> {
 	const response = await fetch(fileConfig.path);
