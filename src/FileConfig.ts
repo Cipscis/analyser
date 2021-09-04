@@ -9,6 +9,9 @@ interface FileConfig {
 	footerRows?: number,
 
 	aliases?: Aliases,
+	transform?: {
+		[key: string]: (value: any) => any,
+	},
 }
 
 export { FileConfig };

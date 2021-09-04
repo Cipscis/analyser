@@ -1,6 +1,26 @@
 // import * as analyser from '@cipscis/analyser';
 import * as analyser from '../../../../src/analyser';
 
+const stringToBool = (value: any): boolean => {
+	if (typeof value === 'boolean') {
+		return value;
+	} else if (typeof value === 'string') {
+		switch (value.trim().toLowerCase()) {
+			case 'yes':
+				return true;
+				break;
+			case 'no':
+				return false;
+				break;
+			default:
+				return false;
+				break;
+		}
+	} else {
+		return false;
+	}
+};
+
 const analyse = async function () {
 	const fileInfoA: analyser.FileConfig = {
 		path: '/analyser/assets/data/city example.csv',
@@ -14,17 +34,15 @@ const analyse = async function () {
 			MAYOR_2012: 'F',
 			MAYOR_2018: 'G',
 		}),
-		// arrayCols: {},
 		aliases: {
 			'COUNTRY': [
 				['New Zealand', 'Aotearoa']
 			],
 		},
-		// aliases: {
-		// 	COUNTRY: [
-		// 		['New Zealand', 'Aotearoa']
-		// 	]
-		// },
+		transform: {
+			'CAPITAL': stringToBool,
+		},
+		// arrayCols: {},
 		// enumsMap: {},
 	};
 	// fileInfoA.arrayCols[fileInfoA.cols.PUBLIC_TRANSPORT] = ',';

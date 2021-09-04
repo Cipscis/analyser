@@ -4,6 +4,7 @@ import { AnalyserRows } from './AnalyserRows.js';
 import { FileConfig } from './FileConfig.js';
 import { DataConfig } from './DataConfig.js';
 
+import { getColNumbers } from './helpers.js';
 import { createFilterFn } from './filtering.js';
 
 /**
@@ -46,6 +47,14 @@ async function _loadSingleFile(fileConfig: FileConfig): Promise<DataConfig> {
 	}
 }
 
+/**
+ * Processes CSV data into a DataConfig object ready for analysis via code.
+ *
+ * @param  {(string | boolean | number)[][]} rows - CSV data.
+ * @param  {FileConfig} fileConfig - Instructions on how to process the CSV data.
+ *
+ * @return {DataConfig} - Processed CSV data and helpers for analysing it.
+ */
 function _processData(rows: (string | boolean | number)[][], fileConfig: FileConfig): DataConfig {
 	// Remove header rows
 	if (fileConfig.headerRows) {
@@ -54,18 +63,35 @@ function _processData(rows: (string | boolean | number)[][], fileConfig: FileCon
 
 	// Remove footer rows
 	if (fileConfig.footerRows) {
-		rows.splice(0, fileConfig.footerRows);
+		rows.splice(-fileConfig.footerRows);
 	}
 
 	const dataConfig: DataConfig = {
 		rows: new AnalyserRows(rows),
-		cols: fileConfig.cols,
+		cols: getColNumbers(fileConfig.cols),
 		by: createFilterFn(fileConfig.aliases),
 	};
 
 	if (fileConfig.aliases) {
 		dataConfig.aliases = fileConfig.aliases;
 	}
+
+	if (fileConfig.transform) {
+		for (let colName in fileConfig.transform) {
+			if (!(colName in dataConfig.cols)) {
+				console.warn(`Column '${colName}' specified in transform not found in cols.`);
+			} else {
+				const colNum = dataConfig.cols[colName];
+				const transformFn = fileConfig.transform[colName];
+				for (let row of rows) {
+					// TODO: Handle cell values being arrays
+					// TODO: Handle transformFn being an array
+					row[colNum] = transformFn(row[colNum]);
+				}
+			}
+		}
+	}
+
 	return dataConfig;
 }
 
