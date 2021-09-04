@@ -1,23 +1,16 @@
 import * as analyser from '@cipscis/analyser';
 // import * as analyser from '../../../../src/analyser.js';
 
-const stringToBool = (value: any): boolean => {
-	if (typeof value === 'boolean') {
-		return value;
-	} else if (typeof value === 'string') {
-		switch (value.trim().toLowerCase()) {
-			case 'yes':
-				return true;
-				break;
-			case 'no':
-				return false;
-				break;
-			default:
-				return false;
-				break;
-		}
-	} else {
-		return false;
+const stringToBool = (value: string): boolean | null => {
+	console.log(value.trim().toLowerCase());
+	switch (value.trim().toLowerCase()) {
+		case 'true':
+			return true;
+		case `'no'`:
+		case '':
+			return false;
+		default:
+			return null;
 	}
 };
 
@@ -25,7 +18,7 @@ const analyse = async function () {
 	const fileInfoA: analyser.FileConfig = {
 		path: '/analyser/assets/data/city example.csv',
 		headerRows: 1,
-		cols: analyser.getColNumbers({
+		cols: {
 			NAME: 'A',
 			COUNTRY: 'B',
 			POPULATION: 'C',
@@ -33,20 +26,19 @@ const analyse = async function () {
 			PUBLIC_TRANSPORT: 'E',
 			MAYOR_2012: 'F',
 			MAYOR_2018: 'G',
-		}),
+		},
+		transform: {
+			POPULATION: analyser.transformers.number,
+			CAPITAL: stringToBool,
+			PUBLIC_TRANSPORT: analyser.transformers.array,
+			MAYOR_2018: analyser.transformers.array,
+		},
 		aliases: {
 			'COUNTRY': [
 				['New Zealand', 'Aotearoa']
 			],
 		},
-		transform: {
-			'CAPITAL': stringToBool,
-		},
-		// arrayCols: {},
-		// enumsMap: {},
 	};
-	// fileInfoA.arrayCols[fileInfoA.cols.PUBLIC_TRANSPORT] = ',';
-	// fileInfoA.arrayCols[fileInfoA.cols.MAYOR_2018] = ',';
 
 	const fileInfoB: analyser.FileConfig = {
 		path: '/analyser/assets/data/city example 2.csv',

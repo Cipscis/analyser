@@ -220,4 +220,117 @@ describe(`analyser`, () => {
 			expect(filteredRows.length).toBe(0);
 		});
 	});
+
+	describe(`transformers`, () => {
+		const testTransformer = function (transformer, expectedResults) {
+			for (let [input, output] of expectedResults) {
+				expect(transformer(input)).toEqual(output);
+			}
+		};
+
+		describe(`array`, () => {
+			it(`splits a string into an array of strings`, async () => {
+				const expectedOutput = new Map([
+					['Bus,Train', ['Bus', 'Train']],
+				]);
+
+				testTransformer(analyser.transformers.array(','), expectedOutput);
+			});
+
+			it(`can't be used directly as a transformer`, async () => {
+				const config = Object.assign({}, exampleAConfig);
+				config.transform = {
+					PUBLIC_TRANSPORT: analyser.transformers.array,
+				};
+
+				let errorThrown = false;
+				try {
+					const { rows } = await analyser.loadFile(config);
+				} catch (e) {
+					errorThrown = true;
+				}
+
+				expect(errorThrown).toBe(true);
+			});
+		});
+
+		describe(`boolean`, () => {
+			it(`extracts boolean values from strings`, () => {
+				const expectedResults = new Map([
+					['true', true],
+					['false', false],
+				]);
+
+				testTransformer(analyser.transformers.boolean, expectedResults);
+			});
+
+			it(`is case insensitive`, () => {
+				const expectedResults = new Map([
+					['True', true],
+					['TRUE', true],
+					['TrUe', true],
+					['False', false],
+					['FALSE', false],
+					['FaLsE', false],
+				]);
+
+				testTransformer(analyser.transformers.boolean, expectedResults);
+			});
+
+			it(`ignores leading or trailing whitespace`, () => {
+				const expectedResults = new Map([
+					[' true', true],
+					['true ', true],
+					['	true	', true],
+					[' false', false],
+					['false ', false],
+					['	false	', false],
+				]);
+
+				testTransformer(analyser.transformers.boolean, expectedResults);
+			});
+
+			it(`leaves other strings alone`, () => {
+				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(analyser.transformers.boolean(str)).toBe(str));
+			});
+		});
+
+		describe(`number`, () => {
+			it(`extracts plain numbers from strings`, () => {
+				const expectedResults = new Map([
+					['1000', 1000],
+					['-3', -3],
+					['+2.5', 2.5],
+				]);
+
+				testTransformer(analyser.transformers.number, expectedResults);
+			});
+
+			it(`ignores commas in number strings`, () => {
+				const expectedResults = new Map([
+					['1,000', 1000],
+					['1,0,0,0', 1000],
+				]);
+
+				for (let [input, output] of expectedResults) {
+					expect(analyser.transformers.number(input)).toBe(output);
+				}
+			});
+
+			it(`detects percentages`, () => {
+				const expectedResults = new Map([
+					['100%', 1],
+					['10%', 0.1],
+					['10.8%', 0.108],
+					['81.23%', 0.8123],
+				]);
+
+				for (let [input, output] of expectedResults) {
+					expect(analyser.transformers.number(input)).toBe(output);
+				}
+			});
+		});
+
+		describe(`value`, () => {});
+	});
 });

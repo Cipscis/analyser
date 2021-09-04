@@ -13,7 +13,8 @@ const exampleAConfig = {
 	},
 	transform: {
 		POPULATION: transformers.number,
-		PUBLIC_TRANSPORT: transformers.boolean,
+		CAPITAL: transformers.boolean,
+		PUBLIC_TRANSPORT: transformers.array(','),
 	},
 	aliases: {
 		COUNTRY: [

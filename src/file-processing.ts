@@ -7,6 +7,8 @@ import { DataConfig } from './DataConfig.js';
 import { getColNumbers } from './helpers.js';
 import { createFilterFn } from './filtering.js';
 
+import * as transformers from './transformers.js';
+
 /**
  * Load one of more files, process the data they contain, and return it.
  *
@@ -55,7 +57,7 @@ async function _loadSingleFile(fileConfig: FileConfig): Promise<DataConfig> {
  *
  * @return {DataConfig} - Processed CSV data and helpers for analysing it.
  */
-function _processData(rows: (string | boolean | number)[][], fileConfig: FileConfig): DataConfig {
+function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
 	// Remove header rows
 	if (fileConfig.headerRows) {
 		rows.splice(0, fileConfig.headerRows);
@@ -83,9 +85,12 @@ function _processData(rows: (string | boolean | number)[][], fileConfig: FileCon
 			} else {
 				const colNum = dataConfig.cols[colName];
 				const transformFn = fileConfig.transform[colName];
+
+				if (transformFn === transformers.array) {
+					throw new Error(`The 'array' transformer cannot be used directly. Please pass a 'separator' argument.`);
+				}
+
 				for (let row of rows) {
-					// TODO: Handle cell values being arrays
-					// TODO: Handle transformFn being an array
 					row[colNum] = transformFn(row[colNum]);
 				}
 			}

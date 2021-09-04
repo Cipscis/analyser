@@ -1,4 +1,18 @@
 /**
+ * Splits a string into an array using String.prototype.split
+ *
+ * @param {string | RegExp} splitter
+ * @param {number | undefined} [limit]
+ *
+ * @throws {TypeError} - The array transformer requires a 'separator' argument
+ */
+function array(separator: string | RegExp, limit?: number): (value: string) => string[] {
+	return function (value: string): string[] {
+		return value.split(separator, limit);
+	};
+}
+
+/**
  * Extracts a boolean value from a string representation, if it contains one.
  *
  * @param  {string} value
@@ -6,12 +20,13 @@
  * @return {string | boolean}
  */
 function boolean(value: string): string | boolean {
-	if (value === 'true') {
-		return true;
-	} else if (value === 'false') {
-		return false;
-	} else {
-		return value;
+	switch (value.trim().toLowerCase()) {
+		case 'true':
+			return true;
+		case 'false':
+			return false;
+		default:
+			return value;
 	}
 }
 
@@ -73,6 +88,7 @@ function value(value: string): string | boolean | number {
 }
 
 export {
+	array,
 	boolean,
 	number,
 	value,
