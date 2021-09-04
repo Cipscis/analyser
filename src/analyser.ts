@@ -5,10 +5,10 @@ import { FileConfig } from './FileConfig.js';
 /////////////////////
 import { loadFile } from './file-processing.js';
 
-
-///////////////
-// FILTERING //
-///////////////
+//////////////////
+// TRANSFORMERS //
+//////////////////
+import * as transformers from './transformers.js';
 
 //////////////////////
 // HELPER FUNCTIONS //
@@ -17,6 +17,9 @@ import { getColNumber, getColNumbers } from './helpers.js';
 
 export {
 	loadFile,
+
+	transformers,
+
 	getColNumber,
 	getColNumbers,
 

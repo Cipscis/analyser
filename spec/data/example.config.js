@@ -1,3 +1,5 @@
+import { transformers } from '../../dist/analyser.js';
+
 const exampleAConfig = {
 	path: 'city example.csv',
 	cols: {
@@ -8,6 +10,15 @@ const exampleAConfig = {
 		PUBLIC_TRANSPORT: 'E',
 		MAYOR_2012: 'F',
 		MAYOR_2018: 'G',
+	},
+	transform: {
+		POPULATION: transformers.number,
+		PUBLIC_TRANSPORT: transformers.boolean,
+	},
+	aliases: {
+		COUNTRY: [
+			['New Zealand', 'Aotearoa'],
+		],
 	},
 	headerRows: 1,
 };
