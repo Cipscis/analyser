@@ -4,7 +4,7 @@ import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
 
 import { exampleAConfig, exampleBConfig, exampleCConfig } from
-'./data/example.config.mjs';
+'./data/example.config.js';
 
 describe(`analyser`, () => {
 	describe(`getColNumber`, () => {

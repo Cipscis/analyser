@@ -1,5 +1,5 @@
 import { exampleA, exampleB, exampleC } from '../data/example.data.js';
-import { exampleAConfig, exampleBConfig, exampleCConfig } from '../data/example.config.mjs';
+import { exampleAConfig, exampleBConfig, exampleCConfig } from '../data/example.config.js';
 
 const urlMap = {
 	[exampleAConfig.path]: exampleA,
