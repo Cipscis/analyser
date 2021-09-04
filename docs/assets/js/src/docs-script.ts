@@ -84,6 +84,9 @@ const analyse = async function () {
 		.orBy(cols.POPULATION, (pop: number) => pop < 300)
 		.andBy(cols.MAYOR_2012, 'Len Brown')
 	));
+
+	const getIndex = (row: any[], i: number): number => i;
+	cols.INDEX = rows.addCol(getIndex);
 };
 
 analyse();

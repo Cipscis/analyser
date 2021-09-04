@@ -37,11 +37,13 @@ class AnalyserRows extends Array {
 	/**
 	 * Adds a new column to AnalyserRows, and returns its index.
 	 *
-	 * @param  {any[] | ((row: any[], index: number) => any))} creator - Either the column to add, or a function to create the new column's values.
+	 * @param  {T[] | ((row: T[], index: number) => T))} creator - Either the column to add, or a function to create the new column's values.
 	 *
 	 * @return {number} - The index of the newly added column.
 	 */
-	addCol(creator: any[] | ((row: any[], index: number) => any)): number {
+	addCol<T=any>(creator: T[]): number
+	addCol<T=any>(creator: (row: any[], index: number) => T): number
+	addCol<T=any>(creator: T[] | ((row: any[], index: number) => T)): number {
 		const colIndex = this[0].length;
 
 		if (Array.isArray(creator)) {
