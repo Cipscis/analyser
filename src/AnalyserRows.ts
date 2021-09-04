@@ -1,8 +1,14 @@
 class AnalyserRows extends Array {
-	constructor(sourceArray: any[]) {
-		super(sourceArray.length);
-		for (let i = 0; i < sourceArray.length; i++) {
-			this[i] = sourceArray[i];
+	constructor(source?: any[] | number) {
+		if (Array.isArray(source)) {
+			super(source.length);
+			for (let i = 0; i < source.length; i++) {
+				this[i] = source[i];
+			}
+		} else if (typeof source === 'number') {
+			super(source);
+		} else {
+			super();
 		}
 	}
 }
