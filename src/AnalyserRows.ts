@@ -11,6 +11,21 @@ class AnalyserRows extends Array {
 			super();
 		}
 	}
+
+	getCol(colNum: number): any[] {
+		if (typeof colNum !== 'number') {
+			throw new TypeError(`colNum must be a number.`);
+		} else if (colNum < 0 || colNum >= this[0].length) {
+			throw new RangeError(`colNum out of range.`);
+		}
+
+		const col = [];
+		for (let row of this) {
+			col.push(row[colNum]);
+		}
+
+		return col;
+	}
 }
 
 export { AnalyserRows };
