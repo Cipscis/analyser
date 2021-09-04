@@ -29,8 +29,8 @@ const analyse = async function () {
 		transform: {
 			POPULATION: analyser.transformers.number,
 			CAPITAL: stringToBool,
-			PUBLIC_TRANSPORT: analyser.transformers.array,
-			MAYOR_2018: analyser.transformers.array,
+			PUBLIC_TRANSPORT: analyser.transformers.array(','),
+			MAYOR_2018: analyser.transformers.array(','),
 		},
 		aliases: {
 			'COUNTRY': [
@@ -74,6 +74,7 @@ const analyse = async function () {
 		rows,
 		cols,
 		by,
+		group,
 	} = cityData;
 
 	console.log(rows);
@@ -87,6 +88,10 @@ const analyse = async function () {
 
 	const getIndex = (row: any[], i: number): number => i;
 	cols.INDEX = rows.addCol(getIndex);
+
+	console.table(group(rows, cols.COUNTRY).summarise({
+		number: (rows) => rows.length,
+	}));
 };
 
 analyse();

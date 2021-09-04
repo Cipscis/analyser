@@ -5,6 +5,8 @@ import { FileConfig } from './FileConfig.js';
 import { DataConfig } from './DataConfig.js';
 
 import { getColNumbers } from './helpers.js';
+
+import { createGroupFn } from './grouping.js';
 import { createFilterFn } from './filtering.js';
 
 import * as transformers from './transformers.js';
@@ -68,10 +70,14 @@ function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
 		rows.splice(-fileConfig.footerRows);
 	}
 
+	const by = createFilterFn(fileConfig.aliases);
+	const group = createGroupFn(by);
+
 	const dataConfig: DataConfig = {
 		rows: new AnalyserRows(rows),
 		cols: getColNumbers(fileConfig.cols),
-		by: createFilterFn(fileConfig.aliases),
+		by,
+		group,
 	};
 
 	if (fileConfig.aliases) {
