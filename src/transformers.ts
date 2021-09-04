@@ -60,12 +60,12 @@ function number(value: string): string | number {
  */
 function value(value: string): string | boolean | number {
 	const booleanValue = boolean(value);
-	if (booleanValue === !!booleanValue) {
+	if (typeof booleanValue === 'boolean') {
 		return booleanValue;
 	}
 
 	const numberValue = number(value);
-	if (numberValue === +numberValue) {
+	if (typeof numberValue === 'number') {
 		return numberValue;
 	}
 
