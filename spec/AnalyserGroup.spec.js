@@ -73,6 +73,44 @@ describe(`AnalyserGroup`, () => {
 		expect(groupArr[2].length).toBe(3);
 	});
 
+	it(`respects the 'right' argument when splitting continuous data`, () => {
+		const populationGroupRight = group(rows, cols.POPULATION, [300, 1810], true);
+		const populationGroupLeft = group(rows, cols.POPULATION, [300, 1810], false);
+
+		expect(populationGroupRight.get('300 < x <= 1810').length).toBe(4);
+		expect(populationGroupLeft.get('300 <= x < 1810').length).toBe(3);
+
+	});
+
+	it(`can split continuous data into two groups by specifying a single value`, () => {
+		const populationSplit = group(rows, cols.POPULATION, [1000]);
+
+		expect(populationSplit.get('x <= 1000').length).toBe(6);
+		expect(populationSplit.get('1000 < x').length).toBe(3);
+	});
+
+	it(`can split continuous data into two groups by specifying the number 2`, () => {
+		const populationSplit = group(rows, cols.POPULATION, 2);
+
+		const splitArr = [];
+		for (let [groupName, rows] of populationSplit) {
+			splitArr.push(rows);
+		}
+
+		expect(splitArr.length).toBe(2);
+		expect(splitArr[0].length).toBe(7);
+		expect(splitArr[1].length).toBe(1);
+	});
+
+	it(`throws an error if attempting to split into an invalid number of groups`, () => {
+		expect(() => group(rows, cols.POPULATION, 'test')).toThrowError();
+		expect(() => group(rows, cols.POPULATION, 1.2)).toThrowError();
+		expect(() => group(rows, cols.POPULATION, 1)).toThrowError();
+		expect(() => group(rows, cols.POPULATION, -1)).toThrowError();
+		expect(() => group(rows, cols.POPULATION, ['a'])).toThrowError();
+		expect(() => group(rows, cols.POPULATION, [])).toThrowError();
+	});
+
 	it(`can be summarised`, () => {
 		const countryGroup = group(rows, cols.COUNTRY);
 

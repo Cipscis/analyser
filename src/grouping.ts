@@ -91,8 +91,8 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 			if (typeof splitting === 'number') {
 				// Create splitting number of groups based on values retrieved
 
-				if (Number.isInteger(splitting) === false || splitting < 1) {
-					throw new RangeError(`The 'numGroups' argument must be a non-negative integer.`);
+				if (Number.isInteger(splitting) === false || splitting < 2) {
+					throw new RangeError(`The 'numGroups' argument must be an integer greater than 1.`);
 				}
 
 				// Sets are unordered, so create and sort an array (ascending)
@@ -107,9 +107,15 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 
 					setLimits.push([setMin, setMax]);
 				}
-			} else {
+			} else if (Array.isArray(splitting)) {
+				if (splitting.length === 0) {
+					throw new RangeError(`At least one number is required for the 'splitPoints' argument.`);
+				} else if (splitting.every((val) => typeof val === 'number') === false) {
+					throw new TypeError(`All 'splitPoints' must be numbers.`);
+				}
+
 				// Ensure splitting values are ordered (ascending)
-				const splitValues = (new Array(...splitting)).sort((a, b) => a - b);
+				const splitValues = splitting.concat().sort((a, b) => a - b);
 
 				// Outer bounds will be -Infinity and Infinity
 				setLimits.push([-Infinity, splitValues[0]]);
@@ -119,6 +125,8 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 				}
 
 				setLimits.push([splitValues[splitValues.length-1], Infinity]);
+			} else {
+				throw new TypeError(`Invalid argument type: ${typeof splitting}`);
 			}
 
 			// Group rows based on set limits
