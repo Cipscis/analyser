@@ -158,4 +158,5 @@ export {
 	createFilterFn,
 
 	FilterResolverExtender,
+	ExtensibleFilterResolver,
 };

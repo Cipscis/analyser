@@ -43,6 +43,36 @@ describe(`AnalyserGroup`, () => {
 		expect(publicTransportGroup.get('Cable Car').length).toBe(1);
 	});
 
+	it(`can group rows by splitting continuous data into a specified number of bands`, () => {
+		const populationGroup = group(rows, cols.POPULATION, 5);
+
+		const groupArr = [];
+		for (let [groupName, rows] of populationGroup) {
+			groupArr.push(rows);
+		}
+
+		expect(groupArr.length).toBe(5);
+		expect(groupArr[0].length).toBe(5);
+		expect(groupArr[1].length).toBe(2);
+		expect(groupArr[2].length).toBe(0);
+		expect(groupArr[3].length).toBe(0);
+		expect(groupArr[4].length).toBe(1);
+	});
+
+	it(`can group rows by splitting continuous data at specified points`, () => {
+		const populationGroup = group(rows, cols.POPULATION, [300, 1000]);
+
+		const groupArr = [];
+		for (let [groupName, rows] of populationGroup) {
+			groupArr.push(rows);
+		}
+
+		expect(groupArr.length).toBe(3);
+		expect(groupArr[0].length).toBe(4);
+		expect(groupArr[1].length).toBe(2);
+		expect(groupArr[2].length).toBe(3);
+	});
+
 	it(`can be summarised`, () => {
 		const countryGroup = group(rows, cols.COUNTRY);
 
