@@ -1,4 +1,5 @@
 import { AnalyserRows } from './AnalyserRows.js';
+import { Aliases } from './Aliases.js';
 import { FilterResolverExtender } from './filtering.js';
 
 import { AnalyserGroup } from './AnalyserGroup.js';
@@ -17,7 +18,7 @@ interface Grouper {
  *
  * @return {Grouper} - A function for grouping AnalyserRows.
  */
-function createGroupFn (by: FilterResolverExtender): Grouper {
+function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper {
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number): AnalyserGroup {
 		// Ignore aliases for now, and don't worry about splitting
 
@@ -25,6 +26,41 @@ function createGroupFn (by: FilterResolverExtender): Grouper {
 		const enums: Set<any> = new Set();
 		for (let row of rows) {
 			enums.add(row[colNum]);
+		}
+
+		if (aliases) {
+			for (let val of enums) {
+				// If the value is in one or more alias sets,
+				// ensure those sets will be used for grouping and
+				// ensure only canonical values will be checked directly.
+
+				/** @type {boolean} If the value appears in at least one alias list and is **not** the canonical value */
+				let isNonCanonical = false;
+
+				/** @type {boolean} If the value appears in at least one alias list and **is** the canonical value */
+				let isCanonical = false;
+
+				for (let aliasList of aliases) {
+					if (aliasList.includes(val)) {
+						if (aliasList[0] === val) {
+							isCanonical = true;
+						} else {
+							isNonCanonical = true;
+
+							// Remember the canonical value
+							if (enums.has(aliasList[0]) === false) {
+								enums.add(aliasList[0]);
+							}
+						}
+					}
+				}
+
+				// If the value is one one or more alias sets, but is never the canonical value,
+				// then remove it from the set of enums to use for grouping.
+				if (isCanonical === false && isNonCanonical === true) {
+					enums.delete(val);
+				}
+			}
 		}
 
 		// Then, interate through each enum and filter rows into groups

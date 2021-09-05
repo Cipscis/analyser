@@ -71,7 +71,7 @@ function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
 	}
 
 	const by = createFilterFn(fileConfig.aliases);
-	const group = createGroupFn(by);
+	const group = createGroupFn(by, fileConfig.aliases);
 
 	const dataConfig: DataConfig = {
 		rows: new AnalyserRows(rows),

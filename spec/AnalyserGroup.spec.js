@@ -36,8 +36,11 @@ describe(`AnalyserGroup`, () => {
 			max_population: (rows) => statistics.max(rows.getCol(cols.POPULATION)),
 		});
 
-		console.table(summary);
-		// TODO: Implement test
-		throw new Error('Test not implemented');
+		expect(summary).toEqual([
+			['', 'number', 'mean_population', 'max_population'],
+			['New Zealand', 7, 396.94542857142864, 1614],
+			['Germany', 1, 1810, 1810],
+			['Australia', 1, 4841, 4841],
+		]);
 	});
 });
