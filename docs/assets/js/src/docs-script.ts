@@ -90,6 +90,10 @@ const analyse = async function () {
 	console.table(group(rows, cols.COUNTRY).summarise({
 		number: (rows) => rows.length,
 	}));
+
+	console.table(group(rows, cols.PUBLIC_TRANSPORT).summarise({
+		number: (rows) => rows.length,
+	}));
 };
 
 analyse();

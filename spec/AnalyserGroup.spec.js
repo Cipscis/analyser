@@ -34,6 +34,15 @@ describe(`AnalyserGroup`, () => {
 		expect(countryGroup.has('Aoteator')).toBe(false);
 	});
 
+	it(`checks every value in an array when determining which groups a row belongs to`, () => {
+		const publicTransportGroup = group(rows, cols.PUBLIC_TRANSPORT);
+
+		expect(publicTransportGroup.get('Bus').length).toBe(9);
+		expect(publicTransportGroup.get('Train').length).toBe(5);
+		expect(publicTransportGroup.get('Ferry').length).toBe(3);
+		expect(publicTransportGroup.get('Cable Car').length).toBe(1);
+	});
+
 	it(`can be summarised`, () => {
 		const countryGroup = group(rows, cols.COUNTRY);
 

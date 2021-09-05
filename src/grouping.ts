@@ -25,7 +25,15 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 		// First, collect enums
 		const enums: Set<any> = new Set();
 		for (let row of rows) {
-			enums.add(row[colNum]);
+			const cellValue = row[colNum];
+
+			if (Array.isArray(cellValue)) {
+				for (let value of cellValue) {
+					enums.add(value);
+				}
+			} else {
+				enums.add(cellValue);
+			}
 		}
 
 		if (aliases) {
