@@ -27,6 +27,13 @@ describe(`AnalyserGroup`, () => {
 		expect(countryGroup).toBeInstanceOf(AnalyserGroup);
 	});
 
+	it(`respects aliases when grouping by discrete string values`, () => {
+		const countryGroup = group(rows, cols.COUNTRY);
+
+		expect(countryGroup.has('New Zealand')).toBe(true);
+		expect(countryGroup.has('Aoteator')).toBe(false);
+	});
+
 	it(`can be summarised`, () => {
 		const countryGroup = group(rows, cols.COUNTRY);
 
