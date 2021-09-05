@@ -16,11 +16,9 @@ const exampleAConfig = {
 		CAPITAL: transformers.boolean,
 		PUBLIC_TRANSPORT: transformers.array(','),
 	},
-	aliases: {
-		COUNTRY: [
-			['New Zealand', 'Aotearoa'],
-		],
-	},
+	aliases: [
+		['New Zealand', 'Aotearoa'],
+	],
 	headerRows: 1,
 };
 

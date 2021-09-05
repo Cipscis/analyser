@@ -32,11 +32,9 @@ const analyse = async function () {
 			PUBLIC_TRANSPORT: analyser.transformers.array(','),
 			MAYOR_2018: analyser.transformers.array(','),
 		},
-		aliases: {
-			'COUNTRY': [
-				['New Zealand', 'Aotearoa']
-			],
-		},
+		aliases: [
+			['New Zealand', 'Aotearoa']
+		],
 	};
 
 	const fileInfoB: analyser.FileConfig = {

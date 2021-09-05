@@ -1,5 +1,3 @@
-type Aliases = {
-	[key: string]: string[][];
-};
+type Aliases = string[][];;
 
 export { Aliases };

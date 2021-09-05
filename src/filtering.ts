@@ -144,12 +144,9 @@ function _matchAlias(cell: any, value: any, aliases?: Aliases): boolean {
 	}
 
 	if (aliases && typeof cell === 'string' && typeof value === 'string') {
-		for (let key in aliases) {
-			const aliasSet = aliases[key];
-			for (let aliasList of aliasSet) {
-				if (aliasList.includes(cell) && aliasList.includes(value)) {
-					return true;
-				}
+		for (let aliasList of aliases) {
+			if (aliasList.includes(cell) && aliasList.includes(value)) {
+				return true;
 			}
 		}
 	}
