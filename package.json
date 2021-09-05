@@ -4,6 +4,10 @@
 	"description": "For analysing data",
 	"private": true,
 	"browser": "./dist/analyser.js",
+	"exports": {
+		".": "./dist/analyser.js",
+		"./statistics": "./dist/statistics.js"
+	},
 	"type": "module",
 	"files": [
 		"dist/**/*"
