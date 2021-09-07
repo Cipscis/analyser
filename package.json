@@ -1,5 +1,5 @@
 {
-	"name": "analyser",
+	"name": "@cipscis/analyser",
 	"version": "0.1.0",
 	"description": "For analysing data",
 	"private": true,
