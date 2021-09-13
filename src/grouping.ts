@@ -130,7 +130,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 			}
 
 			// Group rows based on set limits
-			const group = new AnalyserGroup();
+			const group = new AnalyserGroup({ discrete: false });
 			for (let row of rows) {
 				for (let set of setLimits) {
 					let setName = '';
