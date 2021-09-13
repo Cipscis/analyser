@@ -42,7 +42,7 @@ class AnalyserGroup extends Map<any, AnalyserRows> {
 			summary.push(summaryRow);
 		}
 
-		if (this.discrete) {
+		if (this.#discrete) {
 			// Sort summary based on its values
 
 			// Split header and value rows, so value rows can be sorted independently
