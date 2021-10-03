@@ -1,4 +1,5 @@
 import * as analyser from '../dist/analyser.js';
+import { AnalyserRows } from '../dist/AnalyserRows.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
@@ -325,6 +326,12 @@ describe(`analyser`, () => {
 			expect(filteredRows[1][cols.NAME]).toBe('Hamburg');
 			expect(filteredRows[2][cols.NAME]).toBe('Dunedin');
 			expect(filteredRows[3][cols.NAME]).toBe('Tauranga');
+		});
+
+		it(`returns an AnalyserRows when using the filter method`, () => {
+			const filteredRows = rows.filter(by(cols.COUNTRY, 'New Zealand'));
+
+			expect(filteredRows).toBeInstanceOf(AnalyserRows);
 		});
 
 		it(`returns an empty AnalyserRows if nothing matches the filter`, () => {

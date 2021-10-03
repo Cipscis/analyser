@@ -1,3 +1,7 @@
+interface AnalyserRows {
+	filter(...args: Parameters<typeof Array.prototype.filter>): this;
+}
+
 class AnalyserRows extends Array<unknown[]> {
 	constructor(source?: unknown[][] | number) {
 		if (Array.isArray(source)) {
