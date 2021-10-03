@@ -97,8 +97,6 @@ function _extendFilterFn(filterResolver: FilterResolver, aliases?: Aliases): Ext
  *
  * @return {boolean}
  */
-function _applyFilter(row: any[], colIndex: number, values: (value: any) => boolean): boolean
-function _applyFilter(row: any[], colIndex: number, values: any[] | Exclude<any, []>, aliases?: Aliases): boolean
 function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases?: Aliases): boolean {
 	if (typeof values === 'function') {
 		return values(row[colIndex]);

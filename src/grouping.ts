@@ -25,7 +25,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 		// Ignore aliases for now, and don't worry about splitting
 
 		// First, collect enums
-		const enums: Set<any> = new Set();
+		const enums: Set<unknown> = new Set();
 		for (let row of rows) {
 			const cellValue = row[colNum];
 
@@ -43,35 +43,37 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 
 			if (aliases) {
 				for (let val of enums) {
-					// If the value is in one or more alias sets,
-					// ensure those sets will be used for grouping and
-					// ensure only canonical values will be checked directly.
+					if (typeof val === 'string') {
+						// If the value is a string in one or more alias sets,
+						// ensure those sets will be used for grouping and
+						// ensure only canonical values will be checked directly.
 
-					/** @type {boolean} If the value appears in at least one alias list and is **not** the canonical value */
-					let isNonCanonical = false;
+						/** @type {boolean} If the value appears in at least one alias list and is **not** the canonical value */
+						let isNonCanonical = false;
 
-					/** @type {boolean} If the value appears in at least one alias list and **is** the canonical value */
-					let isCanonical = false;
+						/** @type {boolean} If the value appears in at least one alias list and **is** the canonical value */
+						let isCanonical = false;
 
-					for (let aliasList of aliases) {
-						if (aliasList.includes(val)) {
-							if (aliasList[0] === val) {
-								isCanonical = true;
-							} else {
-								isNonCanonical = true;
+						for (let aliasList of aliases) {
+							if (aliasList.includes(val)) {
+								if (aliasList[0] === val) {
+									isCanonical = true;
+								} else {
+									isNonCanonical = true;
 
-								// Remember the canonical value
-								if (enums.has(aliasList[0]) === false) {
-									enums.add(aliasList[0]);
+									// Remember the canonical value
+									if (enums.has(aliasList[0]) === false) {
+										enums.add(aliasList[0]);
+									}
 								}
 							}
 						}
-					}
 
-					// If the value is one one or more alias sets, but is never the canonical value,
-					// then remove it from the set of enums to use for grouping.
-					if (isCanonical === false && isNonCanonical === true) {
-						enums.delete(val);
+						// If the value is one one or more alias sets, but is never the canonical value,
+						// then remove it from the set of enums to use for grouping.
+						if (isCanonical === false && isNonCanonical === true) {
+							enums.delete(val);
+						}
 					}
 				}
 			}
@@ -96,16 +98,22 @@ function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper 
 				}
 
 				// Sets are unordered, so create and sort an array (ascending)
-				const values = (new Array(...enums)).sort((a, b) => a - b);
+				const enumArr = new Array(...enums);
 
-				const [min, max] = [values[0], values[values.length-1]];
+				if (enumArr.every((x: any): x is number => typeof x === 'number')) {
+					const values = enumArr.sort((a, b) => a - b);
 
-				const setSize = (max - min) / splitting;
-				for (let i = 0; i < splitting; i++) {
-					const setMin = min + i * setSize;
-					const setMax = min + (i+1) * setSize;
+					const [min, max] = [values[0], values[values.length-1]];
 
-					setLimits.push([setMin, setMax]);
+					const setSize = (max - min) / splitting;
+					for (let i = 0; i < splitting; i++) {
+						const setMin = min + i * setSize;
+						const setMax = min + (i+1) * setSize;
+
+						setLimits.push([setMin, setMax]);
+					}
+				} else {
+					throw new TypeError(`Cannot split values based on a number unless each of those values is a number.`);
 				}
 			} else if (Array.isArray(splitting)) {
 				if (splitting.length === 0) {
