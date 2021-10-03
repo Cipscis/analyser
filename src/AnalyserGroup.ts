@@ -20,14 +20,15 @@ class AnalyserGroup extends Map<any, AnalyserRows> {
 	/**
 	 * Create a 2D summary array that can be printed using console.table.
 	 *
-	 * @param  {{ [key: string]: (rows: AnalyserRows) => T }} summarisers - An object containing summariser functions
+	 * @param  {{ [key: string]: (rows: AnalyserRows) => T }} [summarisers] - An object containing summariser functions
 	 * for reducing a group of AnalyserRows into a single value. The key for each summariser will be
 	 * the heading of its column in the output table.
 	 *
-	 * @return {(string | T)[][]}
+	 * @return {any[][]}
 	 */
-	summarise<T>(summarisers: { [key: string]: (rows: AnalyserRows) => T }): (string | T)[][] {
-		const summary: (string | T)[][] = [];
+
+	summarise(summarisers: { [key: string]: (rows: AnalyserRows) => any } = { 'Count': (rows) => rows.length }): any[][] {
+		const summary: any[][] = [];
 
 		summary.push(['Value'].concat(Object.keys(summarisers)));
 

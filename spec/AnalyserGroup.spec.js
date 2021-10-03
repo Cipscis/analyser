@@ -128,4 +128,17 @@ describe(`AnalyserGroup`, () => {
 			['New Zealand', 7, 396.94542857142864, 1614],
 		]);
 	});
+
+	it(`Uses a default "Count" summariser if none are specified`, () => {
+		const countryGroup = group(rows, cols.COUNTRY);
+
+		const summary = countryGroup.summarise();
+
+		expect(summary).toEqual([
+			['Value', 'Count'],
+			['Australia', 1],
+			['Germany', 1],
+			['New Zealand', 7],
+		]);
+	});
 });
