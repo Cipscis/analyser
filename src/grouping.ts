@@ -1,5 +1,4 @@
 import { AnalyserRows } from './AnalyserRows.js';
-import { Aliases } from './Aliases.js';
 import { FilterResolverExtender, ExtensibleFilterResolver } from './filtering.js';
 
 import { AnalyserGroup } from './AnalyserGroup.js';
@@ -20,7 +19,7 @@ interface Grouper {
  *
  * @return {Grouper} - A function for grouping AnalyserRows.
  */
-function createGroupFn (by: FilterResolverExtender, aliases?: Aliases): Grouper {
+function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Grouper {
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number, splitting?: number | number[], right: boolean = true): AnalyserGroup {
 		// Ignore aliases for now, and don't worry about splitting
 

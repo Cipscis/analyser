@@ -1,19 +1,12 @@
-import { Cols } from './Cols.js';
-import { Aliases } from './Aliases.js';
-
 interface FileConfig {
 	path: string,
-	cols: {
-		[key: string]: string | number,
-	},
+	cols: Record<string, string | number>,
 
 	headerRows?: number,
 	footerRows?: number,
 
-	aliases?: Aliases,
-	transform?: {
-		[key: string]: (value: string) => any,
-	},
+	aliases?: string[][],
+	transform?: Partial<Record<T, (value: string) => any>>,
 }
 
 export { FileConfig };

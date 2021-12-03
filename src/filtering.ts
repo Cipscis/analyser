@@ -1,5 +1,4 @@
 import { AnalyserRows } from './AnalyserRows.js';
-import { Aliases } from './Aliases.js';
 
 type FilterInput = ((value: any) => boolean) | any[] | Exclude<any, []>
 
@@ -30,11 +29,11 @@ interface FilterResolverExtender {
  * to create a function that can be used with Array.prototype.filter to
  * use that alias when filtering a set of data using _applyFilter.
  *
- * @param  {Aliases} [aliases] - The aliases to be embedded in this filter function.
+ * @param  {string[][]} [aliases] - The aliases to be embedded in this filter function.
  *
  * @return {FilterResolver} - A function that can be used with Array.prototype.filter.
  */
-function createFilterFn(aliases?: Aliases): FilterResolverExtender {
+function createFilterFn(aliases?: string[][]): FilterResolverExtender {
 	const by = function (colIndex: number, values: FilterInput) {
 		const applyFilterToRow: FilterResolver = function (row, index, arr) {
 			return _applyFilter(row, colIndex, values, aliases);
@@ -49,14 +48,14 @@ function createFilterFn(aliases?: Aliases): FilterResolverExtender {
 }
 
 /**
- * Extend a FilterResolver into an ExtensibleFilterResolver, including embedding an optional set of Aliases.
+ * Extend a FilterResolver into an ExtensibleFilterResolver, including embedding an optional set of aliases.
  *
  * @param  {FilterResolver} filterResolver - The FilterResolver function to extend.
- * @param  {Aliases} [aliases] - The Aliases to embed in the ExtensibleFilterResolver being created.
+ * @param  {string[][]} [aliases] - The aliases to embed in the ExtensibleFilterResolver being created.
  *
  * @return {ExtensibleFilterResolver} - An extended version of the initial FilterResolver.
  */
-function _extendFilterFn(filterResolver: FilterResolver, aliases?: Aliases): ExtensibleFilterResolver {
+function _extendFilterFn(filterResolver: FilterResolver, aliases?: string[][]): ExtensibleFilterResolver {
 	const extendedFilterResolver = filterResolver as ExtensibleFilterResolver;
 
 	extendedFilterResolver.andBy = function (colIndex: number, values: FilterInput) {
@@ -92,12 +91,12 @@ function _extendFilterFn(filterResolver: FilterResolver, aliases?: Aliases): Ext
  * @param  {number} colIndex - The index of the column to filter by.
  * @param  {((any) => boolean) | any[] | any} values - The value, values,
  * or function to use to apply the filter.
- * @param  {Aliases} [aliases] - A set of aliases to use when matching
+ * @param  {string[][]} [aliases] - A set of aliases to use when matching
  * the value against one or more strings.
  *
  * @return {boolean}
  */
-function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases?: Aliases): boolean {
+function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases?: string[][]): boolean {
 	if (typeof values === 'function') {
 		return values(row[colIndex]);
 	}
@@ -132,11 +131,11 @@ function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases
  *
  * @param  {any} cell - The value of a cell to check.
  * @param  {any} value - The value being matched against.
- * @param  {Aliases} aliases - The aliases to use when matching the value.
+ * @param  {string[][]} aliases - The aliases to use when matching the value.
  *
  * @return {boolean} - Whether or not the value matched.
  */
-function _matchAlias(cell: any, value: any, aliases?: Aliases): boolean {
+function _matchAlias(cell: any, value: any, aliases?: string[][]): boolean {
 	if (cell === value) {
 		return true;
 	}
