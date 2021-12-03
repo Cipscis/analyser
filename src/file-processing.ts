@@ -97,7 +97,9 @@ function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
 				}
 
 				for (let row of rows) {
-					row[colNum] = transformFn(row[colNum]);
+					if (transformFn) {
+						row[colNum] = transformFn(row[colNum]);
+					}
 				}
 			}
 		}
