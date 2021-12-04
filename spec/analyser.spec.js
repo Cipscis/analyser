@@ -226,7 +226,41 @@ describe(`analyser`, () => {
 			});
 		});
 
-		describe(`value`, () => {});
+		describe(`value`, () => {
+			it(`extracts boolean values from strings, if present`, () => {
+				const expectedResults = new Map([
+					['true', true],
+					['True', true],
+					[' false', false],
+				]);
+
+				testTransformer(analyser.transformers.value, expectedResults);
+			});
+
+			it(`extracts number values from strings, if present`, () => {
+				const expectedResults = new Map([
+					['-1,000', -1000],
+					['50.64%', 0.5064],
+				]);
+
+				testTransformer(analyser.transformers.value, expectedResults);
+			});
+
+			it(`leaves strings unchanged otherwise`, () => {
+				const expectedResults = new Map([
+					['test', 'test'],
+					['fifteen', 'fifteen'],
+					['', ''],
+					['true', true],
+					['True', true],
+					[' false', false],
+					['-1,000', -1000],
+					['50.64%', 0.5064],
+				]);
+
+				testTransformer(analyser.transformers.value, expectedResults);
+			});
+		});
 	});
 
 	describe(`filtering`, () => {
