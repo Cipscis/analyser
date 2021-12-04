@@ -13,11 +13,6 @@ interface Grouper {
  * Creates a function that uses a FilterResolverExtender with an embedded
  * set of aliases, to create a summarisable group of AnalyserRows split
  * based on the specified column.
- *
- * @param  {FilterResolverExtender} by - The function used to determine which
- * rows belong to which group.
- *
- * @return {Grouper} - A function for grouping AnalyserRows.
  */
 function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Grouper {
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number, splitting?: number | number[], right: boolean = true): AnalyserGroup {

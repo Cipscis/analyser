@@ -18,10 +18,6 @@ class AnalyserRows extends Array<unknown[]> {
 
 	/**
 	 * Returns the specified column.
-	 *
-	 * @param  {number} colNum - The index of the column to return.
-	 *
-	 * @return {unknown[]} - The specified column.
 	 */
 	getCol(colNum: number): unknown[] {
 		if (typeof colNum !== 'number') {
@@ -40,10 +36,6 @@ class AnalyserRows extends Array<unknown[]> {
 
 	/**
 	 * Adds a new column to AnalyserRows, and returns its index.
-	 *
-	 * @param  {T[] | ((row: T[], index: number) => T))} creator - Either the column to add, or a function to create the new column's values.
-	 *
-	 * @return {number} - The index of the newly added column.
 	 */
 	addCol<T>(creator: T[]): number
 	addCol<T>(creator: (row: any[], index: number) => T): number

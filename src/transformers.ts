@@ -1,12 +1,5 @@
 /**
  * Splits a string into an array using String.prototype.split
- *
- * @param {string | RegExp} splitter
- * @param {number | undefined} [limit]
- *
- * @throws {TypeError} - The array transformer requires a 'separator' argument
- *
- * @return {(value: string) => string[]}
  */
 function array(separator: string | RegExp, limit?: number): (value: string) => string[] {
 	return function (value: string): string[] {
@@ -16,10 +9,6 @@ function array(separator: string | RegExp, limit?: number): (value: string) => s
 
 /**
  * Extracts a boolean value from a string representation, if it contains one.
- *
- * @param  {string} value
- *
- * @return {string | boolean}
  */
 function boolean(value: string): string | boolean {
 	switch (value.trim().toLowerCase()) {
@@ -34,10 +23,6 @@ function boolean(value: string): string | boolean {
 
 /**
  * Extracts a number from a string representation, if it contains one. Strings ending with '%' are treated as percentages and divided by 100.
- *
- * @param  {string} value - A string that may represent a number.
- *
- * @return {string | number} - The value represented by the input string.
  */
 function number(value: string): string | number {
 	let cleanValue = value.replace(/,|%$/g, '');
@@ -70,10 +55,6 @@ function number(value: string): string | number {
 
 /**
  * Extracts boolean or number values from string representations if appropriate.
- *
- * @param  {string} value - A string that may represent a boolean or a number.
- *
- * @return {string} - The value represented by the input string.
  */
 function value(value: string): string | boolean | number {
 	const booleanValue = boolean(value);

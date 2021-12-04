@@ -13,10 +13,6 @@ import * as transformers from './transformers.js';
 
 /**
  * Load a single CSV file and process its contents, then return them.
- *
- * @param  {FileConfig} fileConfig - Details of how to load and process the file
- *
- * @return {Promise<DataConfig>} - The processed data from the file.
  */
 async function loadFile<T extends string>(fileConfig: FileConfig<T>): Promise<DataConfig<T>> {
 	const response = await fetch(fileConfig.path);
@@ -34,11 +30,6 @@ async function loadFile<T extends string>(fileConfig: FileConfig<T>): Promise<Da
 
 /**
  * Processes CSV data into a DataConfig object ready for analysis via code.
- *
- * @param  {(string | boolean | number)[][]} rows - CSV data.
- * @param  {FileConfig} fileConfig - Instructions on how to process the CSV data.
- *
- * @return {DataConfig} - Processed CSV data and helpers for analysing it.
  */
 function _processData<T extends string>(rows: string[][], fileConfig: FileConfig<T>): DataConfig<T> {
 	// Remove header rows
