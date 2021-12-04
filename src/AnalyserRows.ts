@@ -37,9 +37,9 @@ class AnalyserRows extends Array<unknown[]> {
 	/**
 	 * Adds a new column to AnalyserRows, and returns its index.
 	 */
-	addCol<T>(creator: T[]): number
 	addCol<T>(creator: (row: any[], index: number) => T): number
-	addCol<T>(creator: T[] | ((row: any[], index: number) => T)): number {
+	addCol<T>(creator: T[]): number
+	addCol<T>(creator: ((row: any[], index: number) => T) | T[]): number {
 		const colIndex = this[0].length;
 
 		if (Array.isArray(creator)) {
