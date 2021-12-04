@@ -14,7 +14,7 @@ const stringToBool = (value: string): boolean | null => {
 };
 
 const analyse = async function () {
-	const fileInfoA: analyser.FileConfig = {
+	const fileInfoA = analyser.fileConfig({
 		path: '/analyser/assets/data/city example.csv',
 		headerRows: 1,
 		cols: {
@@ -35,27 +35,31 @@ const analyse = async function () {
 		aliases: [
 			['New Zealand', 'Aotearoa']
 		],
-	};
+	});
 
-	const fileInfoB: analyser.FileConfig = {
+	const fileInfoB = analyser.fileConfig({
 		path: '/analyser/assets/data/city example 2.csv',
 		headerRows: 1,
-		cols: analyser.getColNumbers({
+		cols: {
 			NAME: 'A',
 			COUNTRY: 'B',
 			POPULATION: 'C',
-		}),
-	};
-	const fileInfoC = {
+		},
+	});
+	const fileInfoC = analyser.fileConfig({
 		path: '/analyser/assets/data/city example 3.csv',
 		headerRows: 1,
-		cols: analyser.getColNumbers({
+		cols: {
 			YEAR: 'A',
 			POPULATION: 'B',
-		}),
-	};
+		},
+	});
 
-	const [cityData, cityData2, cityData3] = await analyser.loadFile(fileInfoA, fileInfoB, fileInfoC);
+	const [cityData, cityData2, cityData3] = await Promise.all([
+		analyser.loadFile(fileInfoA),
+		analyser.loadFile(fileInfoB),
+		analyser.loadFile(fileInfoC),
+	]);
 
 	const cityDataA = await analyser.loadFile(fileInfoA);
 
@@ -71,6 +75,7 @@ const analyse = async function () {
 	const {
 		rows,
 		cols,
+		addedCols,
 		by,
 		group,
 	} = cityData;
@@ -85,7 +90,11 @@ const analyse = async function () {
 	));
 
 	const getIndex = (row: any[], i: number): number => i;
-	cols.INDEX = rows.addCol(getIndex);
+
+	addedCols.INDEX = rows.addCol(getIndex);
+	console.log(addedCols.INDEX);
+
+	console.dir(group(rows, cols.COUNTRY));
 
 	console.table(group(rows, cols.COUNTRY).summarise({
 		number: (rows) => rows.length,

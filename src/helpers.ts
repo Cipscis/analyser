@@ -1,5 +1,3 @@
-import { Cols } from './Cols.js';
-
 /**
  * Convert a column heading from spreadsheet software to its integer representation. For example, converts 'A' to 0, or 'ZE' to 680.
  *
@@ -9,12 +7,15 @@ import { Cols } from './Cols.js';
  *
  * @return {number | null}
  */
-function getColNumber(colName: number | string): number | null {
+function getColNumber<T extends number>(colName: T): T | null
+function getColNumber<T extends string>(colName: T): number | null
+function getColNumber<T extends number | string>(colName: T): number | null
+function getColNumber<T extends number | string>(colName: T): number | null {
 	if (typeof colName === 'number') {
 		if (Number.isInteger(colName) && colName >= 0) {
 			return colName;
 		} else {
-			return null
+			return null;
 		}
 	} else if (colName === '') {
 		return null;
@@ -46,15 +47,15 @@ function getColNumber(colName: number | string): number | null {
  *
  * Any columns invalid identifiers will be removed from the result.
  *
- * @param  {{ [key: string]: number | string }} cols - A map of column names to column identifiers.
+ * @param  {Record<T, number | string>} cols - A map of column names to column identifiers.
  *
- * @return {Cols} - A map of column names to column identifiers where all column identifiers are integers.
+ * @return {Record<T, number>} - A map of column names to column identifiers where all column identifiers are integers.
  */
-function getColNumbers(cols: { [key: string]: number | string }): Cols {
-	const newCols: Cols = {};
+function getColNumbers<T extends string>(colsConfig: Record<T, number | string>): Record<T, number> {
+	const newCols: Partial<Record<T, number>> = {};
 
-	for (let key in cols) {
-		const value = cols[key];
+	for (let key in colsConfig) {
+		const value = colsConfig[key];
 		const colNumber = getColNumber(value);
 
 		if (typeof colNumber === 'number') {
@@ -62,7 +63,7 @@ function getColNumbers(cols: { [key: string]: number | string }): Cols {
 		}
 	}
 
-	return newCols;
+	return newCols as Record<T, number>;
 }
 
 export {

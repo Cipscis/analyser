@@ -2,9 +2,12 @@ import { AnalyserRows } from './AnalyserRows.js';
 import { FilterResolverExtender } from './filtering.js';
 import { Grouper } from './grouping.js';
 
-interface DataConfig {
+interface DataConfig<T extends string> {
 	rows: AnalyserRows,
-	cols: Record<string, number>,
+
+	cols: Record<T, number>,
+	addedCols: Record<string, number>,
+
 	by: FilterResolverExtender,
 	group: Grouper,
 

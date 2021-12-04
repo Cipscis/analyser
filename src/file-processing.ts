@@ -12,32 +12,13 @@ import { createFilterFn } from './filtering.js';
 import * as transformers from './transformers.js';
 
 /**
- * Load one of more files, process the data they contain, and return it.
- *
- * @param  {...FileConfig} fileConfigs - One or more FileConfigs detailing how to load and process files.
- *
- * @return {Promise<DataConfig | DataConfig[]>} - The processed data contained in all the loaded files.
- */
-async function loadFile(fileConfig: FileConfig): Promise<DataConfig>
-async function loadFile(...fileConfigs: FileConfig[]): Promise<DataConfig[]>
-async function loadFile(...fileConfigs: FileConfig[]): Promise<DataConfig | DataConfig[]> {
-	const promises = fileConfigs.map((fileConfig) => _loadSingleFile(fileConfig));
-
-	if (promises.length > 1) {
-		return await Promise.all(promises);
-	} else {
-		return await promises[0];
-	}
-}
-
-/**
  * Load a single CSV file and process its contents, then return them.
  *
  * @param  {FileConfig} fileConfig - Details of how to load and process the file
  *
  * @return {Promise<DataConfig>} - The processed data from the file.
  */
-async function _loadSingleFile(fileConfig: FileConfig): Promise<DataConfig> {
+async function loadFile<T extends string>(fileConfig: FileConfig<T>): Promise<DataConfig<T>> {
 	const response = await fetch(fileConfig.path);
 
 	if (response.ok) {
@@ -59,7 +40,7 @@ async function _loadSingleFile(fileConfig: FileConfig): Promise<DataConfig> {
  *
  * @return {DataConfig} - Processed CSV data and helpers for analysing it.
  */
-function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
+function _processData<T extends string>(rows: string[][], fileConfig: FileConfig<T>): DataConfig<T> {
 	// Remove header rows
 	if (fileConfig.headerRows) {
 		rows.splice(0, fileConfig.headerRows);
@@ -73,9 +54,10 @@ function _processData(rows: string[][], fileConfig: FileConfig): DataConfig {
 	const by = createFilterFn(fileConfig.aliases);
 	const group = createGroupFn(by, fileConfig.aliases);
 
-	const dataConfig: DataConfig = {
+	const dataConfig: DataConfig<T> = {
 		rows: new AnalyserRows(rows),
 		cols: getColNumbers(fileConfig.cols),
+		addedCols: {},
 		by,
 		group,
 	};

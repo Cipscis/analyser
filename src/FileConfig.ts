@@ -1,6 +1,6 @@
-interface FileConfig {
+interface FileConfig<T extends string> {
 	path: string,
-	cols: Record<string, string | number>,
+	cols: Record<T, string | number>,
 
 	headerRows?: number,
 	footerRows?: number,
@@ -9,4 +9,10 @@ interface FileConfig {
 	transform?: Partial<Record<T, (value: string) => any>>,
 }
 
-export { FileConfig };
+/**
+ * This function is a noop, but it's necessary to use a function here
+ * in order for the TypeScript compiler to correctly infer the type of T
+ */
+const fileConfig = <T extends string>(fileConfig: FileConfig<T>) => fileConfig;
+
+export { FileConfig, fileConfig };

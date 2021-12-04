@@ -1,4 +1,4 @@
-import { FileConfig } from './FileConfig.js';
+import { fileConfig } from './FileConfig.js';
 
 /////////////////////
 // FILE PROCESSING //
@@ -23,5 +23,5 @@ export {
 	getColNumber,
 	getColNumbers,
 
-	FileConfig,
+	fileConfig,
 };
