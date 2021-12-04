@@ -82,24 +82,6 @@ describe(`analyser`, () => {
 			expect(data).not.toBeInstanceOf(Array);
 		});
 
-		it(`resolves to an array of objects when loading multiple files`, async () => {
-			const fileConfigs = [
-				{
-					path: 'city example.csv',
-					cols: {},
-				},
-				{
-					path: 'city example 2.csv',
-					cols: {},
-				},
-			];
-
-			const dataArr = await analyser.loadFile(...fileConfigs);
-
-			expect(dataArr).toBeInstanceOf(Array);
-			expect(dataArr.length).toBe(fileConfigs.length);
-		});
-
 		it(`reads all rows from a file`, async () => {
 			const fileConfig = {
 				path: 'city example.csv',
