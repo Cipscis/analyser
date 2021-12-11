@@ -1,27 +1,20 @@
-import { fileConfig } from './FileConfig.js';
+export { fileConfig } from './FileConfig.js';
+
+// Export type of AnalyserRows only, not the class itself
+import { AnalyserRows as AnalyserRowsClass } from './AnalyserRows.js';
+export type AnalyserRows = InstanceType<typeof AnalyserRowsClass>;
 
 /////////////////////
 // FILE PROCESSING //
 /////////////////////
-import { loadFile } from './file-processing.js';
+export { loadFile } from './file-processing.js';
 
 //////////////////
 // TRANSFORMERS //
 //////////////////
-import * as transformers from './transformers.js';
+export * as transformers from './transformers.js';
 
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
-import { getColNumber, getColNumbers } from './helpers.js';
-
-export {
-	loadFile,
-
-	transformers,
-
-	getColNumber,
-	getColNumbers,
-
-	fileConfig,
-};
+export { getColNumber, getColNumbers } from './helpers.js';
