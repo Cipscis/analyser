@@ -9,8 +9,9 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 
 describe(`analyser`, () => {
 	// Suppress console warnings during tests
-	beforeAll(() => {
-		spyOn(console, 'warn');
+	let consoleWarnSpy;
+	beforeEach(() => {
+		consoleWarnSpy = spyOn(console, 'warn');
 	});
 
 	describe(`getColNumber`, () => {
@@ -313,6 +314,48 @@ describe(`analyser`, () => {
 				]);
 
 				testTransformer(analyser.transformers.value, expectedResults);
+			});
+		});
+
+		describe(`enumValue`, () => {
+			// String enums are a TypeScript feature, but really they're just a Record<string, string>
+			const testEnum = {
+				test: 'test',
+				val: 'val',
+				['1']: '1',
+			};
+
+			it(`doesn't modify the value passed in`, () => {
+				const expectedResults = new Map([
+					[testEnum.test, testEnum.test],
+					[testEnum.val, testEnum.val],
+					[testEnum['1'], testEnum['1']],
+					['another value', 'another value'],
+				]);
+
+				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
+			});
+
+			it(`generates a warning in the console if the value doesn't exist in the passed enum`, () => {
+				const expectedResults = new Map([
+					['another value', 'another value'],
+				]);
+
+				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
+
+				expect(consoleWarnSpy).toHaveBeenCalled();
+			});
+
+			it(`doesn't generate a warrning in the console if the value exists in the passed enum`, () => {
+				const expectedResults = new Map([
+					[testEnum.test, testEnum.test],
+					[testEnum.val, testEnum.val],
+					[testEnum['1'], testEnum['1']],
+				]);
+
+				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
 			});
 		});
 	});

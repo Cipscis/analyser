@@ -65,7 +65,8 @@ export function array(separator: string | RegExp, limit?: number): (value: strin
 	};
 }
 
-/** Extracts a boolean value froma  string representation using a custom definition.
+/**
+ * Extracts a boolean value froma  string representation using a custom definition.
  *
  *  If the value doesn't appear like it represents a boolean, a warning will be generated.
  */
@@ -161,4 +162,28 @@ export function value<T extends string>(value: T): boolean | number | T {
 	} else {
 		return value;
 	}
+}
+
+/**
+ * Checks that the value, if it exists, is a member of an enum. The value is not modified.
+ *
+ * If the value exists but is not a member of the enum, a warning will be generated.
+ */
+export function enumValue<T extends string>(enums: Record<string, string>): (value: T, locationIdentifier?: string) => T {
+	const enumValues = Object.values(enums);
+
+	return function (value, locationIdentifier) {
+		if (!value) {
+			return value;
+		}
+
+		for (let enumValue of enumValues) {
+			if (value === enumValue) {
+				return value;
+			}
+		}
+
+		console.warn(`Could not find any values of ${enumValues.join(', ')} in '${value}' (${locationIdentifier})`);
+		return value;
+	};
 }

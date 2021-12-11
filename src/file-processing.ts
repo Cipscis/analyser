@@ -65,10 +65,14 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 				const colNum = dataConfig.cols[colName];
 				const transformFn = fileConfig.transform[colName];
 
+				// Some of these conditions are ignored because they're intended to help when TypeScript isn't being used
 				if (transformFn === transformers.array) {
 					throw new Error(`The 'array' transformer cannot be used directly. Please pass a 'separator' argument.`);
 				} else if (transformFn === transformers.booleanCustom) {
 					throw new Error(`The 'booleanCustom' transformer cannot be used directly. Please invoke it to create a transformer function.`);
+				// @ts-ignore
+				} else if (transformFn === transformers.enumValue) {
+					throw new Error(`The 'enumValue' transformer cannot be used directly. Please pass an 'enums' argument.`);
 				}
 
 				for (let row of rows) {
