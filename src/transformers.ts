@@ -93,7 +93,9 @@ export function booleanCustom(truthy: string | RegExp = 'true', falsey: string |
 			}
 		}
 
-		console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey} (${locationIdentifier})`);
+		if (value) {
+			console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey} (${locationIdentifier})`);
+		}
 		return value;
 	};
 
@@ -139,7 +141,9 @@ export function number<T extends string>(value: T, locationIdentifier?: string):
 
 		return +cleanValue;
 	} else {
-		console.warn(`Number value not found in '${value}' (${locationIdentifier})`);
+		if (value) {
+			console.warn(`Number value not found in '${value}' (${locationIdentifier})`);
+		}
 		return value;
 	}
 }
