@@ -6,7 +6,7 @@ interface FileConfig<T extends string> {
 	footerRows?: number,
 
 	aliases?: string[][],
-	transform?: Partial<Record<T, (value: string) => any>>,
+	transform?: Partial<Record<T, (value: string, locationIdentifier?: string) => any>>,
 }
 
 /**

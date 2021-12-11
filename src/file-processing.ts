@@ -65,13 +65,15 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 				const colNum = dataConfig.cols[colName];
 				const transformFn = fileConfig.transform[colName];
 
+				// @ts-ignore - This error exists for when working in JavaScript, not TypeScript
 				if (transformFn === transformers.array) {
 					throw new Error(`The 'array' transformer cannot be used directly. Please pass a 'separator' argument.`);
 				}
 
 				for (let row of rows) {
 					if (transformFn) {
-						row[colNum] = transformFn(row[colNum]);
+						const locationIdentifier = `column ${colName}, row ${rows.indexOf(row)}`;
+						row[colNum] = transformFn(row[colNum], locationIdentifier);
 					}
 				}
 			}
