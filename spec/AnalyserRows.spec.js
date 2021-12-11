@@ -7,6 +7,11 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`AnalyserRows`, () => {
+	// Suppress console warnings during tests
+	beforeAll(() => {
+		spyOn(console, 'warn');
+	});
+
 	let rows;
 	let cols;
 

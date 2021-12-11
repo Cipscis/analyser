@@ -8,6 +8,11 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`analyser`, () => {
+	// Suppress console warnings during tests
+	beforeAll(() => {
+		spyOn(console, 'warn');
+	});
+
 	describe(`getColNumber`, () => {
 		it(`converts a column name string into a number`, () => {
 			let colName = 'A';
@@ -187,6 +192,55 @@ describe(`analyser`, () => {
 
 			it(`leaves other strings alone`, () => {
 				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(analyser.transformers.boolean(str)).toBe(str));
+			});
+		});
+
+		describe(`booleanCustom`, () => {
+			it(`allows strings to be used for custom truthy and falsey values`, () => {
+				const expectedResults = new Map([
+					['customTrue', true],
+					['customFalse', false],
+				]);
+				const boolean = analyser.transformers.booleanCustom('customTrue', 'customFalse');
+
+				testTransformer(boolean, expectedResults);
+			});
+
+			it(`allows regular expressions to be used for custom truthy and falsey values`, () => {
+				const expectedResults = new Map([
+					['customTrue', true],
+					['yes', true],
+					['customFalseString', false],
+					['Nooo', false],
+				]);
+				const boolean = analyser.transformers.booleanCustom(/true$|YES/i, /False|No/);
+
+				testTransformer(boolean, expectedResults);
+			});
+
+			it(`uses cleaned values (case insensitive, no leading or trailing whitespace) when testing against strings`, () => {
+				const expectedResults = new Map([
+					[' True', true],
+					['naH ', false],
+				]);
+				const boolean = analyser.transformers.booleanCustom('TRUE ', ' nah ');
+
+				testTransformer(boolean, expectedResults);
+			});
+
+			it(`uses raw values when testing against regular expressions`, () => {
+				const expectedResults = new Map([
+					[' yes', true],
+					[' NO', false],
+				]);
+				const boolean = analyser.transformers.booleanCustom(/ ye\w/, /\sNO/);
+
+				testTransformer(boolean, expectedResults);
+			});
+
+			it(`doesn't transform strings that don't match its expectations`, () => {
+				const boolean = analyser.transformers.booleanCustom(/A/, /B/);
+				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(str));
 			});
 		});
 

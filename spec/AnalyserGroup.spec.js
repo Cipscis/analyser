@@ -10,6 +10,11 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`AnalyserGroup`, () => {
+	// Suppress console warnings during tests
+	beforeAll(() => {
+		spyOn(console, 'warn');
+	});
+
 	let rows;
 	let cols;
 	let group;

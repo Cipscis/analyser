@@ -71,29 +71,29 @@ export function array(separator: string | RegExp, limit?: number): (value: strin
  */
 export function booleanCustom(truthy: string | RegExp = 'true', falsey: string | RegExp = 'false') {
 	function boolean<T extends string>(value: T, locationIdentifier?: string): boolean | T {
-		const trimmedValue = value.trim();
+		const cleanedValue = value.trim().toLowerCase();
 
 		if (typeof truthy === 'string') {
-			if (trimmedValue === truthy) {
+			if (cleanedValue === truthy.trim().toLowerCase()) {
 				return true;
 			}
 		} else {
-			if (truthy.test(trimmedValue)) {
+			if (truthy.test(value)) {
 				return true;
 			}
 		}
 
 		if (typeof falsey === 'string') {
-			if (trimmedValue === falsey) {
+			if (cleanedValue === falsey.trim().toLowerCase()) {
 				return false;
 			}
 		} else {
-			if (falsey.test(trimmedValue)) {
+			if (falsey.test(value)) {
 				return false;
 			}
 		}
 
-		console.warn(`Boolean value not found in ${value}, checking for ${truthy} or ${falsey} (${locationIdentifier})`);
+		console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey} (${locationIdentifier})`);
 		return value;
 	};
 
@@ -139,7 +139,7 @@ export function number<T extends string>(value: T, locationIdentifier?: string):
 
 		return +cleanValue;
 	} else {
-		console.warn(`Number value not found in ${value} (${locationIdentifier})`);
+		console.warn(`Number value not found in '${value}' (${locationIdentifier})`);
 		return value;
 	}
 }
