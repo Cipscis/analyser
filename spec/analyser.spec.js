@@ -346,7 +346,7 @@ describe(`analyser`, () => {
 				expect(consoleWarnSpy).toHaveBeenCalled();
 			});
 
-			it(`doesn't generate a warrning in the console if the value exists in the passed enum`, () => {
+			it(`doesn't generate a warning in the console if the value exists in the passed enum`, () => {
 				const expectedResults = new Map([
 					[testEnum.test, testEnum.test],
 					[testEnum.val, testEnum.val],

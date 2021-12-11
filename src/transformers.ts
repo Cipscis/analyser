@@ -177,10 +177,8 @@ export function enumValue<T extends string>(enums: Record<string, string>): (val
 			return value;
 		}
 
-		for (let enumValue of enumValues) {
-			if (value === enumValue) {
-				return value;
-			}
+		if (enumValues.includes(value)) {
+			return value;
 		}
 
 		console.warn(`Could not find any values of ${enumValues.join(', ')} in '${value}' (${locationIdentifier})`);
