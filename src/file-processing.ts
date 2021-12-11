@@ -65,9 +65,10 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 				const colNum = dataConfig.cols[colName];
 				const transformFn = fileConfig.transform[colName];
 
-				// @ts-ignore - This error exists for when working in JavaScript, not TypeScript
 				if (transformFn === transformers.array) {
 					throw new Error(`The 'array' transformer cannot be used directly. Please pass a 'separator' argument.`);
+				} else if (transformFn === transformers.booleanCustom) {
+					throw new Error(`The 'booleanCustom' transformer cannot be used directly. Please invoke it to create a transformer function.`);
 				}
 
 				for (let row of rows) {
