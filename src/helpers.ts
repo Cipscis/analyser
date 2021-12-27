@@ -19,7 +19,7 @@ function getColNumber<T extends number | string>(colName: T): number | null {
 		return null;
 	}
 
-	const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+	const alphabet: readonly string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 	let rowNumber = -1; // Adjust for 0-based counting
 
 	const upperColName = colName.toUpperCase();
