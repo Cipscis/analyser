@@ -325,12 +325,12 @@ describe(`analyser`, () => {
 				['1']: '1',
 			};
 
-			it(`doesn't modify the value passed in`, () => {
+			it(`doesn't modify valid values, and converts invalid values to null`, () => {
 				const expectedResults = new Map([
 					[testEnum.test, testEnum.test],
 					[testEnum.val, testEnum.val],
 					[testEnum['1'], testEnum['1']],
-					['another value', 'another value'],
+					['another value', null],
 				]);
 
 				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
@@ -338,7 +338,7 @@ describe(`analyser`, () => {
 
 			it(`generates a warning in the console if the value doesn't exist in the passed enum`, () => {
 				const expectedResults = new Map([
-					['another value', 'another value'],
+					['another value', null],
 				]);
 
 				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
@@ -354,6 +354,19 @@ describe(`analyser`, () => {
 				]);
 
 				testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
+			});
+
+			it(`can transform values based on a recodeMap`, () => {
+				const expectedResults = new Map([
+					[testEnum.test, testEnum.test],
+					[testEnum.val, testEnum.val],
+					[testEnum['1'], testEnum['1']],
+					['another value', testEnum.val],
+				]);
+
+				testTransformer(analyser.transformers.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults);
 
 				expect(consoleWarnSpy).not.toHaveBeenCalled();
 			});
@@ -400,6 +413,12 @@ describe(`analyser`, () => {
 			const filteredRows = rows.filter(by(cols.COUNTRY, 'Aotearoa'));
 
 			expect(filteredRows.length).toBe(7);
+		});
+
+		it(`respects aliases when filtering by an array of values`, () => {
+			const filteredRows = rows.filter(by(cols.COUNTRY, ['Australia', 'Aotearoa']));
+
+			expect(filteredRows.length).toBe(8);
 		});
 
 		it(`lets you build an AND filter using 'andBy'`, () => {

@@ -165,23 +165,36 @@ export function value<T extends string>(value: T): boolean | number | T {
 }
 
 /**
- * Checks that the value, if it exists, is a member of an enum. The value is not modified.
+ * Checks that the value, if it exists, is a member of an enum.
  *
- * If the value exists but is not a member of the enum, a warning will be generated.
+ * If the value does not exist, it is transformed to null.
+ *
+ * If a recoding map is passed, and it contains instructions for this value, it is recoded first.
+ *
+ * If the value exists but it is not a member of the enum and cannot be recoded,
+ * a warning will be generated and null will be returned.
  */
-export function enumValue<T extends string>(enums: Record<string, string>): (value: T, locationIdentifier?: string) => T {
-	const enumValues = Object.values(enums);
+export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?: Record<string, E>): (value: string, locationIdentifier?: string) => E | null {
+	const enumValues: E[] = Object.values(enums);
+
+	function isEnumMember(val: unknown): val is E {
+		return (enumValues as any[]).includes(val);
+	}
 
 	return function (value, locationIdentifier) {
 		if (!value) {
+			return null;
+		}
+
+		if (isEnumMember(value)) {
 			return value;
 		}
 
-		if (enumValues.includes(value)) {
-			return value;
+		if (recodeMap && value in recodeMap) {
+			return recodeMap[value];
 		}
 
-		console.warn(`Could not find any values of ${enumValues.join(', ')} in '${value}' (${locationIdentifier})`);
-		return value;
+		console.warn(`Value '${value}' does not exist within ${enumValues.join(', ')} (${locationIdentifier})`);
+		return null;
 	};
 }
