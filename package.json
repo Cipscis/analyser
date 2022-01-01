@@ -6,6 +6,7 @@
 	"browser": "./dist/analyser.js",
 	"exports": {
 		".": "./dist/analyser.js",
+		"./transformers": "./dist/transformers.js",
 		"./statistics": "./dist/statistics.js"
 	},
 	"type": "module",
