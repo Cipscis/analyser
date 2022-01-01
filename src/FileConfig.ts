@@ -10,7 +10,9 @@ interface FileConfig<T extends string> {
 }
 
 /**
- * This function is a noop, but it's necessary to use a function here
+ * Use this function when creating a FileConfig object.
+ *
+ * It is a noop function, but it's necessary to use a function here
  * in order for the TypeScript compiler to correctly infer the type of T
  */
 const fileConfig = <T extends string>(fileConfig: FileConfig<T>) => fileConfig;

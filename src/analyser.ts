@@ -1,4 +1,5 @@
-export { fileConfig } from './FileConfig.js';
+export { FileConfig, fileConfig } from './FileConfig.js';
+export { DataConfig } from './DataConfig.js';
 
 // Export type of AnalyserRows only, not the class itself
 import { AnalyserRows as AnalyserRowsClass } from './AnalyserRows.js';
