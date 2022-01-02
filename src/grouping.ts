@@ -42,10 +42,10 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 						// ensure those sets will be used for grouping and
 						// ensure only canonical values will be checked directly.
 
-						/** @type {boolean} If the value appears in at least one alias list and is **not** the canonical value */
+						/** If the value appears in at least one alias list and is **not** the canonical value */
 						let isNonCanonical = false;
 
-						/** @type {boolean} If the value appears in at least one alias list and **is** the canonical value */
+						/** If the value appears in at least one alias list and **is** the canonical value */
 						let isCanonical = false;
 
 						for (let aliasList of aliases) {
