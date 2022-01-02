@@ -3,7 +3,7 @@
 //////////////////////////
 
 export interface TransformerFn<T> {
-	(value: string, locationIdentifier?: string): T extends [] ? T : (T | null)
+	(value: string, locationIdentifier?: string): T extends any[] ? T : (T | null)
 }
 
 /**
