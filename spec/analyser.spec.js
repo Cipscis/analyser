@@ -191,8 +191,33 @@ describe(`analyser`, () => {
 				testTransformer(analyser.transformers.boolean, expectedResults);
 			});
 
-			it(`leaves other strings alone`, () => {
-				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(analyser.transformers.boolean(str)).toBe(str));
+			it(`converts other strings into null`, () => {
+				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(analyser.transformers.boolean(str)).toBe(null));
+			});
+
+			it(`generates a warning in the console if the value can't be converted`, () => {
+				const expectedResults = new Map([
+					['another value', null],
+				]);
+
+				testTransformer(analyser.transformers.boolean, expectedResults);
+
+				expect(consoleWarnSpy).toHaveBeenCalled();
+			});
+
+			it(`doesn't generate a warning in the console if the value can be converted`, () => {
+				const expectedResults = new Map([
+					[' true', true],
+					['true ', true],
+					['	true	', true],
+					[' false', false],
+					['false ', false],
+					['	false	', false],
+				]);
+
+				testTransformer(analyser.transformers.boolean, expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
 			});
 		});
 
@@ -239,9 +264,31 @@ describe(`analyser`, () => {
 				testTransformer(boolean, expectedResults);
 			});
 
-			it(`doesn't transform strings that don't match its expectations`, () => {
+			it(`transforms strings that don't match its expectations to null`, () => {
 				const boolean = analyser.transformers.booleanCustom(/A/, /B/);
-				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(str));
+				(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(null));
+			});
+
+			it(`generates a warning in the console if the value can't be converted`, () => {
+				const expectedResults = new Map([
+					['yes', null],
+					['NO', null],
+				]);
+
+				testTransformer(analyser.transformers.booleanCustom(/ ye\w/, /\sNO/), expectedResults);
+
+				expect(consoleWarnSpy).toHaveBeenCalled();
+			});
+
+			it(`doesn't generate a warning in the console if the value can be converted`, () => {
+				const expectedResults = new Map([
+					[' yes', true],
+					[' NO', false],
+				]);
+
+				testTransformer(analyser.transformers.booleanCustom(/ ye\w/, /\sNO/), expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
 			});
 		});
 
@@ -279,6 +326,37 @@ describe(`analyser`, () => {
 					expect(analyser.transformers.number(input)).toBe(output);
 				}
 			});
+
+			it(`transforms strings that don't match its expectations to null`, () => {
+				const boolean = analyser.transformers.number;
+				(['', 'yes', 'no', 'test', 'a100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(null));
+			});
+
+			it(`generates a warning in the console if the value can't be converted`, () => {
+				const expectedResults = new Map([
+					['a100%', null],
+					['a10%', null],
+					['a10.8%', null],
+					['a81.23%', null],
+				]);
+
+				testTransformer(analyser.transformers.number, expectedResults);
+
+				expect(consoleWarnSpy).toHaveBeenCalled();
+			});
+
+			it(`doesn't generate a warning in the console if the value can be converted`, () => {
+				const expectedResults = new Map([
+					['100%', 1],
+					['10%', 0.1],
+					['10.8%', 0.108],
+					['81.23%', 0.8123],
+				]);
+
+				testTransformer(analyser.transformers.number, expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
+			});
 		});
 
 		describe(`value`, () => {
@@ -301,11 +379,11 @@ describe(`analyser`, () => {
 				testTransformer(analyser.transformers.value, expectedResults);
 			});
 
-			it(`leaves strings unchanged otherwise`, () => {
+			it(`transforms strings to null if it can't extract a value`, () => {
 				const expectedResults = new Map([
-					['test', 'test'],
-					['fifteen', 'fifteen'],
-					['', ''],
+					['test', null],
+					['fifteen', null],
+					['', null],
 					['true', true],
 					['True', true],
 					[' false', false],
@@ -314,6 +392,32 @@ describe(`analyser`, () => {
 				]);
 
 				testTransformer(analyser.transformers.value, expectedResults);
+			});
+
+			it(`generates a warning in the console if the value can't be converted`, () => {
+				const expectedResults = new Map([
+					['test', null],
+					['fifteen', null],
+					['', null],
+				]);
+
+				testTransformer(analyser.transformers.value, expectedResults);
+
+				expect(consoleWarnSpy).toHaveBeenCalled();
+			});
+
+			it(`doesn't generate a warning in the console if the value can be converted`, () => {
+				const expectedResults = new Map([
+					['true', true],
+					['True', true],
+					[' false', false],
+					['-1,000', -1000],
+					['50.64%', 0.5064],
+				]);
+
+				testTransformer(analyser.transformers.value, expectedResults);
+
+				expect(consoleWarnSpy).not.toHaveBeenCalled();
 			});
 		});
 

@@ -1,3 +1,5 @@
+import { TransformerFn } from './transformers.js';
+
 interface FileConfig<T extends string> {
 	path: string,
 	cols: Record<T, string | number>,
@@ -6,7 +8,7 @@ interface FileConfig<T extends string> {
 	footerRows?: number,
 
 	aliases?: string[][],
-	transform?: Partial<Record<T, (value: string, locationIdentifier?: string) => any>>,
+	transform?: Partial<Record<T, TransformerFn<any>>>,
 }
 
 /**

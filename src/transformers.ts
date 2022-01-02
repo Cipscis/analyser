@@ -2,6 +2,10 @@
 // Appearance functions //
 //////////////////////////
 
+export interface TransformerFn<T> {
+	(value: string, locationIdentifier?: string): T extends [] ? T : (T | null)
+}
+
 /**
  * Checks if a string appears like it represents true
  */
@@ -23,9 +27,9 @@ function appearsBoolean(value: string): boolean {
 	return appearsTrue(value) || appearsFalse(value);
 }
 
-type CleanNumberLike<T extends string> =
-	T extends `${infer U},${infer V}` ? CleanNumberLike<`${U}${V}`> :
-	T extends `${infer W}%` ? W : T;
+type NoCommas<T extends string> = T extends `${infer U},${infer V}` ? NoCommas<`${U}${V}`> : T;
+type NoPercent<T extends string> = T extends `${infer W}%` ? W : T;
+type CleanNumberLike<T extends string> = NoCommas<NoPercent<T>>;
 
 /**
  * Removes any ',' characters, and any '%' at the end of
@@ -59,19 +63,19 @@ function appearsPercentage(value: string): boolean {
 /**
  * Splits a string into an array using String.prototype.split
  */
-export function array(separator: string | RegExp, limit?: number): (value: string) => string[] {
+export function array(separator: string | RegExp, limit?: number): TransformerFn<string[]> {
 	return function (value: string): string[] {
 		return value.split(separator, limit);
 	};
 }
 
 /**
- * Extracts a boolean value froma  string representation using a custom definition.
+ * Extracts a boolean value from a string representation using a custom definition.
  *
  *  If the value doesn't appear like it represents a boolean, a warning will be generated.
  */
-export function booleanCustom(truthy: string | RegExp = 'true', falsey: string | RegExp = 'false') {
-	function boolean<T extends string>(value: T, locationIdentifier?: string): boolean | T {
+export function booleanCustom(truthy: string | RegExp = 'true', falsey: string | RegExp = 'false'): TransformerFn<boolean> {
+	return function (value: string, locationIdentifier?: string): boolean | null {
 		const cleanedValue = value.trim().toLowerCase();
 
 		if (typeof truthy === 'string') {
@@ -97,10 +101,8 @@ export function booleanCustom(truthy: string | RegExp = 'true', falsey: string |
 		if (value) {
 			console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey} (${locationIdentifier})`);
 		}
-		return value;
+		return null;
 	};
-
-	return boolean;
 }
 
 /**
@@ -116,7 +118,7 @@ export const boolean = booleanCustom();
  *
  * If the value doesn't appear like it represents a number, a warning will be generated.
  */
-export function number<T extends string>(value: T, locationIdentifier?: string): number | T {
+export const number: TransformerFn<number> = (value: string, locationIdentifier?: string): number | null => {
 	if (appearsNumber(value)) {
 		// Condition matches if the entire string represents a number
 
@@ -145,7 +147,7 @@ export function number<T extends string>(value: T, locationIdentifier?: string):
 		if (value) {
 			console.warn(`Number value not found in '${value}' (${locationIdentifier})`);
 		}
-		return value;
+		return null;
 	}
 }
 
@@ -154,13 +156,14 @@ export function number<T extends string>(value: T, locationIdentifier?: string):
  *
  * No warnings will be generated if the value doesn't appear like a boolean or number.
  */
-export function value<T extends string>(value: T): boolean | number | T {
+export const value: TransformerFn<boolean | number> = (value: string, locationIdentifier?: string): boolean | number | null => {
 	if (appearsBoolean(value)) {
 		return boolean(value);
 	} else if (appearsNumber(value)) {
 		return number(value);
 	} else {
-		return value;
+		console.warn(`Boolean or number value not found in '${value}' (${locationIdentifier})`);
+		return null;
 	}
 }
 
@@ -174,14 +177,14 @@ export function value<T extends string>(value: T): boolean | number | T {
  * If the value exists but it is not a member of the enum and cannot be recoded,
  * a warning will be generated and null will be returned.
  */
-export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?: Record<string, E>): (value: string, locationIdentifier?: string) => E | null {
+export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?: Record<string, E>): TransformerFn<E> {
 	const enumValues: E[] = Object.values(enums);
 
 	function isEnumMember(val: unknown): val is E {
 		return (enumValues as any[]).includes(val);
 	}
 
-	return function (value, locationIdentifier) {
+	const transformer = ((value: string, locationIdentifier?: string) => {
 		if (!value) {
 			return null;
 		}
@@ -191,10 +194,15 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 		}
 
 		if (recodeMap && value in recodeMap) {
-			return recodeMap[value];
+			const recodedValue = recodeMap[value];
+			return recodedValue;
 		}
 
 		console.warn(`Value '${value}' does not exist within ${enumValues.join(', ')} (${locationIdentifier})`);
 		return null;
-	};
+	}) as TransformerFn<E>;
+	// Need to use a type assertion here as TypeScript doesn't know how to use the generic constraint to resolve the conditional type
+	// See https://stackoverflow.com/questions/70553130/typescript-generic-conditional-type-as-return-value-for-generic-function/70553240#70553240
+
+	return transformer;
 }

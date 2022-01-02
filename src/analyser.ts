@@ -13,6 +13,7 @@ export { loadFile } from './file-processing.js';
 //////////////////
 // TRANSFORMERS //
 //////////////////
+export { TransformerFn } from './transformers.js';
 export * as transformers from './transformers.js';
 
 //////////////////////
