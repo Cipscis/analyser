@@ -4,6 +4,7 @@ import { Grouper } from './grouping.js';
 
 interface DataConfig<T extends string> {
 	rows: AnalyserRows,
+	raw: string[][],
 
 	cols: Record<T, number>,
 	addedCols: Record<string, number>,

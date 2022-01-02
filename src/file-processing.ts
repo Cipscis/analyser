@@ -47,6 +47,7 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 
 	const dataConfig: DataConfig<T> = {
 		rows: new AnalyserRows(rows),
+		raw: rows,
 		cols: getColNumbers(fileConfig.cols),
 		addedCols: {},
 		by,
