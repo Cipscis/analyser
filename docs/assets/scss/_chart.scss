@@ -1,0 +1,154 @@
+@use "sass:math";
+
+@import "mixins/reset.scss";
+
+.chart {
+	page-break-inside: avoid;
+
+	display: grid;
+	grid-template-areas:
+		"title title"
+		"y chart"
+		". x";
+}
+
+.chart__title {
+	display: block;
+}
+
+.chart__area {
+	grid-area: chart;
+	aspect-ratio: 16 / 9;
+
+	position: relative;
+}
+
+///////////
+// TITLE //
+///////////
+.chart__title {
+	grid-area: title;
+}
+
+////////////
+// LEGEND //
+////////////
+.chart__legend {
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	border: 1px solid gray;
+}
+
+//////////
+// AXES //
+//////////
+.chart__y-axis {
+	grid-area: y;
+
+	@include list-reset;
+
+	border-right: 1px solid black;
+	margin-top: -1px;
+	margin-bottom: -1px;
+
+	position: relative;
+}
+
+.chart__y-axis-label {
+	position: absolute;
+	right: 0;
+
+	transform: translateY(50%);
+
+	width: 100%;
+	text-align: right;
+}
+
+.chart__x-axis {
+	grid-area: x;
+
+	@include list-reset;
+
+	display: flex;
+	justify-content: space-between;
+
+	border-top: 1px solid black;
+}
+
+.chart__x-axis-label {
+	flex: 1 1 0;
+	text-align: center;
+}
+
+///////////////
+// GRIDLINES //
+///////////////
+.chart__y-gridlines {
+	@include list-reset;
+
+	position: absolute;
+	left: 0;
+	top: 0;
+
+	width: 100%;
+	height: 100%;
+}
+
+.chart__y-gridline {
+	position: absolute;
+	left: 0;
+	width: 100%;
+
+	height: 1px;
+	background: gray;
+}
+
+//////////
+// BARS //
+//////////
+.chart__bar-groups {
+	@include list-reset;
+
+	display: flex;
+	justify-content: space-between;
+
+	height: 100%;
+}
+
+.chart__bar-group {
+	position: relative;
+	flex: 1 1 0%;
+	height: 100%;
+	display: flex;
+
+	margin: 0 2%;
+}
+
+.chart__bar-group-bars {
+	@include list-reset;
+
+	padding: 0;
+	width: 100%;
+	display: flex;
+}
+
+.chart__bar {
+	position: relative;
+	flex: 1 1 0%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	// Tell browsers not to hide the background colour when printing
+	color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+.chart__bar-area {
+	width: 100%;
+	height: 100%;
+	flex: 0 0 100%;
+}

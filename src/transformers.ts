@@ -181,6 +181,7 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 	const enumValues: E[] = Object.values(enums);
 
 	function isEnumMember(val: unknown): val is E {
+		// Use `as any[]` so TypeScript doesn't complain when using Array.prototype.includes
 		return (enumValues as any[]).includes(val);
 	}
 

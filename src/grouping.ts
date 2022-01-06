@@ -75,7 +75,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 			// Then, interate through each enum and filter rows into groups
 			const group = new AnalyserGroup();
 			for (let val of enums) {
-				const matchingRows = rows.filter(by(colNum, val)) as AnalyserRows;
+				const matchingRows = rows.filter(by(colNum, val));
 				group.set(val, matchingRows);
 			}
 			return group;
@@ -160,7 +160,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 						filterFn = by(colNum, (val: number) => set[0] <= val && val < set[1]);
 					}
 
-					const matchingRows = rows.filter(filterFn) as AnalyserRows;
+					const matchingRows = rows.filter(filterFn);
 
 					group.set(setName, matchingRows);
 				}

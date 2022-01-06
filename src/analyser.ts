@@ -20,3 +20,8 @@ export * as transformers from './transformers.js';
 // HELPER FUNCTIONS //
 //////////////////////
 export { getColNumber, getColNumbers } from './helpers.js';
+
+//////////////
+// GRAPHING //
+//////////////
+export { bar } from './charts/bar.js';

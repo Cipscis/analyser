@@ -1,17 +1,6 @@
-import * as analyser from '@cipscis/analyser';
-// import * as analyser from '../../../../src/analyser.js';
-
-const stringToBool = (value: string): boolean | null => {
-	switch (value.trim().toLowerCase()) {
-		case 'true':
-			return true;
-		case `'no'`:
-		case '':
-			return false;
-		default:
-			return null;
-	}
-};
+// import * as analyser from '@cipscis/analyser';
+import { sum } from '../../../../dist/statistics.js';
+import * as analyser from '../../../../src/analyser.js';
 
 const analyse = async function () {
 	const fileInfoA = analyser.fileConfig({
@@ -28,7 +17,7 @@ const analyse = async function () {
 		},
 		transform: {
 			POPULATION: analyser.transformers.number,
-			CAPITAL: stringToBool,
+			CAPITAL: analyser.transformers.booleanCustom('true', /^$|^'no'$/i),
 			PUBLIC_TRANSPORT: analyser.transformers.array(','),
 			MAYOR_2018: analyser.transformers.array(','),
 		},
@@ -61,17 +50,6 @@ const analyse = async function () {
 		analyser.loadFile(fileInfoC),
 	]);
 
-	const cityDataA = await analyser.loadFile(fileInfoA);
-
-	// console.log(cityData.rows);
-	// console.log(cityData.rows[0]);
-
-	// console.log(cityData2.rows);
-	// console.log(cityData2.rows[0]);
-
-	// console.log(cityData3.rows);
-	// console.log(cityData3.rows[0]);
-
 	const {
 		rows,
 		cols,
@@ -103,6 +81,23 @@ const analyse = async function () {
 	console.table(group(rows, cols.PUBLIC_TRANSPORT).summarise({
 		number: (rows) => rows.length,
 	}));
+
+	const chartHtml = analyser.bar(group(rows, cols.NAME).summarise({
+		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
+		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
+		not_number: (rows) => `${rows.length}`,
+	}),
+	{
+		label: 'Chart Title',
+		legend: true,
+
+		yMin: 0,
+	});
+
+	const $chartExample = document.getElementById('chart-example');
+	if ($chartExample) {
+		$chartExample.innerHTML = chartHtml;
+	}
 };
 
 analyse();
