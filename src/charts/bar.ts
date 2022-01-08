@@ -6,7 +6,7 @@ import { Scale } from './Scale.js';
 
 import { chart as renderChart } from './chart.js';
 
-function renderBars(chartData: ChartData, options?: ChartOptions): string {
+function renderBars<T extends string>(chartData: ChartData<T>, options?: ChartOptions): string {
 	const { labels, groups, colours } = chartData;
 	const scale = new Scale(chartData);
 
@@ -28,7 +28,7 @@ function renderBars(chartData: ChartData, options?: ChartOptions): string {
 	`;
 }
 
-export function bar(summary: AnalyserSummary, options?: ChartOptions) {
+export function bar<T extends string>(summary: AnalyserSummary<T>, options?: ChartOptions) {
 	const chartData = getChartData(summary, options);
 	const bars = renderBars(chartData, options);
 

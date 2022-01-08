@@ -82,11 +82,13 @@ const analyse = async function () {
 		number: (rows) => rows.length,
 	}));
 
-	const chartHtml = analyser.bar(group(rows, cols.NAME).summarise({
+	const nameGroup = group(rows, cols.NAME);
+	const nameGroupSummary = nameGroup.summarise({
 		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
 		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
 		not_number: (rows) => `${rows.length}`,
-	}),
+	});
+	const chartHtml = analyser.bar(nameGroupSummary,
 	{
 		label: 'Chart Title',
 		legend: true,

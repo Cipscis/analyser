@@ -1,9 +1,9 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
 import { ChartOptions } from './ChartOptions.js';
 
-export type ChartData = {
+export type ChartData<T extends string> = {
 	labels: string[],
-	groupNames: string[],
+	groupNames: T[],
 	groups: number[][],
 	colours: string[],
 
@@ -11,7 +11,7 @@ export type ChartData = {
 	max?: number,
 };
 
-export function getChartData(summary: AnalyserSummary, options?: ChartOptions): ChartData {
+export function getChartData<T extends string>(summary: AnalyserSummary<T>, options?: ChartOptions): ChartData<T> {
 	const [
 		[, ...groupNames], // Ignore first 'Value' entry
 		...valueRows
@@ -48,7 +48,7 @@ export function getChartData(summary: AnalyserSummary, options?: ChartOptions): 
 	// TODO: Determine colours based on options, if possible
 	const colours = numberValueGroupNames.map((groupName) => Math.random() > 0.5 ? 'red' : 'blue');
 
-	const chartData: ChartData = {
+	const chartData: ChartData<T> = {
 		labels,
 		groupNames: numberValueGroupNames,
 		groups: numberValueGroups,

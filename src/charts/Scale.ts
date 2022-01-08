@@ -11,7 +11,7 @@ export class Scale {
 	min: number;
 	max: number;
 
-	constructor(options: ScaleOptions | ChartData, chartOptions?: ChartOptions) {
+	constructor(options: ScaleOptions | ChartData<string>, chartOptions?: ChartOptions) {
 		if ('groups' in options) {
 			// options: ChartData
 			const { groups } = options;
