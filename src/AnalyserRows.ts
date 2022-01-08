@@ -22,7 +22,7 @@ class AnalyserRows extends Array<unknown[]> {
 	getCol(colNum: number): unknown[] {
 		if (typeof colNum !== 'number') {
 			throw new TypeError(`colNum must be a number.`);
-		} else if (colNum < 0 || colNum >= this[0].length) {
+		} else if (colNum < 0 || colNum >= this[0]?.length) {
 			throw new RangeError(`colNum out of range.`);
 		}
 
