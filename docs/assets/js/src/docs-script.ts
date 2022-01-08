@@ -88,9 +88,23 @@ const analyse = async function () {
 		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
 		not_number: (rows) => `${rows.length}`,
 	});
-	const chartHtml = analyser.bar(nameGroupSummary,
+	const nameChartHtml = analyser.bar(nameGroupSummary,
 	{
-		label: 'Chart Title',
+		label: 'Chart grouped by name',
+		legend: true,
+
+		yMin: 0,
+	});
+
+	const populationGroup = group(rows, cols.POPULATION, 6);
+	const populationGroupSummary = populationGroup.summarise({
+		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
+		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
+		not_number: (rows) => `${rows.length}`,
+	});
+	const populationChartHtml = analyser.bar(populationGroupSummary,
+	{
+		label: 'Chart grouped by population',
 		legend: true,
 
 		yMin: 0,
@@ -98,7 +112,7 @@ const analyse = async function () {
 
 	const $chartExample = document.getElementById('chart-example');
 	if ($chartExample) {
-		$chartExample.innerHTML = chartHtml;
+		$chartExample.innerHTML = nameChartHtml;
 	}
 };
 

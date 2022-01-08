@@ -2,7 +2,7 @@ import { ChartData } from './ChartData.js';
 import { ChartOptions } from './ChartOptions.js';
 import { Scale } from './Scale.js';
 
-export function chart<T extends string>(chartData: ChartData<T>, contents: string, options?: ChartOptions): string {
+export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions): string {
 	return `
 		<div class="chart">
 			${options?.label ? title(options) : ''}
@@ -26,7 +26,7 @@ function title(options: ChartOptions): string {
 	return `<h2 class="chart__title">${options.label}</h2>`;
 }
 
-function legend<T extends string>(chartData: ChartData<T>): string {
+function legend<GroupName extends string>(chartData: ChartData<GroupName>): string {
 	return `
 		<div class="chart__legend">
 			<span>Legend</span>
@@ -40,7 +40,7 @@ function legend<T extends string>(chartData: ChartData<T>): string {
 	`;
 }
 
-function yAxis<T extends string>(chartData: ChartData<T>, options?: ChartOptions): string {
+function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions): string {
 	const scale = new Scale(chartData, options);
 	const range = scale.getRange(5);
 
@@ -53,7 +53,7 @@ function yAxis<T extends string>(chartData: ChartData<T>, options?: ChartOptions
 	</ul>`;
 }
 
-function xAxis<T extends string>(chartData: ChartData<T>): string {
+function xAxis<GroupName extends string>(chartData: ChartData<GroupName>): string {
 	const { labels } = chartData;
 
 	return `
@@ -65,7 +65,7 @@ function xAxis<T extends string>(chartData: ChartData<T>): string {
 	</ul>`;
 }
 
-function yGridlines<T extends string>(chartData: ChartData<T>, options?: ChartOptions): string {
+function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions): string {
 	const scale = new Scale(chartData, options);
 	const range = scale.getRange(5);
 

@@ -1,9 +1,9 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
 import { ChartOptions } from './ChartOptions.js';
 
-export type ChartData<T extends string> = {
+export type ChartData<GroupName extends string> = {
 	labels: string[],
-	groupNames: T[],
+	groupNames: GroupName[],
 	groups: number[][],
 	colours: string[],
 
@@ -11,13 +11,14 @@ export type ChartData<T extends string> = {
 	max?: number,
 };
 
-export function getChartData<T extends string>(summary: AnalyserSummary<T>, options?: ChartOptions): ChartData<T> {
+export function getChartData<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions): ChartData<GroupName> {
 	const [
 		[, ...groupNames], // Ignore first 'Value' entry
 		...valueRows
 	] = summary;
 
-	const labels = valueRows.map((row) => row[0]);
+	// Extract the labels and convert them to strings
+	const labels = valueRows.map((row) => row[0] + '');
 
 	// Transpose valueRows to get groups
 	const valueGroups: any[][] = [];
@@ -33,7 +34,7 @@ export function getChartData<T extends string>(summary: AnalyserSummary<T>, opti
 	// This method has given us an empty element at index 0, so remove it
 	valueGroups.splice(0, 1);
 
-	// We can only graph values that are entirely numbers
+	// We can only graph groups if all their values are numbers
 	const numberValueGroups = valueGroups.filter(
 		(group): group is number[] => group.every(
 			(value): value is number => typeof value === 'number'
@@ -48,7 +49,7 @@ export function getChartData<T extends string>(summary: AnalyserSummary<T>, opti
 	// TODO: Determine colours based on options, if possible
 	const colours = numberValueGroupNames.map((groupName) => Math.random() > 0.5 ? 'red' : 'blue');
 
-	const chartData: ChartData<T> = {
+	const chartData: ChartData<GroupName> = {
 		labels,
 		groupNames: numberValueGroupNames,
 		groups: numberValueGroups,
