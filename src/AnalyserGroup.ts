@@ -18,7 +18,7 @@ type DefaultSummaryName = keyof typeof defaultSummarisers;
 /**
  * A 2D array of the results of AnalyserSummariser functions applied to an AnalyserGroup of AnalyserRows,
  * able to be printed to the console using `console.table`.
- * 
+ *
  * After the first header row, each row represents a set of AnalyserRows grouped by the value given in the first cell.
  * After the first column, each column represents a summary of a group of AnalyserRows. The name of the summary is given in the first cell.
  */
@@ -75,7 +75,7 @@ export class AnalyserGroup extends Map<any, AnalyserRows> {
 			// Sort summary value rows using the sorted values as a reference
 			summaryValueRows = summaryValueRows.sort((a, b) => summaryValuesSorted.indexOf(a[0]) - summaryValuesSorted.indexOf(b[0]));
 		}
-		
+
 		const summary = [summaryHeaderRow, ...summaryValueRows];
 
 		// Let the overloads tell TypeScript which type the summary actually is.

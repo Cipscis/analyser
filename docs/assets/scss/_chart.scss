@@ -98,7 +98,7 @@
 	top: 100%;
 	right: 50%;
 	transform: translate(-50%, -100%);
-	
+
 	line-height: 1;
 }
 
@@ -113,6 +113,8 @@
 
 .chart__x-axis__value {
 	flex: 1 1 0;
+	width: 0;
+
 	text-align: center;
 }
 
@@ -153,7 +155,10 @@
 
 .chart__bar-group {
 	position: relative;
-	flex: 1 1 0%;
+
+	flex: 1 1 0;
+	width: 0;
+
 	height: 100%;
 	display: flex;
 
@@ -197,7 +202,7 @@
 	.chart__bar__area:focus & {
 		display: block;
 	}
-	
+
 	position: absolute;
 	z-index: 1;
 	bottom: 100%;

@@ -95,7 +95,7 @@ function getMinMax(options: ScaleOptions | ChartData): [number, number] {
 	if ('groups' in options) {
 		// options is of type ChartData, so determine min and max based on the data
 		const { groups } = options;
-	
+
 		// Use `as number[]` here so TypeScript doesn't complain when using Array.prototype.concat
 		const allValues: number[] = ([] as number[]).concat(...groups);
 
@@ -104,7 +104,7 @@ function getMinMax(options: ScaleOptions | ChartData): [number, number] {
 		} else {
 			min = options.min;
 		}
-		
+
 		if (typeof options.max === 'undefined') {
 			max = Math.max(...allValues);
 		} else {
@@ -112,7 +112,7 @@ function getMinMax(options: ScaleOptions | ChartData): [number, number] {
 		}
 	} else {
 		// options is a ScaleOptions, so read min and max directly
-		min = options.min;	
+		min = options.min;
 		max = options.max;
 	}
 
