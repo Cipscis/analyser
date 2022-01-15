@@ -122,7 +122,7 @@ describe(`AnalyserGroup`, () => {
 		const summary = countryGroup.summarise({
 			number: (rows) => rows.length,
 			mean_population: (rows) => statistics.mean(rows.getCol(cols.POPULATION)),
-			max_population: (rows) => statistics.max(rows.getCol(cols.POPULATION)),
+			max_population: (rows) => Math.max(...rows.getCol(cols.POPULATION)),
 		});
 
 		// Summaries of discrete values are sorted
