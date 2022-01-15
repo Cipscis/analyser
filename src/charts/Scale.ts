@@ -21,11 +21,36 @@ export class Scale {
 		// min and max may be overridden by chartOptions
 		if (type && chartOptions) {
 			const axisOptions = chartOptions[type];
-			if (typeof axisOptions?.min !== 'undefined') {
-				this.min = axisOptions.min;
-			}
-			if (typeof axisOptions?.max !== 'undefined') {
-				this.max = axisOptions.max;
+			if (axisOptions) {
+				if ('min' in axisOptions && typeof axisOptions.min === 'number') {
+					this.min = axisOptions.min;
+				}
+
+				if ('max' in axisOptions) {
+					if (typeof axisOptions.max === 'number') {
+						this.max = axisOptions.max;
+					} else if (axisOptions.max === 'auto') {
+						// Round max up to nearest multiple of
+						// the greatest power of 10 beneath it, and
+						// ensure the number of values to be displayed will
+						// fit easily within the range of the scale
+
+						// First, determine highest power of 10
+						const power = Math.floor(Math.log10(this.max));
+						const roundTo = Math.pow(10, power);
+
+						// Then, round up max to nearest multiple of that power of 10
+						this.max = Math.ceil(this.max / roundTo) * roundTo;
+
+						// Then, if the number of values to be displayed has been set,
+						// continue to increase max until it is a multiple of it too
+						if (axisOptions.values) {
+							while ((this.range % axisOptions.values) || this.max <= this.min) {
+								this.max += roundTo;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -38,17 +63,6 @@ export class Scale {
 		const percent = (value - this.min) / this.range;
 
 		return percent;
-	}
-
-	/**
-	 * Returns a percentage string representing the value's position on the scale,
-	 * optionally with a fixed number of digits after the decimal point.
-	 */
-	getPercent(value: number, fractionDigits?: number): string {
-		const proportion = this.getProportion(value) * 100;
-		const proportionString = typeof fractionDigits === 'undefined' ? `${proportion}` : proportion.toFixed(fractionDigits);
-
-		return `${proportionString}%`;
 	}
 
 	/**

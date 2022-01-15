@@ -100,6 +100,9 @@ const analyse = async function () {
 
 		y: {
 			label: 'population',
+			values: 6,
+			gridLines: 3,
+			max: 'auto',
 			min: 0,
 		},
 		x: {

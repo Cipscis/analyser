@@ -45,9 +45,10 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 
 function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const axisOptions = options?.y;
+	const numValues = (axisOptions?.values || 0) + 1;
 
 	const scale = new Scale(chartData, options, 'y');
-	const series = scale.getSeries(5);
+	const series = scale.getSeries(numValues);
 
 	// Render axis based on scale
 	return `
@@ -58,7 +59,7 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 
 		<ul class="chart__y-axis__value-list">
 			${series.map((val) => `
-			<li class="chart__y-axis__value" style="bottom: ${scale.getPercent(val)};">${val}</li>
+			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">${val}</li>
 			`).join('')}
 		</ul>
 	</div>`;
@@ -84,14 +85,17 @@ function xAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 }
 
 function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
+	const axisOptions = options?.y;
+	const numGridlines = (axisOptions?.gridLines || axisOptions?.values || 0) + 1;
+
 	const scale = new Scale(chartData, options, 'y');
-	const series = scale.getSeries(5);
+	const series = scale.getSeries(numGridlines);
 
 	// Render gridlines based on scale
 	return `
 		<ul class="chart__y-gridlines" aria-hidden="true">
 			${series.map((val, index) => index > 0 ? `
-			<li class="chart__y-gridline" style="bottom: ${scale.getPercent(val)};"></li>
+			<li class="chart__y-gridline" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>
 			` : '').join('')}
 		</ul>
 	`;

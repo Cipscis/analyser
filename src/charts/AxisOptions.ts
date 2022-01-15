@@ -1,6 +1,15 @@
-export interface AxisOptions {
+interface AxisOptionsBase {
 	label?: string,
+}
 
-	max?: number,
+export interface AxisOptionsQualitative extends AxisOptionsBase {}
+
+export interface AxisOptionsQuantitative extends AxisOptionsBase {
+	values?: number,
+	gridLines?: number,
+
+	max?: number | 'auto',
 	min?: number,
 };
+
+export type AxisOptions = AxisOptionsQualitative | AxisOptionsQuantitative;
