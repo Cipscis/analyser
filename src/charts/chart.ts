@@ -59,7 +59,9 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 
 		<ul class="chart__y-axis__value-list">
 			${series.map((val) => `
-			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">${val}</li>
+			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">
+				${axisOptions?.format ? axisOptions.format.format(val) : val}
+			</li>
 			`).join('')}
 		</ul>
 	</div>`;

@@ -26,7 +26,9 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 
 						const str = `<li class="chart__bar">
 							<div class="chart__bar__area" style="${colour ? `background: ${colour}; ` : ''}flex-basis: ${(Math.max(0, scale.getProportion(group[index]))) * 100}%;" data-value="${group[index]}" tabindex="0">
-								<div class="chart__bar__tooltip">${groupName} ${label}: ${group[index]}</div>
+								<div class="chart__bar__tooltip">
+									${groupName} ${label}: ${options?.y?.format ? options.y.format.format(group[index]) : group[index]}
+								</div>
 							</div>
 						</li>`
 						return str;

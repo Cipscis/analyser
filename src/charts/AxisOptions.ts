@@ -8,6 +8,8 @@ export interface AxisOptionsQuantitative extends AxisOptionsBase {
 	values?: number,
 	gridLines?: number,
 
+	format?: Intl.NumberFormat,
+
 	max?: number | 'auto',
 	min?: number,
 };

@@ -102,6 +102,12 @@ const analyse = async function () {
 			label: 'population',
 			values: 6,
 			gridLines: 3,
+
+			format: new Intl.NumberFormat('en-NZ', {
+				useGrouping: true,
+				maximumFractionDigits: 0,
+			}),
+
 			max: 'auto',
 			min: 0,
 		},
