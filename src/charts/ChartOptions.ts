@@ -1,4 +1,4 @@
-export interface ChartOptions<GroupName extends string> {
+export interface ChartOptions<GroupName extends string = string> {
 	label?: string,
 	legend?: boolean,
 

@@ -1,7 +1,7 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
 import { ChartOptions } from './ChartOptions.js';
 
-export type ChartData<GroupName extends string> = {
+export type ChartData<GroupName extends string = string> = {
 	labels: string[],
 	groupNames: GroupName[],
 	groups: number[][],

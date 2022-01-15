@@ -45,7 +45,7 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 
 function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const scale = new Scale(chartData, options);
-	const range = scale.getRange(5);
+	const range = scale.getSeries(5);
 
 	return `
 	<!-- TODO: Render axis based on scale -->
@@ -70,7 +70,7 @@ function xAxis<GroupName extends string>(chartData: ChartData<GroupName>): strin
 
 function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const scale = new Scale(chartData, options);
-	const range = scale.getRange(5);
+	const range = scale.getSeries(5);
 
 	return `
 		<!-- TODO: Render gridlines based on scale -->
