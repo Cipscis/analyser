@@ -93,6 +93,11 @@ const analyse = async function () {
 		label: 'Chart grouped by name',
 		legend: true,
 
+		colours: {
+			population: 'blue',
+			pop_half: 'red',
+		},
+
 		yMin: 0,
 	});
 
@@ -106,6 +111,11 @@ const analyse = async function () {
 	{
 		label: 'Chart grouped by population',
 		legend: true,
+
+		colours: {
+			population: 'blue',
+			pop_half: 'red',
+		},
 
 		yMin: 0,
 	});

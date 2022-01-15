@@ -6,8 +6,9 @@ import { Scale } from './Scale.js';
 
 import { chart as renderChart } from './chart.js';
 
-function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions): string {
-	const { labels, groups, colours } = chartData;
+function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
+	const { labels, groups, groupNames } = chartData;
+	const { colours } = options || {};
 	const scale = new Scale(chartData);
 
 	return `
@@ -16,11 +17,15 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 			${labels.map((label, index) => `
 			<li class="chart__bar-group">
 				<ul class="chart__bar-group-bars">
-					${groups.map((group, groupIndex) => `
-						<li class="chart__bar">
-							<div class="chart__bar-area" style="background: ${colours[groupIndex]}; flex-basis: ${(scale.getPercent(group[index], 2))};"></div>
-						</li>
-					`).join('')}
+					${groups.map((group, groupIndex) => {
+						const groupName = groupNames[groupIndex];
+						const colour = colours && colours[groupName];
+
+						const str = `<li class="chart__bar">
+							<div class="chart__bar-area" style="${colour ? `background: ${colour}; ` : ''}flex-basis: ${(scale.getPercent(group[index], 2))};"></div>
+						</li>`
+						return str;
+					}).join('')}
 				</ul>
 			</li>
 			`).join('')}
@@ -28,7 +33,7 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 	`;
 }
 
-export function bar<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions) {
+export function bar<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions<GroupName>) {
 	const chartData = getChartData(summary, options);
 	const bars = renderBars(chartData, options);
 

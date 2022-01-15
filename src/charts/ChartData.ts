@@ -5,13 +5,12 @@ export type ChartData<GroupName extends string> = {
 	labels: string[],
 	groupNames: GroupName[],
 	groups: number[][],
-	colours: string[],
 
 	min?: number,
 	max?: number,
 };
 
-export function getChartData<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions): ChartData<GroupName> {
+export function getChartData<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions<GroupName>): ChartData<GroupName> {
 	const [
 		[, ...groupNames], // Ignore first 'Value' entry
 		...valueRows
@@ -46,14 +45,10 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		(groupName, index) => numberValueGroups.includes(valueGroups[index])
 	);
 
-	// TODO: Determine colours based on options, if possible
-	const colours = numberValueGroupNames.map((groupName) => Math.random() > 0.5 ? 'red' : 'blue');
-
 	const chartData: ChartData<GroupName> = {
 		labels,
 		groupNames: numberValueGroupNames,
 		groups: numberValueGroups,
-		colours,
 	};
 
 	return chartData;

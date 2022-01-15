@@ -2,13 +2,13 @@ import { ChartData } from './ChartData.js';
 import { ChartOptions } from './ChartOptions.js';
 import { Scale } from './Scale.js';
 
-export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions): string {
+export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
 	return `
 		<div class="chart">
 			${options?.label ? title(options) : ''}
 
 			<div class="chart__area">
-				${options?.legend ? legend(chartData) : ''}
+				${options?.legend ? legend(chartData, options) : ''}
 
 				${yGridlines(chartData, options)}
 
@@ -22,25 +22,28 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 	`;
 }
 
-function title(options: ChartOptions): string {
+function title<GroupName extends string>(options: ChartOptions<GroupName>): string {
 	return `<h2 class="chart__title">${options.label}</h2>`;
 }
 
-function legend<GroupName extends string>(chartData: ChartData<GroupName>): string {
+function legend<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	return `
 		<div class="chart__legend">
 			<span>Legend</span>
 
 			<ul>
-				${chartData.groupNames.map((groupName, index) => `
-					<span style="color: ${chartData.colours[index]};">${groupName}</span>
-				`).join('')}
+				${chartData.groupNames.map((groupName, index) => {
+					const colour = options?.colours && options.colours[groupName];
+
+					const str = `<span${colour ? ` style="color: ${colour};"` : ''}>${groupName}</span>`;
+					return str;
+				}).join('')}
 			</ul>
 		</div>
 	`;
 }
 
-function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions): string {
+function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const scale = new Scale(chartData, options);
 	const range = scale.getRange(5);
 
@@ -65,7 +68,7 @@ function xAxis<GroupName extends string>(chartData: ChartData<GroupName>): strin
 	</ul>`;
 }
 
-function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions): string {
+function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const scale = new Scale(chartData, options);
 	const range = scale.getRange(5);
 
