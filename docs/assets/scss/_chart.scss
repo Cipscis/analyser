@@ -10,6 +10,8 @@
 		"title title"
 		"y chart"
 		". x";
+
+	grid-template-columns: calc(1em + 10ch) 1fr;
 }
 
 .chart__title {
@@ -50,8 +52,6 @@
 
 	// Padding to leave space for axis label
 	padding-left: 1em;
-
-	width: calc(1em + 10ch);
 }
 
 .chart__y-axis__label {
