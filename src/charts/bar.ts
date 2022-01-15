@@ -9,10 +9,10 @@ import { chart as renderChart } from './chart.js';
 function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
 	const { colours } = options || {};
-	const scale = new Scale(chartData);
+	const scale = new Scale(chartData, options, 'y');
 
+	// For each label, render a bar from each group
 	return `
-		<!-- For each label, render a bar from each group -->
 		<ul class="chart__bar-groups">
 			${labels.map((label, index) => `
 			<li class="chart__bar-group">
@@ -22,7 +22,9 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 						const colour = colours && colours[groupName];
 
 						const str = `<li class="chart__bar">
-							<div class="chart__bar-area" style="${colour ? `background: ${colour}; ` : ''}flex-basis: ${(scale.getPercent(group[index], 2))};"></div>
+							<div class="chart__bar__area" style="${colour ? `background: ${colour}; ` : ''}flex-basis: ${(scale.getPercent(group[index], 2))};" data-value="${group[index]}" tabindex="0">
+								<div class="chart__bar__tooltip">${groupName} ${label}: ${group[index]}</div>
+							</div>
 						</li>`
 						return str;
 					}).join('')}

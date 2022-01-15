@@ -17,7 +17,7 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 
 			${yAxis(chartData, options)}
 
-			${xAxis(chartData)}
+			${xAxis(chartData, options)}
 		</div>
 	`;
 }
@@ -44,38 +44,53 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 }
 
 function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
-	const scale = new Scale(chartData, options);
-	const range = scale.getSeries(5);
+	const axisOptions = options?.y;
 
+	const scale = new Scale(chartData, options, 'y');
+	const series = scale.getSeries(5);
+
+	// Render axis based on scale
 	return `
-	<!-- TODO: Render axis based on scale -->
-	<ul class="chart__y-axis">
-		${range.map((val) => `
-		<li class="chart__y-axis-label" style="bottom: ${scale.getPercent(val)};">${val}</li>
-		`).join('')}
-	</ul>`;
+	<div class="chart__y-axis">
+		${axisOptions?.label ? `
+		<span class="chart__y-axis__label">${axisOptions.label}</span>
+		` : ''}
+
+		<ul class="chart__y-axis__value-list">
+			${series.map((val) => `
+			<li class="chart__y-axis__value" style="bottom: ${scale.getPercent(val)};">${val}</li>
+			`).join('')}
+		</ul>
+	</div>`;
 }
 
-function xAxis<GroupName extends string>(chartData: ChartData<GroupName>): string {
+function xAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
+	const axisOptions = options?.x;
+
 	const { labels } = chartData;
 
+	// For each label, render that label
 	return `
-	<!-- For each label, render that label -->
-	<ul class="chart__x-axis">
-		${labels.map((label) => `
-		<li class="chart__x-axis-label">${label}</li>
-		`).join('')}
-	</ul>`;
+	<div class="chart__x-axis">
+		${axisOptions?.label ? `
+		<span class="chart__x-axis__label">${axisOptions.label}</span>
+		` : ''}
+		<ul class="chart__x-axis__value-list">
+			${labels.map((label) => `
+			<li class="chart__x-axis__value">${label}</li>
+			`).join('')}
+		</ul>
+	</div>`;
 }
 
 function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
-	const scale = new Scale(chartData, options);
-	const range = scale.getSeries(5);
+	const scale = new Scale(chartData, options, 'y');
+	const series = scale.getSeries(5);
 
+	// Render gridlines based on scale
 	return `
-		<!-- TODO: Render gridlines based on scale -->
 		<ul class="chart__y-gridlines" aria-hidden="true">
-			${range.map((val, index) => index > 0 ? `
+			${series.map((val, index) => index > 0 ? `
 			<li class="chart__y-gridline" style="bottom: ${scale.getPercent(val)};"></li>
 			` : '').join('')}
 		</ul>

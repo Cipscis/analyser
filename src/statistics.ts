@@ -22,28 +22,10 @@ export function sum(...arr: number[] | [number[]]): number {
 }
 
 /**
- * Returns the maximum of an array of numbers.
- */
-export function max(...arr: number[] | [number[]]): number {
-	const numbers = getNumArray(arr);
-
-	return Math.max(...numbers);
-}
-
-/**
  * Returns the mean of an array of numbers.
  */
 export function mean(...arr: number[] | [number[]]): number {
 	const numbers = getNumArray(arr);
 
 	return sum(numbers) / numbers.length;
-}
-
-/**
- * Returns the minimum of an array of numbers.
- */
-export function min(...arr: number[] | [number[]]): number {
-	const numbers = getNumArray(arr);
-
-	return Math.min(...numbers);
 }

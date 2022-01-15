@@ -15,15 +15,18 @@ export class Scale {
 		return this.max - this.min;
 	};
 
-	constructor(options: ScaleOptions | ChartData, chartOptions?: ChartOptions) {
+	constructor(options: ScaleOptions | ChartData, chartOptions?: ChartOptions, type?: 'y' | 'x') {
 		[this.min, this.max] = getMinMax(options);
 
-		// TODO: This is going to cause trouble when you want to do scatterplots with two numeric axes
-		if (typeof chartOptions?.yMin !== 'undefined') {
-			this.min = chartOptions.yMin;
-		}
-		if (typeof chartOptions?.yMax !== 'undefined') {
-			this.max = chartOptions.yMax;
+		// min and max may be overridden by chartOptions
+		if (type && chartOptions) {
+			const axisOptions = chartOptions[type];
+			if (typeof axisOptions?.min !== 'undefined') {
+				this.min = axisOptions.min;
+			}
+			if (typeof axisOptions?.max !== 'undefined') {
+				this.max = axisOptions.max;
+			}
 		}
 	}
 
@@ -90,25 +93,25 @@ function getMinMax(options: ScaleOptions | ChartData): [number, number] {
 	let max: number;
 
 	if ('groups' in options) {
-		// options: ChartData
+		// options is of type ChartData, so determine min and max based on the data
 		const { groups } = options;
 	
 		// Use `as number[]` here so TypeScript doesn't complain when using Array.prototype.concat
 		const allValues: number[] = ([] as number[]).concat(...groups);
 
 		if (typeof options.min === 'undefined') {
-			min = statistics.min(allValues);
+			min = Math.min(...allValues);
 		} else {
 			min = options.min;
 		}
 		
 		if (typeof options.max === 'undefined') {
-			max = statistics.max(allValues);
+			max = Math.max(...allValues);
 		} else {
 			max = options.max;
 		}
 	} else {
-		// options: ScaleOptions
+		// options is a ScaleOptions, so read min and max directly
 		min = options.min;	
 		max = options.max;
 	}

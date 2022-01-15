@@ -98,7 +98,13 @@ const analyse = async function () {
 			pop_half: 'red',
 		},
 
-		yMin: 0,
+		y: {
+			label: 'population',
+			min: 0,
+		},
+		x: {
+			label: 'City',
+		},
 	});
 
 	const populationGroup = group(rows, cols.POPULATION, 6);
@@ -116,13 +122,12 @@ const analyse = async function () {
 			population: 'blue',
 			pop_half: 'red',
 		},
-
-		yMin: 0,
 	});
 
 	const $chartExample = document.getElementById('chart-example');
 	if ($chartExample) {
 		$chartExample.innerHTML = nameChartHtml;
+		// $chartExample.innerHTML = populationChartHtml;
 	}
 };
 
