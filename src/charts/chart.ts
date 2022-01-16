@@ -58,9 +58,15 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 		` : ''}
 
 		<ul class="chart__y-axis__value-list">
-			${series.map((val) => `
+			${values.map((val) => `
 			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">
-				${axisOptions?.format ? axisOptions.format.format(val) : val}
+				${axisOptions?.format ?
+					axisOptions.format instanceof Intl.NumberFormat ?
+						axisOptions.format.format(val) :
+						axisOptions.format(val)
+					:
+					val
+				}
 			</li>
 			`).join('')}
 		</ul>

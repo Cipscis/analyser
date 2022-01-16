@@ -106,6 +106,7 @@ const analyse = async function () {
 				useGrouping: true,
 				maximumFractionDigits: 0,
 			}),
+			// format: (value: number) => value.toFixed(2),
 
 			max: 'auto',
 			min: 'auto',
