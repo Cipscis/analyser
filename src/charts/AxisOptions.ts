@@ -11,7 +11,7 @@ export interface AxisOptionsQuantitative extends AxisOptionsBase {
 	format?: Intl.NumberFormat,
 
 	max?: number | 'auto',
-	min?: number,
+	min?: number | 'auto',
 };
 
 export type AxisOptions = AxisOptionsQualitative | AxisOptionsQuantitative;

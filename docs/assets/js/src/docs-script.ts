@@ -58,35 +58,34 @@ const analyse = async function () {
 		group,
 	} = cityData;
 
-	console.log(rows);
-	console.log(cols);
+	// console.log(rows);
+	// console.log(cols);
 
-	console.log(rows.filter(
-		by(cols.POPULATION, (pop: number) => pop > 1000)
-		.orBy(cols.POPULATION, (pop: number) => pop < 300)
-		.andBy(cols.MAYOR_2012, 'Len Brown')
-	));
+	// console.log(rows.filter(
+	// 	by(cols.POPULATION, (pop: number) => pop > 1000)
+	// 	.orBy(cols.POPULATION, (pop: number) => pop < 300)
+	// 	.andBy(cols.MAYOR_2012, 'Len Brown')
+	// ));
 
 	const getIndex = (row: any[], i: number): number => i;
 
 	addedCols.INDEX = rows.addCol(getIndex);
-	console.log(addedCols.INDEX);
+	// console.log(addedCols.INDEX);
 
-	console.dir(group(rows, cols.COUNTRY));
+	// console.dir(group(rows, cols.COUNTRY));
 
-	console.table(group(rows, cols.COUNTRY).summarise({
-		number: (rows) => rows.length,
-	}));
+	// console.table(group(rows, cols.COUNTRY).summarise({
+	// 	number: (rows) => rows.length,
+	// }));
 
-	console.table(group(rows, cols.PUBLIC_TRANSPORT).summarise({
-		number: (rows) => rows.length,
-	}));
+	// console.table(group(rows, cols.PUBLIC_TRANSPORT).summarise({
+	// 	number: (rows) => rows.length,
+	// }));
 
 	const nameGroup = group(rows, cols.NAME);
 	const nameGroupSummary = nameGroup.summarise({
 		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
 		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
-		not_number: (rows) => `${rows.length}`,
 	});
 	const nameChartHtml = analyser.bar(nameGroupSummary,
 	{
@@ -109,7 +108,7 @@ const analyse = async function () {
 			}),
 
 			max: 'auto',
-			min: 0,
+			min: 'auto',
 		},
 		x: {
 			label: 'City',
