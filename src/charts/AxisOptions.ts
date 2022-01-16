@@ -5,8 +5,8 @@ interface AxisOptionsBase {
 export interface AxisOptionsQualitative extends AxisOptionsBase {}
 
 export interface AxisOptionsQuantitative extends AxisOptionsBase {
-	values?: number,
-	gridLines?: number,
+	values?: number | number[],
+	gridlines?: number | number[],
 
 	format?: Intl.NumberFormat | ((value: number) => string),
 

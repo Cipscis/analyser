@@ -99,8 +99,10 @@ const analyse = async function () {
 
 		y: {
 			label: 'population',
-			values: 6,
-			gridLines: 3,
+			// values: 6,
+			values: [0, 1000, 6000],
+			// gridlines: [0, 1000, 6000],
+			// gridlines: [],
 
 			format: new Intl.NumberFormat('en-NZ', {
 				useGrouping: true,
@@ -108,8 +110,10 @@ const analyse = async function () {
 			}),
 			// format: (value: number) => value.toFixed(2),
 
-			max: 'auto',
-			min: 'auto',
+			// max: 'auto',
+			// min: 'auto',
+			max: 6500,
+			// min: -1000,
 		},
 		x: {
 			label: 'City',

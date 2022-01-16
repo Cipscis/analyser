@@ -1,5 +1,6 @@
 import { ChartData } from './ChartData.js';
 import { ChartOptions } from './ChartOptions.js';
+import { AxisOptionsQuantitative } from './AxisOptions.js';
 import { Scale } from './Scale.js';
 
 export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
@@ -44,11 +45,10 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 }
 
 function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
-	const axisOptions = options?.y;
-	const numValues = (axisOptions?.values || 0) + 1;
-
 	const scale = new Scale(chartData, options, 'y');
-	const series = scale.getSeries(numValues);
+
+	const axisOptions = options?.y;
+	const values: number[] = getAxisValues(scale, axisOptions);
 
 	// Render axis based on scale
 	return `
@@ -93,18 +93,49 @@ function xAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 }
 
 function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
-	const axisOptions = options?.y;
-	const numGridlines = (axisOptions?.gridLines || axisOptions?.values || 0) + 1;
-
 	const scale = new Scale(chartData, options, 'y');
-	const series = scale.getSeries(numGridlines);
+
+	const axisOptions = options?.y;
+	const values: number[] = getAxisGridlines(scale, options?.y);
 
 	// Render gridlines based on scale
 	return `
-		<ul class="chart__y-gridlines" aria-hidden="true">
-			${series.map((val, index) => index > 0 ? `
-			<li class="chart__y-gridline" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>
-			` : '').join('')}
+		<ul class="chart__y-gridlines" role="presentation">
+			${values.map((val, index) => {
+				// Only render the first gridline if it's above the minimum number,
+				// since that line is already drawn by the x axis
+				const gridlines = (index > 0 || val > scale.min) ? `
+					<li class="chart__y-gridline" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>` :
+					'';
+
+				return gridlines
+			}).join('')}
 		</ul>
 	`;
+}
+
+function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
+	if (typeof axisOptions?.values !== 'undefined') {
+		if (typeof axisOptions.values === 'number') {
+			const numValues = axisOptions.values;
+			return scale.getSeries(numValues);
+		} else {
+			return axisOptions.values;
+		}
+	} else {
+		return scale.getSeries(2);
+	}
+}
+
+function getAxisGridlines(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
+	if (typeof axisOptions?.gridlines !== 'undefined') {
+		if (typeof axisOptions.gridlines === 'number') {
+			const numValues = axisOptions.gridlines;
+			return scale.getSeries(numValues);
+		} else {
+			return axisOptions.gridlines;
+		}
+	} else {
+		return getAxisValues(scale, axisOptions);
+	}
 }
