@@ -1,6 +1,6 @@
 import { AxisOptions, AxisOptionsQualitative, AxisOptionsQuantitative } from './AxisOptions.js';
 
-export interface ChartOptions<GroupName extends string = string, XAxisType extends AxisOptions = AxisOptions> {
+interface BaseChartOptions<GroupName extends string = string, XAxisType extends AxisOptions = AxisOptions> {
 	label?: string,
 	legend?: boolean,
 
@@ -10,3 +10,9 @@ export interface ChartOptions<GroupName extends string = string, XAxisType exten
 	x?: XAxisType,
 	y?: AxisOptionsQuantitative,
 }
+
+export type BarChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQualitative> & {
+	stacked?: boolean;
+};
+
+export type ChartOptions<GroupName extends string = string> = BarChartOptions<GroupName>;

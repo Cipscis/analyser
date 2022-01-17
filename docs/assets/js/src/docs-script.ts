@@ -99,10 +99,11 @@ const analyse = async function () {
 
 		y: {
 			label: 'population',
-			// values: 6,
-			values: [0, 1000, 6000],
+			values: 9,
+			// values: [0, 1000, 6000],
 			// gridlines: [0, 1000, 6000],
 			// gridlines: [],
+			gridlines: 5,
 
 			format: new Intl.NumberFormat('en-NZ', {
 				useGrouping: true,
@@ -110,14 +111,16 @@ const analyse = async function () {
 			}),
 			// format: (value: number) => value.toFixed(2),
 
-			// max: 'auto',
-			// min: 'auto',
-			max: 6500,
+			max: 'auto',
+			min: 'auto',
+			// max: 6500,
 			// min: -1000,
 		},
 		x: {
 			label: 'City',
 		},
+
+		stacked: true,
 	});
 
 	const populationGroup = group(rows, cols.POPULATION, 6);

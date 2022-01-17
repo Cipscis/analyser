@@ -173,6 +173,14 @@
 	display: flex;
 }
 
+.chart__bar-group-bars--stacked {
+	flex-direction: column;
+	justify-content: flex-end;
+	.chart__bar {
+		flex: 0 0 auto;
+	}
+}
+
 .chart__bar {
 	position: relative;
 	flex: 1 1 0%;

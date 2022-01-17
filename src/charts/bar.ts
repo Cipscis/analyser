@@ -1,13 +1,12 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
-import { ChartOptions } from './ChartOptions.js';
+import { BarChartOptions } from './ChartOptions.js';
 
 import { ChartData, getChartData } from './ChartData.js';
 import { Scale } from './Scale.js';
 
 import { chart as renderChart } from './chart.js';
-import { AxisOptionsQualitative } from './AxisOptions.js';
 
-type BarChartOptions<GroupName extends string> = ChartOptions<GroupName, AxisOptionsQualitative>;
+import * as statistics from '../statistics.js';
 
 function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: BarChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
@@ -17,23 +16,50 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 	// For each label, render a bar from each group
 	return `
 		<ul class="chart__bar-groups">
-			${labels.map((label, index) => `
-			<li class="chart__bar-group">
-				<ul class="chart__bar-group-bars">
+			${labels.map((label, index) =>
+			`<li class="chart__bar-group">
+				<ul class="chart__bar-group-bars${options?.stacked ? ` chart__bar-group-bars--stacked` : ''}">
 					${groups.map((group, groupIndex) => {
 						const groupName = groupNames[groupIndex];
 						const colour = colours && colours[groupName];
+						const value = group[index];
 
-						const str = `<li class="chart__bar">
-							<div class="chart__bar__area" style="${colour ? `background: ${colour}; ` : ''}flex-basis: ${(Math.max(0, scale.getProportion(group[index]))) * 100}%;" data-value="${group[index]}" tabindex="0">
+						const str = `
+							<li
+								class="chart__bar"
+								${
+									options?.stacked ?
+										` style="flex-basis: ${
+											(Math.max(0, scale.getProportion(value))) * 100
+										}%;"` :
+										''
+								}
+							>
+							<div
+								class="chart__bar__area"
+								style="
+									${
+										colour ?
+											`background: ${colour}; ` :
+											''
+									}
+									${
+										options?.stacked ?
+											'' :
+											`flex-basis: ${
+												(Math.max(0, scale.getProportion(value))) * 100
+											}%;`
+									}" data-value="${value}"
+									tabindex="0"
+							>
 								<div class="chart__bar__tooltip">
 									${groupName} ${label}: ${
 										options?.y?.format ?
 											options.y.format instanceof Intl.NumberFormat ?
-												options.y.format.format(group[index]) :
-												options.y.format(group[index])
+												options.y.format.format(value) :
+												options.y.format(value)
 											:
-											group[index]
+											value
 									}
 								</div>
 							</div>
@@ -41,8 +67,7 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 						return str;
 					}).join('')}
 				</ul>
-			</li>
-			`).join('')}
+			</li>`).join('')}
 		</ul>
 	`;
 }

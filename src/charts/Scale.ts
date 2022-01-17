@@ -109,8 +109,17 @@ function getMinMaxFromChartData(options: ChartData): [number, number] {
 
 	const { groups } = options;
 
-	// Use `as number[]` here so TypeScript doesn't complain when using Array.prototype.concat
-	const allValues: number[] = ([] as number[]).concat(...groups);
+	if (!groups.length || !groups[0].length) {
+		throw new TypeError('Cannot extract minimum or maximum values from empty chart data.');
+	}
+
+	let allValues: number[];
+	if ('stacked' in options && options.stacked) {
+		allValues = groups[0].map((el, i) => groups.reduce((sum, group) => sum + group[i], 0));
+	} else {
+		// Use `as number[]` here so TypeScript doesn't complain when using Array.prototype.concat
+		allValues = ([] as number[]).concat(...groups);
+	}
 
 	if (typeof options.min === 'undefined') {
 		min = Math.min(...allValues);

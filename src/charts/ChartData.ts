@@ -8,6 +8,8 @@ export type ChartData<GroupName extends string = string> = {
 
 	min?: number,
 	max?: number,
+
+	stacked?: boolean,
 };
 
 export function getChartData<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: ChartOptions<GroupName>): ChartData<GroupName> {
@@ -50,6 +52,10 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		groupNames: numberValueGroupNames,
 		groups: numberValueGroups,
 	};
+
+	if (options && 'stacked' in options) {
+		chartData.stacked = options.stacked;
+	}
 
 	return chartData;
 }
