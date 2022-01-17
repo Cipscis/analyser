@@ -51,7 +51,7 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 									tabindex="0"
 							>
 								<div class="chart__bar__tooltip">
-									${groupName} ${label}: ${
+									${groups.length > 1 ? groupName : ''} ${label}: ${
 										options?.y?.format ?
 											options.y.format instanceof Intl.NumberFormat ?
 												options.y.format.format(value) :
