@@ -93,7 +93,7 @@ function getMinMax(options: ScaleOptions | ChartData, chartOptions?: ChartOption
 	if (type && chartOptions) {
 		const axisOptions = chartOptions[type];
 		if (axisOptions && ('min' in axisOptions || 'max' in axisOptions || 'values' in axisOptions)) {
-			[min, max] = getMinMaxFromChartOptions(axisOptions, min, max);
+			[min, max] = getMinMaxFromAxisOptions(axisOptions, min, max);
 		}
 	}
 
@@ -150,7 +150,7 @@ function getMinMaxFromScaleOptions(options: ScaleOptions): [number, number] {
  * directly from the options or calculating them from the highest order of magnitude
  * and, if specified, the number of values that needs to display on an axis.
  */
-function getMinMaxFromChartOptions(axisOptions: AxisOptionsQuantitative, min: number, max: number): [number, number] {
+function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: number, max: number): [number, number] {
 	let autoAllowed = true;
 	if (axisOptions) {
 		if (
