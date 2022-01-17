@@ -11,11 +11,13 @@
 		"y chart"
 		". x";
 
-	grid-template-columns: calc(1em + 10ch) 1fr;
+	grid-template-columns: calc(1em + 11ch) 1fr;
 }
 
 .chart__title {
 	display: block;
+
+	margin-bottom: 1.5em;
 }
 
 .chart__area {
@@ -23,6 +25,7 @@
 	aspect-ratio: 16 / 9;
 
 	position: relative;
+	isolation: isolate;
 }
 
 ///////////
@@ -106,6 +109,7 @@
 
 	width: 100%;
 	text-align: right;
+	padding-right: 1ch;
 }
 
 .chart__x-axis {
@@ -228,10 +232,12 @@
 }
 
 .chart__bar__tooltip {
-	display: none;
-	.chart__bar__area:hover &,
-	.chart__bar__area:focus & {
-		display: block;
+	.chart__bar__area:not(:hover):not(:focus) & {
+		@include sr-only;
+	}
+	.chart__bar__area:hover & {
+		// Ensure anything being hovered over is on top
+		z-index: 2;
 	}
 
 	position: absolute;

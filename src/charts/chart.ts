@@ -5,7 +5,7 @@ import { Scale } from './Scale.js';
 
 export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
 	return `
-		<div class="chart">
+		<figure class="chart">
 			${options?.label ? title(options) : ''}
 
 			<div class="chart__area">
@@ -19,12 +19,12 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 			${yAxis(chartData, options)}
 
 			${xAxis(chartData, options)}
-		</div>
+		</figure>
 	`;
 }
 
 function title<GroupName extends string>(options: ChartOptions<GroupName>): string {
-	return `<h2 class="chart__title">${options.label}</h2>`;
+	return `<figcaption class="chart__title">${options.label}</figcaption>`;
 }
 
 function legend<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
