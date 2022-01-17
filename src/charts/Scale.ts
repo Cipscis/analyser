@@ -220,7 +220,7 @@ function getMinMaxFromChartOptions(axisOptions: AxisOptionsQuantitative, min: nu
 					// greatest power of 10 below the largest one beneath max.
 					// Also, ensure max is greater than min
 					const valuePower = maxPower - 1;
-					let valueRoundTo = Math.pow(10, valuePower) * axisOptions.values;
+					let valueRoundTo = Math.pow(10, valuePower) * (axisOptions.values - 1);
 
 					// If that power is negative, JavaScript can run into issues
 					// to do with numbers like 0.1 being unable to be represented in binary.
