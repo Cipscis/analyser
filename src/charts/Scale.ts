@@ -151,15 +151,14 @@ function getMinMaxFromScaleOptions(options: ScaleOptions): [number, number] {
  * and, if specified, the number of values that needs to display on an axis.
  */
 function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: number, max: number): [number, number] {
-	let autoAllowed = true;
 	if (axisOptions) {
 		if (
 			(Array.isArray(axisOptions.values) && axisOptions.values.length) ||
 			(Array.isArray(axisOptions.gridlines) && axisOptions.gridlines.length)
 		) {
-			// If all the axis values or gridlines are specified, they determine can extends
-			// min and/or max past the values already determined. This prevents 'auto' determination
-			autoAllowed = false;
+			// If all the axis values or gridlines are specified,
+			// the values they determine can extend min and/or max
+			// past the values already determined.
 
 			let allValues: number[] = [];
 			if (Array.isArray(axisOptions.values)) {
@@ -175,7 +174,7 @@ function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: num
 		if ('min' in axisOptions) {
 			if (typeof axisOptions.min === 'number') {
 				min = axisOptions.min;
-			} else if (autoAllowed && axisOptions.min === 'auto') {
+			} else if (axisOptions.min === 'auto') {
 				// Determine highest power of 10 within min and max
 				const maxPower = Math.floor(
 					Math.log10(
@@ -200,7 +199,7 @@ function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: num
 		if ('max' in axisOptions) {
 			if (typeof axisOptions.max === 'number') {
 				max = axisOptions.max;
-			} else if (autoAllowed && axisOptions.max === 'auto') {
+			} else if (axisOptions.max === 'auto') {
 				// Determine highest power of 10 within min and max
 				const maxPower = Math.floor(
 					Math.log10(
