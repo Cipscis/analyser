@@ -99,11 +99,11 @@ const analyse = async function () {
 
 		y: {
 			label: 'population',
-			values: 9,
+			values: 8,
 			// values: [0, 1000, 6000],
 			// gridlines: [0, 1000, 6000],
 			// gridlines: [],
-			gridlines: 5,
+			gridlines: 4,
 
 			format: new Intl.NumberFormat('en-NZ', {
 				useGrouping: true,

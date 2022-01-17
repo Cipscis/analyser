@@ -117,7 +117,7 @@ function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
 	if (typeof axisOptions?.values !== 'undefined') {
 		if (typeof axisOptions.values === 'number') {
-			const numValues = axisOptions.values;
+			const numValues = axisOptions.values + 1;
 			return scale.getSeries(numValues);
 		} else {
 			return axisOptions.values;
@@ -130,7 +130,7 @@ function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): num
 function getAxisGridlines(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
 	if (typeof axisOptions?.gridlines !== 'undefined') {
 		if (typeof axisOptions.gridlines === 'number') {
-			const numValues = axisOptions.gridlines;
+			const numValues = axisOptions.gridlines + 1;
 			return scale.getSeries(numValues);
 		} else {
 			return axisOptions.gridlines;
