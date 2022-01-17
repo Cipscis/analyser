@@ -40,7 +40,29 @@
 	top: 0;
 	right: 0;
 
-	border: 1px solid gray;
+	padding: 0.2em 0.4em;
+	border: 1px solid currentColor;
+}
+
+// .chart__legend__title {}
+
+.chart__legend__items {
+	@include list-reset;
+}
+
+.chart__legend__item {
+	display: flex;
+	align-items: center;
+}
+
+.chart__legend__item__swatch {
+	width: 1em;
+	height: 1em;
+	margin-right: 1em;
+}
+
+.chart__legend__item__name {
+	word-wrap: nowrap;
 }
 
 //////////
@@ -70,7 +92,8 @@
 
 	border-right: 1px solid black;
 	margin-top: -1px;
-	height: calc(100% + 2px); // Extra 2px to make gridline and axis borders align
+	// Extra 2px to make gridline and axis borders align
+	height: calc(100% + 2px);
 
 	position: relative;
 }

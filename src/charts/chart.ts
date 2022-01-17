@@ -30,13 +30,16 @@ function title<GroupName extends string>(options: ChartOptions<GroupName>): stri
 function legend<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	return `
 		<div class="chart__legend">
-			<span>Legend</span>
+			<span class="chart__legend__title">Legend</span>
 
-			<ul>
+			<ul class="chart__legend__items">
 				${chartData.groupNames.map((groupName, index) => {
 					const colour = options?.colours && options.colours[groupName];
 
-					const str = `<span${colour ? ` style="color: ${colour};"` : ''}>${groupName}</span>`;
+					const str = `<li class="chart__legend__item">
+						<span class="chart__legend__item__swatch"${colour ? ` style="background-color: ${colour};"` : ''}></span>
+						<span class="chart__legend__item__name">${groupName}</span>
+					</li>`;
 					return str;
 				}).join('')}
 			</ul>

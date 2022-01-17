@@ -6,8 +6,6 @@ import { Scale } from './Scale.js';
 
 import { chart as renderChart } from './chart.js';
 
-import * as statistics from '../statistics.js';
-
 function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: BarChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
 	const { colours } = options || {};
