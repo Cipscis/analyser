@@ -171,93 +171,89 @@ function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: num
 			max = Math.max(max, ...allValues);
 		}
 
-		if ('min' in axisOptions) {
-			if (typeof axisOptions.min === 'number') {
-				min = axisOptions.min;
-			} else if (axisOptions.min === 'auto') {
-				// Determine highest power of 10 within min and max
-				const maxPower = Math.floor(
-					Math.log10(
-						Math.max(
-							Math.abs(max),
-							Math.abs(min),
-						)
+		if (typeof axisOptions.min === 'number') {
+			min = axisOptions.min;
+		} else if (axisOptions.min === 'auto' || typeof axisOptions.min === 'undefined') {
+			// Determine highest power of 10 within min and max
+			const maxPower = Math.floor(
+				Math.log10(
+					Math.max(
+						Math.abs(max),
+						Math.abs(min),
 					)
-				);
+				)
+			);
 
-				// Round down min to nearest multiple of that power of 10
-				const widthRoundTo = Math.pow(10, maxPower);
-				min = Math.floor(min / widthRoundTo) * widthRoundTo;
+			// Round down min to nearest multiple of that power of 10
+			const widthRoundTo = Math.pow(10, maxPower);
+			min = Math.floor(min / widthRoundTo) * widthRoundTo;
 
-				// If the power was negative, fix any floating point issues that may have arisen
-				if (maxPower < 0) {
-					min = +(min.toFixed(-maxPower));
-				}
+			// If the power was negative, fix any floating point issues that may have arisen
+			if (maxPower < 0) {
+				min = +(min.toFixed(-maxPower));
 			}
 		}
 
-		if ('max' in axisOptions) {
-			if (typeof axisOptions.max === 'number') {
-				max = axisOptions.max;
-			} else if (axisOptions.max === 'auto') {
-				// Determine highest power of 10 within min and max
-				const maxPower = Math.floor(
-					Math.log10(
-						Math.max(
-							Math.abs(max),
-							Math.abs(min),
-						)
+		if (typeof axisOptions.max === 'number') {
+			max = axisOptions.max;
+		} else if (axisOptions.max === 'auto' || typeof axisOptions.max === 'undefined') {
+			// Determine highest power of 10 within min and max
+			const maxPower = Math.floor(
+				Math.log10(
+					Math.max(
+						Math.abs(max),
+						Math.abs(min),
 					)
-				);
+				)
+			);
 
-				// Subtract min so we're working directly with the width
-				max -= min;
+			// Subtract min so we're working directly with the width
+			max -= min;
 
-				// Round up max to nearest multiple of that power of 10
-				let widthRoundTo = Math.pow(10, maxPower);
-				max = Math.ceil(max / widthRoundTo) * widthRoundTo;
+			// Round up max to nearest multiple of that power of 10
+			let widthRoundTo = Math.pow(10, maxPower);
+			max = Math.ceil(max / widthRoundTo) * widthRoundTo;
 
-				// If the number of values to be displayed has been set
-				if (typeof axisOptions.values === 'number') {
-					// Only integers are accepted
-					if (Number.isInteger(axisOptions.values) === false) {
-						throw new TypeError(`axisOptions.values must be an integer.`);
-					}
+			// If the number of values to be displayed has been set
+			if (typeof axisOptions.values === 'number') {
+				// Only integers are accepted
+				if (Number.isInteger(axisOptions.values) === false) {
+					throw new TypeError(`axisOptions.values must be an integer.`);
+				}
 
-					// Continue to increase max until it is a multiple of the next
-					// greatest power of 10 below the largest one beneath max.
-					// Also, ensure max is greater than min
-					const valuePower = maxPower - 1;
-					let valueRoundTo = Math.pow(10, valuePower) * axisOptions.values;
+				// Continue to increase max until it is a multiple of the next
+				// greatest power of 10 below the largest one beneath max.
+				// Also, ensure max is greater than min
+				const valuePower = maxPower - 1;
+				let valueRoundTo = Math.pow(10, valuePower) * axisOptions.values;
 
-					// If that power is negative, JavaScript can run into issues
-					// to do with numbers like 0.1 being unable to be represented in binary.
-					// So multiply everything by that power and round it, then divide and fix at the end
-					if (valuePower < 0) {
-						valueRoundTo = Math.round(valueRoundTo / Math.pow(10, valuePower));
-						widthRoundTo = Math.round(widthRoundTo / Math.pow(10, valuePower));
-						max = Math.round(max / Math.pow(10, valuePower));
-					}
+				// If that power is negative, JavaScript can run into issues
+				// to do with numbers like 0.1 being unable to be represented in binary.
+				// So multiply everything by that power and round it, then divide and fix at the end
+				if (valuePower < 0) {
+					valueRoundTo = Math.round(valueRoundTo / Math.pow(10, valuePower));
+					widthRoundTo = Math.round(widthRoundTo / Math.pow(10, valuePower));
+					max = Math.round(max / Math.pow(10, valuePower));
+				}
 
-					for (let iterations = 0; iterations < 1000; iterations++) {
-						let remainder = max % valueRoundTo;
+				for (let iterations = 0; iterations < 1000; iterations++) {
+					let remainder = max % valueRoundTo;
 
-						if (remainder === 0 && max > 0) {
-							break;
-						} else {
-							max += widthRoundTo;
-						}
-					}
-
-					// If we muliplied everything earlier, undo that now then fix any floating point issues
-					if (valuePower < 0) {
-						max = +(max * Math.pow(10, valuePower)).toFixed(-valuePower);
+					if (remainder === 0 && max > 0) {
+						break;
+					} else {
+						max += widthRoundTo;
 					}
 				}
 
-				// Add min back to convert width back to max
-				max += min;
+				// If we muliplied everything earlier, undo that now then fix any floating point issues
+				if (valuePower < 0) {
+					max = +(max * Math.pow(10, valuePower)).toFixed(-valuePower);
+				}
 			}
+
+			// Add min back to convert width back to max
+			max += min;
 		}
 	}
 

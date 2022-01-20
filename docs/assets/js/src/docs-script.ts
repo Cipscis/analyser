@@ -111,8 +111,8 @@ const analyse = async function () {
 			}),
 			// format: (value: number) => value.toFixed(2),
 
-			max: 'auto',
-			min: 'auto',
+			// max: 'auto',
+			// min: 'auto',
 			// max: 6500,
 			// min: -1000,
 		},
