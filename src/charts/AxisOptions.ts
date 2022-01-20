@@ -2,7 +2,9 @@ interface AxisOptionsBase {
 	title?: string,
 }
 
-export interface AxisOptionsQualitative extends AxisOptionsBase {}
+export interface AxisOptionsQualitative extends AxisOptionsBase {
+	labels?: string[],
+}
 
 export interface AxisOptionsQuantitative extends AxisOptionsBase {
 	values?: number | number[],

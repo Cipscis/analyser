@@ -118,6 +118,7 @@ const analyse = async function () {
 		},
 		x: {
 			title: 'City',
+			labels: ['Sydney', 'Hamburg', 'Auckland', 'Wellington', 'Christchurch', 'Hamilton', 'Nothing'],
 		},
 
 		stacked: true,
