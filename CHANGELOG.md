@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 * Processing
 * * Allow combining sets of processed data
 
+* Charting
+* * Line graphs
+
 ### Added
 
 * Initial release
