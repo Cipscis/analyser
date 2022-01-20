@@ -6,7 +6,7 @@ import { Scale } from './Scale.js';
 export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
 	return `
 		<figure class="chart">
-			${options?.label ? title(options) : ''}
+			${options?.title ? title(options) : ''}
 
 			<div class="chart__area">
 				${options?.legend ? legend(chartData, options) : ''}
@@ -24,7 +24,7 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 }
 
 function title<GroupName extends string>(options: ChartOptions<GroupName>): string {
-	return `<figcaption class="chart__title">${options.label}</figcaption>`;
+	return `<figcaption class="chart__title">${options.title}</figcaption>`;
 }
 
 function legend<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
@@ -56,8 +56,8 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 	// Render axis based on scale
 	return `
 	<div class="chart__y-axis">
-		${axisOptions?.label ? `
-		<span class="chart__y-axis__label">${axisOptions.label}</span>
+		${axisOptions?.title ? `
+		<span class="chart__y-axis__label">${axisOptions.title}</span>
 		` : ''}
 
 		<ul class="chart__y-axis__value-list">
@@ -84,8 +84,8 @@ function xAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 	// For each label, render that label
 	return `
 	<div class="chart__x-axis">
-		${axisOptions?.label ? `
-		<span class="chart__x-axis__label">${axisOptions.label}</span>
+		${axisOptions?.title ? `
+		<span class="chart__x-axis__label">${axisOptions.title}</span>
 		` : ''}
 		<ul class="chart__x-axis__value-list">
 			${labels.map((label) => `

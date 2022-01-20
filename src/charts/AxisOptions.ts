@@ -1,5 +1,5 @@
 interface AxisOptionsBase {
-	label?: string,
+	title?: string,
 }
 
 export interface AxisOptionsQualitative extends AxisOptionsBase {}

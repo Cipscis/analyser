@@ -1,7 +1,7 @@
 import { AxisOptions, AxisOptionsQualitative, AxisOptionsQuantitative } from './AxisOptions.js';
 
 interface BaseChartOptions<GroupName extends string = string, XAxisType extends AxisOptions = AxisOptions> {
-	label?: string,
+	title?: string,
 	legend?: boolean,
 
 	colours?: Partial<Record<GroupName, string>>,

@@ -89,7 +89,7 @@ const analyse = async function () {
 	});
 	const nameChartHtml = analyser.bar(nameGroupSummary,
 	{
-		label: 'Chart grouped by name',
+		title: 'Chart grouped by name',
 		legend: true,
 
 		colours: {
@@ -98,7 +98,7 @@ const analyse = async function () {
 		},
 
 		y: {
-			label: 'population',
+			title: 'population',
 			values: 8,
 			// values: [0, 1000, 6000],
 			// gridlines: [0, 1000, 6000],
@@ -117,7 +117,7 @@ const analyse = async function () {
 			// min: -1000,
 		},
 		x: {
-			label: 'City',
+			title: 'City',
 		},
 
 		stacked: true,
@@ -131,7 +131,7 @@ const analyse = async function () {
 	});
 	const populationChartHtml = analyser.bar(populationGroupSummary,
 	{
-		label: 'Chart grouped by population',
+		title: 'Chart grouped by population',
 		legend: true,
 
 		colours: {
