@@ -1,12 +1,12 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
-import { BarChartOptions } from './ChartOptions.js';
+import { LineChartOptions } from './ChartOptions.js';
 
 import { ChartData, getChartData } from './ChartData.js';
 import { Scale } from './Scale.js';
 
 import { chart as renderChart, tooltip as renderTooltip } from './chart.js';
 
-function renderLines<GroupName extends string>(chartData: ChartData<GroupName>, options?: BarChartOptions<GroupName>): string {
+function renderLines<GroupName extends string>(chartData: ChartData<GroupName>, options?: LineChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
 	const { colours } = options || {};
 	const scale = new Scale(chartData, options, 'y');
@@ -67,7 +67,7 @@ function renderLines<GroupName extends string>(chartData: ChartData<GroupName>, 
 	`;
 }
 
-export function line<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: BarChartOptions<GroupName>) {
+export function line<GroupName extends string>(summary: AnalyserSummary<GroupName>, options?: LineChartOptions<GroupName>) {
 	const chartData = getChartData(summary, options);
 	const lines = renderLines(chartData, options);
 

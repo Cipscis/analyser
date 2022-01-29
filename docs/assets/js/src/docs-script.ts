@@ -156,6 +156,12 @@ const analyse = async function () {
 					maximumFractionDigits: 0,
 				}),
 			},
+
+			x: {
+				title: 'x axis',
+				values: 8,
+				gridlines: [1, 4],
+			},
 		}
 	);
 

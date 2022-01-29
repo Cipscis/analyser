@@ -10,8 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 * * Allow combining sets of processed data
 
 * Charting
-* * Line graph x axis label position
-* * Line graph quantitative axis
+* * Allow dates to be used on quantitative x axis (e.g. for line charts)
 * * Clean up labels of groups of continuous data
 * * Allow customisation of how labels are displayed
 

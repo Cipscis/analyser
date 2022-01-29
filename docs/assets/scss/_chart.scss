@@ -77,11 +77,16 @@
 	grid-area: y;
 	position: relative;
 
+	border-right: 1px solid black;
 	// Padding to leave space for axis label
 	padding-left: 1em;
+
+	margin-top: -1px;
+	// Extra 2px to make gridline and axis borders align
+	height: calc(100% + 2px);
 }
 
-.chart__y-axis__label {
+.chart__y-axis__title {
 	position: absolute;
 	top: 50%;
 	right: 100%;
@@ -94,11 +99,7 @@
 
 .chart__y-axis__value-list {
 	@include list-reset;
-
-	border-right: 1px solid black;
-	margin-top: -1px;
-	// Extra 2px to make gridline and axis borders align
-	height: calc(100% + 2px);
+	height: 100%;
 
 	position: relative;
 }
@@ -118,39 +119,63 @@
 	grid-area: x;
 	position: relative;
 
+	border-top: 1px solid black;
 	// Padding to leave space for axis label
 	padding-bottom: 1em;
+
+	margin-left: -1px;
+	// Extra 2px to make gridline and axis borders align
+	width: calc(100% + 2px);
 }
 
-.chart__x-axis__label {
+.chart__x-axis__title {
 	position: absolute;
 	top: 100%;
 	right: 50%;
-	transform: translate(-50%, -100%);
+
+	transform: translate(50%, -100%);
 
 	line-height: 1;
 }
 
-.chart__x-axis__value-list {
+// Labels are for qualitative axes
+.chart__x-axis__label-list {
 	@include list-reset;
 
 	display: flex;
 	justify-content: space-between;
-
-	border-top: 1px solid black;
 }
 
-.chart__x-axis__value {
+.chart__x-axis__label {
 	flex: 1 1 0;
 	width: 0;
 
 	text-align: center;
 }
 
+// Values are for quantitative axes
+.chart__x-axis__value-list {
+	@include list-reset;
+	height: 1.5em; // Line height of values
+
+	position: relative;
+}
+
+.chart__x-axis__value {
+	position: absolute;
+	top: 0;
+
+	transform: translateX(-50%);
+
+	text-align: center;
+	line-height: 1.5;
+}
+
 ///////////////
 // GRIDLINES //
 ///////////////
-.chart__y-gridlines {
+.chart__y-gridlines,
+.chart__x-gridlines {
 	@include list-reset;
 
 	position: absolute;
@@ -159,15 +184,27 @@
 
 	width: 100%;
 	height: 100%;
+
+	// Gridlines go behind everything else and are not interactive
+	pointer-events: none;
+	z-index: -1;
+}
+
+.chart__y-gridline,
+.chart__x-gridline {
+	position: absolute;
+	background: gray;
 }
 
 .chart__y-gridline {
-	position: absolute;
 	left: 0;
 	width: 100%;
-
 	height: 1px;
-	background: gray;
+}
+.chart__x-gridline {
+	top: 0;
+	height: 100%;
+	width: 1px;
 }
 
 //////////////

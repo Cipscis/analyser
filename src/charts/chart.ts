@@ -1,6 +1,6 @@
 import { ChartData } from './ChartData.js';
-import { ChartOptions } from './ChartOptions.js';
-import { AxisOptionsQuantitative } from './AxisOptions.js';
+import { BaseChartOptions, ChartOptions } from './ChartOptions.js';
+import { AxisOptionsQualitative, AxisOptionsQuantitative } from './AxisOptions.js';
 import { Scale } from './Scale.js';
 
 export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
@@ -12,6 +12,8 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 				${options?.legend ? legend(chartData, options) : ''}
 
 				${yGridlines(chartData, options)}
+
+				${xGridlines(chartData, options)}
 
 				${contents}
 			</div>
@@ -48,16 +50,16 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 }
 
 function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
-	const scale = new Scale(chartData, options, 'y');
-
 	const axisOptions = options?.y;
+
+	const scale = new Scale(chartData, options, 'y');
 	const values: number[] = getAxisValues(scale, axisOptions);
 
 	// Render axis based on scale
 	return `
 	<div class="chart__y-axis">
 		${axisOptions?.title ? `
-		<span class="chart__y-axis__label">${axisOptions.title}</span>
+		<span class="chart__y-axis__title">${axisOptions.title}</span>
 		` : ''}
 
 		<ul class="chart__y-axis__value-list">
@@ -78,20 +80,64 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 
 function xAxis<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const axisOptions = options?.x;
+	if (axisOptions) {
+		// AxisOptions has no required values, so we can only be certain what axis type we're dealing with if labels or values is specified
+		if ('labels' in axisOptions) {
+			return xAxisQualitative(chartData, options);
+		} else if ('values' in axisOptions) {
+			return xAxisQuantitative(chartData, options);
+		}
+	}
+
+	return xAxisMinimal(chartData, options);
+}
+
+function xAxisQualitative<GroupName extends string>(chartData: ChartData<GroupName>, options?: BaseChartOptions<GroupName, AxisOptionsQuantitative>): string {
+	const axisOptions = options?.x;
 
 	const { labels } = chartData;
 
 	// For each label, render that label
 	return `
 	<div class="chart__x-axis">
-		${axisOptions?.title ? `
-		<span class="chart__x-axis__label">${axisOptions.title}</span>
-		` : ''}
+		${axisOptions?.title ? `<span class="chart__x-axis__title">${axisOptions.title}</span>` : ''}
+		<ul class="chart__x-axis__label-list">
+			${labels.map((label) => `<li class="chart__x-axis__label">${label}</li>`).join('')}
+		</ul>
+	</div>`;
+}
+
+function xAxisQuantitative<GroupName extends string>(chartData: ChartData<GroupName>, options?: BaseChartOptions<GroupName, AxisOptionsQuantitative>): string {
+	const axisOptions = options?.x;
+
+	const scale = new Scale(chartData, options, 'x');
+	const values: number[] = getAxisValues(scale, axisOptions);
+
+	return `
+	<div class="chart__x-axis">
+		${axisOptions?.title ? `<span class="chart__x-axis__title">${axisOptions.title}</span>` : ''}
 		<ul class="chart__x-axis__value-list">
-			${labels.map((label) => `
-			<li class="chart__x-axis__value">${label}</li>
+			${values.map((val) => `
+			<li class="chart__x-axis__value" style="left: ${Math.max(0, scale.getProportion(val)) * 100}%;">
+				${axisOptions?.format ?
+					axisOptions.format instanceof Intl.NumberFormat ?
+						axisOptions.format.format(val) :
+						axisOptions.format(val)
+					:
+					val
+				}
+			</li>
 			`).join('')}
 		</ul>
+	</div>`;
+}
+
+function xAxisMinimal<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
+	const axisOptions = options?.x;
+
+	return `
+	<div class="chart__x-axis">
+		${axisOptions?.title ? `<span class="chart__x-axis__title">${axisOptions.title}</span>` : ''}
 	</div>`;
 }
 
@@ -115,6 +161,32 @@ function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 			}).join('')}
 		</ul>
 	`;
+}
+
+function xGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
+	const axisOptions = options?.x;
+
+	if (axisOptions && ('values' in axisOptions || 'gridlines' in axisOptions)) {
+		const scale = new Scale(chartData, options, 'x');
+		const values: number[] = getAxisGridlines(scale, axisOptions);
+
+		// Render gridlines based on scale
+		return `
+			<ul class="chart__x-gridlines" role="presentation">
+				${values.map((val, index) => {
+					// Only render the first gridline if it's above the minimum number,
+					// since that line is already drawn by the y axis
+					const gridlines = (index > 0 || val > scale.min) ? `
+						<li class="chart__x-gridline" style="left: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>` :
+						'';
+
+					return gridlines
+				}).join('')}
+			</ul>
+		`;
+	} else {
+		return '';
+	}
 }
 
 export function tooltip<GroupName extends string>(chartData: ChartData<GroupName>, group: number[], label: string, options?: ChartOptions<GroupName>): string {

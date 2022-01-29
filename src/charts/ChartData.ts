@@ -19,8 +19,8 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 	// Extract the labels and convert them to strings
 	let labels = valueRows.map((row) => row[0] + '');
 
-	// If labels were limited on x axis options
-	if (options?.x?.labels) {
+	// If the x axis is qualitative, and its labels were limited in its options
+	if (options?.x && 'labels' in options.x && options.x.labels) {
 		// Remove any labels not specified in the axis options
 		for (let i = 0; i < labels.length; i++) {
 			const label = labels[i];
