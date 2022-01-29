@@ -15,4 +15,7 @@ export type BarChartOptions<GroupName extends string> = BaseChartOptions<GroupNa
 	stacked?: boolean;
 };
 
-export type ChartOptions<GroupName extends string = string> = BarChartOptions<GroupName>;
+// TODO: Allow quantitative axes
+export type LineChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQualitative>;
+
+export type ChartOptions<GroupName extends string = string> = BarChartOptions<GroupName> | LineChartOptions<GroupName>;

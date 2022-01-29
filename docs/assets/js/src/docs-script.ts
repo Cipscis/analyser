@@ -87,7 +87,7 @@ const analyse = async function () {
 		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
 		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
 	});
-	const nameChartHtml = analyser.bar(nameGroupSummary,
+	const barChartHtml = analyser.bar(nameGroupSummary,
 	{
 		title: 'Chart grouped by name',
 		legend: true,
@@ -124,27 +124,44 @@ const analyse = async function () {
 		stacked: true,
 	});
 
-	const populationGroup = group(rows, cols.POPULATION, 6);
-	const populationGroupSummary = populationGroup.summarise({
-		population: (rows) => sum(rows.getCol(cols.POPULATION) as number[]),
-		pop_half: (rows) => sum(rows.getCol(cols.POPULATION) as number[]) / 2,
-		not_number: (rows) => `${rows.length}`,
-	});
-	const populationChartHtml = analyser.bar(populationGroupSummary,
-	{
-		title: 'Chart grouped by population',
-		legend: true,
+	const $barChart = document.getElementById('bar-chart');
+	if ($barChart) {
+		$barChart.innerHTML = barChartHtml;
+	}
 
-		colours: {
-			population: 'blue',
-			pop_half: 'red',
-		},
-	});
+	const lineChartHtml = analyser.line(
+		[
+			[, 'Line 1', 'Line 2'],
+			['1', 0, 50],
+			['2', 10, 40],
+			['3', 25, 20],
+			['4', 50, 15],
+			['5', 30, 30],
+		],
+		{
+			title: 'Chart grouped by population',
+			legend: true,
 
-	const $chartExample = document.getElementById('chart-example');
-	if ($chartExample) {
-		$chartExample.innerHTML = nameChartHtml;
-		// $chartExample.innerHTML = populationChartHtml;
+			colours: {
+				'Line 1': 'blue',
+				'Line 2': 'red',
+			},
+
+			y: {
+				title: 'population',
+				values: 5,
+
+				format: new Intl.NumberFormat('en-NZ', {
+					useGrouping: true,
+					maximumFractionDigits: 0,
+				}),
+			},
+		}
+	);
+
+	const $lineChart = document.getElementById('line-chart');
+	if ($lineChart) {
+		$lineChart.innerHTML = lineChartHtml;
 	}
 };
 

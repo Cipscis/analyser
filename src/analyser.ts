@@ -25,3 +25,4 @@ export { getColNumber, getColNumbers } from './helpers.js';
 // GRAPHING //
 //////////////
 export { bar } from './charts/bar.js';
+export { line } from './charts/line.js';

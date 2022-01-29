@@ -4,7 +4,7 @@ import { BarChartOptions } from './ChartOptions.js';
 import { ChartData, getChartData } from './ChartData.js';
 import { Scale } from './Scale.js';
 
-import { chart as renderChart } from './chart.js';
+import { chart as renderChart, tooltip as renderTooltip } from './chart.js';
 
 function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, options?: BarChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
@@ -50,16 +50,7 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 									}" data-value="${value}"
 									tabindex="0"
 							>
-								<div class="chart__bar__tooltip">
-									${groups.length > 1 ? groupName : ''} ${label}: ${
-										options?.y?.format ?
-											options.y.format instanceof Intl.NumberFormat ?
-												options.y.format.format(value) :
-												options.y.format(value)
-											:
-											value
-									}
-								</div>
+								${renderTooltip(chartData, group, label, options)}
 							</div>
 						</li>`
 						return str;

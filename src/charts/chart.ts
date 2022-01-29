@@ -117,6 +117,37 @@ function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 	`;
 }
 
+export function tooltip<GroupName extends string>(chartData: ChartData<GroupName>, group: number[], label: string, options?: ChartOptions<GroupName>): string {
+	const { labels, groups, groupNames } = chartData;
+	const groupIndex = groups.indexOf(group);
+	if (groupIndex === -1) {
+		throw new Error(`Cannot render tooltip: unrecognised group`);
+	}
+
+	const groupName = groupNames[groupIndex];
+
+	const labelIndex = labels.indexOf(label);
+	if (labelIndex === -1) {
+		throw new Error(`Cannot render tooltip: unrecognised label`);
+	}
+
+	const value = group[labelIndex];
+
+	const str = `
+	<div class="chart__tooltip">
+		${groups.length > 1 ? groupName : ''} ${label}: ${
+			options?.y?.format ?
+				options.y.format instanceof Intl.NumberFormat ?
+					options.y.format.format(value) :
+					options.y.format(value)
+				:
+				value
+		}
+	</div>`;
+
+	return str;
+}
+
 function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
 	if (typeof axisOptions?.values !== 'undefined') {
 		if (typeof axisOptions.values === 'number') {
