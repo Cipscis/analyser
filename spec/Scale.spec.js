@@ -76,7 +76,7 @@ describe(`Scale`, () => {
 		expect(scale.max).toBe(4841);
 	});
 
-	it(`can have data min and max overridden by AxisOptions from ChartOptions`, () => {
+	it(`can have data min and max overridden by AxisOptions from ChartOptions for a y axis`, () => {
 		const chartData = getChartData(summary);
 
 		const axisOptions = {
@@ -91,6 +91,72 @@ describe(`Scale`, () => {
 
 		expect(scale.min).toBe(axisOptions.min);
 		expect(scale.max).toBe(axisOptions.max);
+	});
+
+	it(`can determine min and max from ChartData labels for an x axis`, () => {
+		const numberSummary = [
+			[, 'Group 1', 'Group 2'],
+			['1', 2, 3],
+			['4', 5, 6],
+			['7', 8, 9],
+		];
+
+		const chartData = getChartData(numberSummary);
+
+		const axisOptions = {};
+		const chartOptions = {
+			x: axisOptions,
+		};
+
+		const scale = new Scale(chartData, chartOptions, 'x');
+
+		expect(scale.min).toBe(1);
+		expect(scale.max).toBe(7);
+	});
+
+	it(`can have data min and max overridden by AxisOptions from ChartOptions for an x axis`, () => {
+		const numberSummary = [
+			[, 'Group 1', 'Group 2'],
+			['1', 2, 3],
+			['4', 5, 6],
+			['7', 8, 9],
+		];
+
+		const chartData = getChartData(numberSummary);
+
+		const axisOptions = {
+			min: -1,
+			max: 10,
+		};
+		const chartOptions = {
+			x: axisOptions,
+		};
+
+		const scale = new Scale(chartData, chartOptions, 'x');
+
+		expect(scale.min).toBe(axisOptions.min);
+		expect(scale.max).toBe(axisOptions.max);
+	});
+
+	it(`throws an error if trying to determine min and max from ChartData labels for an x axis where labels are not numbers`, () => {
+		const numberSummary = [
+			[, 'Group 1', 'Group 2'],
+			['a', 2, 3],
+			['b', 5, 6],
+			['c', 8, 9],
+		];
+
+		const chartData = getChartData(numberSummary);
+
+		const axisOptions = {
+			min: -1,
+			max: 10,
+		};
+		const chartOptions = {
+			x: axisOptions,
+		};
+
+		expect(() => new Scale(chartData, chartOptions, 'x')).toThrowError();
 	});
 
 	it(`can automatically determine min from AxisOptions from ChartOptions`, () => {
