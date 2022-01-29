@@ -89,7 +89,7 @@ const analyse = async function () {
 	});
 	const barChartHtml = analyser.bar(nameGroupSummary,
 	{
-		title: 'Chart grouped by name',
+		title: 'Bar Chart',
 		legend: true,
 
 		colours: {
@@ -139,7 +139,7 @@ const analyse = async function () {
 			['5', 30, 30],
 		],
 		{
-			title: 'Chart grouped by population',
+			title: 'Line Chart',
 			legend: true,
 
 			colours: {

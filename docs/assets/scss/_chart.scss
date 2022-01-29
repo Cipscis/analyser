@@ -12,6 +12,8 @@
 		". x";
 
 	grid-template-columns: calc(1em + 11ch) 1fr;
+
+	isolation: isolate;
 }
 
 .chart__title {
@@ -25,7 +27,7 @@
 	aspect-ratio: 16 / 9;
 
 	position: relative;
-	isolation: isolate;
+	z-index: 1;
 }
 
 ///////////
