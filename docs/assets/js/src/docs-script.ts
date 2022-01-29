@@ -144,7 +144,7 @@ const analyse = async function () {
 
 			colours: {
 				'Line 1': 'blue',
-				'Line 2': 'red',
+				// 'Line 2': 'red',
 			},
 
 			y: {
@@ -159,7 +159,7 @@ const analyse = async function () {
 
 			x: {
 				title: 'x axis',
-				values: 8,
+				values: [0, 2, 4, 6],
 				gridlines: [1, 4],
 			},
 		}
