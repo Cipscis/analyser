@@ -3,7 +3,7 @@ import { AnalyserRows } from './AnalyserRows.js';
 /**
  * A function for summarising a set of AnalyserRows
  */
-type AnalyserSummariser<T = any> = (rows: AnalyserRows) => T;
+type AnalyserSummariser<T = any, G = any> = (rows: AnalyserRows, groupName: G) => T;
 
 /**
  * A group of AnalyserSummariser functions
@@ -58,7 +58,7 @@ export class AnalyserGroup extends Map<any, AnalyserRows> {
 			const summaryRow: [any, ...any[]] = [groupName];
 
 			for (let [, summariser] of Object.entries<AnalyserSummariser>(summarisers)) {
-				const rowSummary = summariser(rows);
+				const rowSummary = summariser(rows, groupName);
 				summaryRow.push(rowSummary);
 			}
 
