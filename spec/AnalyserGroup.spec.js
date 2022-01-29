@@ -123,14 +123,15 @@ describe(`AnalyserGroup`, () => {
 			number: (rows) => rows.length,
 			mean_population: (rows) => statistics.mean(rows.getCol(cols.POPULATION)),
 			max_population: (rows) => Math.max(...rows.getCol(cols.POPULATION)),
+			name: (rows, name) => name,
 		});
 
 		// Summaries of discrete values are sorted
 		expect(summary).toEqual([
-			['Value', 'number', 'mean_population', 'max_population'],
-			['Australia', 1, 4841, 4841],
-			['Germany', 1, 1810, 1810],
-			['New Zealand', 7, 396.94542857142864, 1614],
+			['Value', 'number', 'mean_population', 'max_population', 'name'],
+			['Australia', 1, 4841, 4841, 'Australia'],
+			['Germany', 1, 1810, 1810, 'Germany'],
+			['New Zealand', 7, 396.94542857142864, 1614, 'New Zealand'],
 		]);
 	});
 
