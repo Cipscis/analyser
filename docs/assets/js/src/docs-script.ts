@@ -148,7 +148,7 @@ const analyse = async function () {
 			},
 
 			y: {
-				title: 'population',
+				title: 'y axis',
 				values: 5,
 
 				format: new Intl.NumberFormat('en-NZ', {
