@@ -22,7 +22,7 @@ type DefaultSummaryName = keyof typeof defaultSummarisers;
  * After the first header row, each row represents a set of AnalyserRows grouped by the value given in the first cell.
  * After the first column, each column represents a summary of a group of AnalyserRows. The name of the summary is given in the first cell.
  */
-export type AnalyserSummary<SummaryName extends string> = [['Value', ...SummaryName[]], ...[any, ...any[]][]];
+export type AnalyserSummary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[any, ...any[]][]];
 
 interface AnalyserGroupOptions {
 	discrete?: boolean,
