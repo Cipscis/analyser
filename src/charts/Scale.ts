@@ -156,8 +156,8 @@ function getMinMaxFromChartDataLabels(options: ChartData): [number, number] {
 		throw new TypeError('Cannot extract minimum or maximum values from empty chart data.');
 	}
 
-	const numberLabels = labels.map((label) => +label);
-	if (!labels.every((label, i) => label === ('' + numberLabels[i]))) {
+	const numberLabels = labels.map((label) => typeof label === 'number' ? label : +label);
+	if (!numberLabels.every((label) => isNaN(label) === false)) {
 		throw new TypeError(`Cannot extract minimum or maximum values from labels that aren't all numbers.`);
 	}
 

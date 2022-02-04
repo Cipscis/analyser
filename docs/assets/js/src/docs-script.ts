@@ -132,11 +132,11 @@ const analyse = async function () {
 	const lineChartHtml = analyser.line(
 		[
 			[, 'Line 1', 'Line 2'],
-			['1', 0, 50],
-			['2', 10, 40],
-			['3', 25, 20],
-			['4', 50, 15],
-			['5', 30, 30],
+			[1, 0, 50],
+			[2, 10, 40],
+			[3, 25, 20],
+			[4, 50, 15],
+			[5, 30, 30],
 		],
 		{
 			title: 'Line Chart',

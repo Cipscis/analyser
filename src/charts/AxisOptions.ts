@@ -3,7 +3,7 @@ interface AxisOptionsBase {
 }
 
 export interface AxisOptionsQualitative extends AxisOptionsBase {
-	labels?: string[],
+	labels?: any[],
 }
 
 export interface AxisOptionsQuantitative extends AxisOptionsBase {

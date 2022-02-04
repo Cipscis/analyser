@@ -1,6 +1,6 @@
 import { ChartData } from './ChartData.js';
 import { BaseChartOptions, ChartOptions } from './ChartOptions.js';
-import { AxisOptionsQualitative, AxisOptionsQuantitative } from './AxisOptions.js';
+import { AxisOptionsQuantitative } from './AxisOptions.js';
 import { Scale } from './Scale.js';
 
 export function chart<GroupName extends string>(chartData: ChartData<GroupName>, contents: string, options?: ChartOptions<GroupName>): string {
@@ -65,13 +65,7 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 		<ul class="chart__y-axis__value-list">
 			${values.map((val) => `
 			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">
-				${axisOptions?.format ?
-					axisOptions.format instanceof Intl.NumberFormat ?
-						axisOptions.format.format(val) :
-						axisOptions.format(val)
-					:
-					val
-				}
+				${applyFormat(val, axisOptions?.format)}
 			</li>
 			`).join('')}
 		</ul>
@@ -119,13 +113,7 @@ function xAxisQuantitative<GroupName extends string>(chartData: ChartData<GroupN
 		<ul class="chart__x-axis__value-list">
 			${values.map((val) => `
 			<li class="chart__x-axis__value" style="left: ${Math.max(0, scale.getProportion(val)) * 100}%;">
-				${axisOptions?.format ?
-					axisOptions.format instanceof Intl.NumberFormat ?
-						axisOptions.format.format(val) :
-						axisOptions.format(val)
-					:
-					val
-				}
+				${applyFormat(val, axisOptions?.format)}
 			</li>
 			`).join('')}
 		</ul>
@@ -207,14 +195,7 @@ export function tooltip<GroupName extends string>(chartData: ChartData<GroupName
 
 	const str = `
 	<div class="chart__tooltip">
-		${groups.length > 1 ? groupName : ''} ${label}: ${
-			options?.y?.format ?
-				options.y.format instanceof Intl.NumberFormat ?
-					options.y.format.format(value) :
-					options.y.format(value)
-				:
-				value
-		}
+		${groups.length > 1 ? groupName : ''} ${label}: ${applyFormat(value, options?.y?.format)}
 	</div>`;
 
 	return str;
@@ -243,5 +224,15 @@ function getAxisGridlines(scale: Scale, axisOptions?: AxisOptionsQuantitative): 
 		}
 	} else {
 		return getAxisValues(scale, axisOptions);
+	}
+}
+
+function applyFormat<T extends number>(value: T, format?: Intl.NumberFormat | ((value: number) => string)): string {
+	if (format instanceof Intl.NumberFormat) {
+		return format.format(value);
+	} else if (format) {
+		return format(value);
+	} else {
+		return value.toString();
 	}
 }

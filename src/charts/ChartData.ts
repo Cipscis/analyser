@@ -2,7 +2,7 @@ import { AnalyserSummary } from '../AnalyserGroup.js';
 import { ChartOptions } from './ChartOptions.js';
 
 export type ChartData<GroupName extends string = string> = {
-	labels: string[],
+	labels: any[],
 	groupNames: GroupName[],
 	groups: number[][],
 
@@ -16,8 +16,8 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 	const [[, ...groupNames]] = summary; // Ignore first 'Value' entry in first row
 	let [, ...valueRows] = summary; // Ignore first row of group names
 
-	// Extract the labels and convert them to strings
-	let labels = valueRows.map((row) => row[0] + '');
+	// Extract the labels
+	let labels = valueRows.map((row) => row[0]);
 
 	// If the x axis is qualitative, and its labels were limited in its options
 	if (options?.x && 'labels' in options.x && options.x.labels) {
@@ -42,12 +42,12 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		}
 
 		// Also update order of labels and value rows to match specified label order
-		labels = options.x.labels; //
+		labels = options.x.labels;
 		valueRows = valueRows.sort((rowA, rowB) => {
-			const labelA = rowA[0] + '';
+			const labelA = rowA[0];
 			const indexA = labels.indexOf(labelA);
 
-			const labelB = rowB[0] + '';
+			const labelB = rowB[0];
 			const indexB = labels.indexOf(labelB);
 
 			return indexA - indexB;
