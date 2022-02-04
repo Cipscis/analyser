@@ -105,11 +105,11 @@ const analyse = async function () {
 			// gridlines: [],
 			gridlines: 4,
 
-			format: new Intl.NumberFormat('en-NZ', {
+			numberFormat: new Intl.NumberFormat('en-NZ', {
 				useGrouping: true,
 				maximumFractionDigits: 0,
 			}),
-			// format: (value: number) => value.toFixed(2),
+			// numberFormat: (value: number) => value.toFixed(2),
 
 			// max: 'auto',
 			// min: 'auto',
@@ -151,7 +151,7 @@ const analyse = async function () {
 				title: 'y axis',
 				values: 5,
 
-				format: new Intl.NumberFormat('en-NZ', {
+				numberFormat: new Intl.NumberFormat('en-NZ', {
 					useGrouping: true,
 					maximumFractionDigits: 0,
 				}),
@@ -161,6 +161,8 @@ const analyse = async function () {
 				title: 'x axis',
 				values: [0, 2, 4, 6],
 				gridlines: [1, 4],
+
+				numberFormat: (value: number) => value.toFixed(1),
 			},
 		}
 	);
