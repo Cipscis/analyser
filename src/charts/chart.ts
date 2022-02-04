@@ -96,7 +96,7 @@ function xAxisQualitative<GroupName extends string>(chartData: ChartData<GroupNa
 	<div class="chart__x-axis">
 		${axisOptions?.title ? `<span class="chart__x-axis__title">${axisOptions.title}</span>` : ''}
 		<ul class="chart__x-axis__label-list">
-			${labels.map((label) => `<li class="chart__x-axis__label">${label}</li>`).join('')}
+			${labels.map((label) => `<li class="chart__x-axis__label">${applyFormat(label, axisOptions)}</li>`).join('')}
 		</ul>
 	</div>`;
 }
