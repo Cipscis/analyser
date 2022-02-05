@@ -53,7 +53,7 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 	const axisOptions = options?.y;
 
 	const scale = new Scale(chartData, options, 'y');
-	const values: number[] = getAxisValues(scale, axisOptions);
+	const { values, dates } = getAxisValues(scale, axisOptions);
 
 	// Render axis based on scale
 	return `
@@ -65,7 +65,7 @@ function yAxis<GroupName extends string>(chartData: ChartData<GroupName>, option
 		<ul class="chart__y-axis__value-list">
 			${values.map((val) => `
 			<li class="chart__y-axis__value" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;">
-				${applyFormat(val, axisOptions)}
+				${applyFormat(dates ? new Date(val) : val, axisOptions)}
 			</li>
 			`).join('')}
 		</ul>
@@ -105,7 +105,7 @@ function xAxisQuantitative<GroupName extends string>(chartData: ChartData<GroupN
 	const axisOptions = options?.x;
 
 	const scale = new Scale(chartData, options, 'x');
-	const values: number[] = getAxisValues(scale, axisOptions);
+	const { values, dates } = getAxisValues(scale, axisOptions);
 
 	return `
 	<div class="chart__x-axis">
@@ -113,7 +113,7 @@ function xAxisQuantitative<GroupName extends string>(chartData: ChartData<GroupN
 		<ul class="chart__x-axis__value-list">
 			${values.map((val) => `
 			<li class="chart__x-axis__value" style="left: ${Math.max(0, scale.getProportion(val)) * 100}%;">
-				${applyFormat(val, axisOptions)}
+				${applyFormat(dates ? new Date(val) : val, axisOptions)}
 			</li>
 			`).join('')}
 		</ul>
@@ -133,7 +133,7 @@ function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 	const scale = new Scale(chartData, options, 'y');
 
 	const axisOptions = options?.y;
-	const values: number[] = getAxisGridlines(scale, options?.y);
+	const { values } = getAxisGridlines(scale, options?.y);
 
 	// Render gridlines based on scale
 	return `
@@ -156,7 +156,7 @@ function xGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 
 	if (axisOptions && ('values' in axisOptions || 'gridlines' in axisOptions)) {
 		const scale = new Scale(chartData, options, 'x');
-		const values: number[] = getAxisGridlines(scale, axisOptions);
+		const { values } = getAxisGridlines(scale, axisOptions);
 
 		// Render gridlines based on scale
 		return `
@@ -201,30 +201,75 @@ export function tooltip<GroupName extends string>(chartData: ChartData<GroupName
 	return str;
 }
 
-function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
-	if (typeof axisOptions?.values !== 'undefined') {
-		if (typeof axisOptions.values === 'number') {
-			const numValues = axisOptions.values + 1;
-			return scale.getSeries(numValues);
-		} else {
-			return axisOptions.values;
-		}
-	} else {
-		return scale.getSeries(2);
-	}
+interface AxisValues {
+	values: number[],
+	dates: boolean,
 }
 
-function getAxisGridlines(scale: Scale, axisOptions?: AxisOptionsQuantitative): number[] {
+function getAxisValues(scale: Scale, axisOptions?: AxisOptionsQuantitative): AxisValues {
+	let values: number[];
+	let dates: boolean = false;
+
+	if (typeof axisOptions?.values !== 'undefined') {
+		const axisValues = getAxisValuesBase(scale, axisOptions.values);
+		values = axisValues.values;
+		dates = axisValues.dates;
+	} else {
+		values = scale.getSeries(2);
+	}
+
+	return {
+		values,
+		dates,
+	};
+}
+
+function getAxisGridlines(scale: Scale, axisOptions?: AxisOptionsQuantitative): AxisValues {
+	let values: number[];
+	let dates: boolean = false;
+
 	if (typeof axisOptions?.gridlines !== 'undefined') {
-		if (typeof axisOptions.gridlines === 'number') {
-			const numValues = axisOptions.gridlines + 1;
-			return scale.getSeries(numValues);
+		const axisValues = getAxisValuesBase(scale, axisOptions.gridlines);
+		values = axisValues.values;
+		dates = axisValues.dates;
+	} else {
+		const axisValues = getAxisValues(scale, axisOptions);
+		values = axisValues.values;
+		dates = axisValues.dates;
+	}
+
+	return {
+		values,
+		dates,
+	};
+}
+
+/**
+ * Both axis values and axis gridlines are retrieved in the same way, only with different fallbacks.
+ * This base function contains that shared functionality, including the necessary conversion from
+ * Date to number if the specified values are Dates, while remembering that they were Dates so they
+ * can be converted back to Dates further down the line.
+ */
+function getAxisValuesBase(scale: Scale, axisValues: Exclude<AxisOptionsQuantitative['values'], undefined>): AxisValues {
+	let values: number[];
+	let dates: boolean = false;
+
+	if (typeof axisValues === 'number') {
+		const numValues = axisValues + 1;
+		values = scale.getSeries(numValues);
+	} else if (axisValues.length > 0) {
+		// TODO: I don't understand why the type assertions here are necessary
+		if ((axisValues as unknown[]).every((val: unknown): val is number => typeof val === 'number')) {
+			values = axisValues as number[];
 		} else {
-			return axisOptions.gridlines;
+			dates = true;
+			values = axisValues.map((val) => +val);
 		}
 	} else {
-		return getAxisValues(scale, axisOptions);
+		values = axisValues as [];
 	}
+
+	return { values, dates };
 }
 
 function applyFormat(value: any, axisOptions?: AxisOptionsQuantitative): string {

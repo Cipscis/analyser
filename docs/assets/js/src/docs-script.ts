@@ -133,11 +133,17 @@ const analyse = async function () {
 	const lineChartHtml = analyser.line(
 		[
 			[, 'Line 1', 'Line 2'],
-			[1, 0, 50],
-			[2, 10, 40],
-			[3, 25, 20],
-			[4, 50, 15],
-			[5, 30, 30],
+			[new Date(2022, 2, 1), 0, 50],
+			[new Date(2022, 2, 2), 10, 40],
+			[new Date(2022, 2, 4), 25, 20],
+			[new Date(2022, 2, 5), 50, 15],
+			[new Date(2022, 2, 6), 30, 30],
+
+			// [1, 0, 50],
+			// [2, 10, 40],
+			// [3, 25, 20],
+			// [4, 50, 15],
+			// [5, 30, 30],
 		],
 		{
 			title: 'Line Chart',
@@ -160,10 +166,42 @@ const analyse = async function () {
 
 			x: {
 				title: 'x axis',
-				values: [0, 2, 4, 6],
-				gridlines: [1, 4],
+				// values: 5,
+				values: [
+					new Date(2022, 2, 1),
+					new Date(2022, 2, 2),
+					new Date(2022, 2, 4),
+					new Date(2022, 2, 5),
+					new Date(2022, 2, 6),
+				],
+				// values: [0, 2, 4, 6],
 
-				numberFormat: (value: number) => value.toFixed(1),
+				gridlines: 5,
+				// gridlines: [
+				// 	new Date(2022, 2, 1),
+				// 	new Date(2022, 2, 2),
+				// 	new Date(2022, 2, 3),
+				// 	new Date(2022, 2, 4),
+				// 	new Date(2022, 2, 5),
+				// 	new Date(2022, 2, 6),
+				// ],
+				// gridlines: [1, 4],
+
+				// numberFormat: (value: number) => value.toFixed(1),
+				numberFormat: (value: number) => {
+					const date = new Date(value);
+					const dateString = new Intl.DateTimeFormat('en-NZ', {
+						dateStyle: 'short',
+					}).format(date);
+					const timeString = new Intl.DateTimeFormat('en-NZ', {
+						timeStyle: 'short',
+					}).format(date);
+
+					const dateTimeString = `${dateString} ${timeString}`;
+
+					return dateTimeString;
+				},
+				dateFormat: new Intl.DateTimeFormat('en-NZ'),
 			},
 		}
 	);

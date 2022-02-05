@@ -10,8 +10,8 @@ export interface AxisOptionsQualitative extends AxisOptionsBase {
 }
 
 export interface AxisOptionsQuantitative extends AxisOptionsBase {
-	values?: number | number[],
-	gridlines?: number | number[],
+	values?: number | number[] | Date[],
+	gridlines?: number | number[] | Date[],
 
 	max?: number | 'auto',
 	min?: number | 'auto',

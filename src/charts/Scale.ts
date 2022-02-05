@@ -199,12 +199,13 @@ function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: num
 		// the values they determine can extend min and/or max
 		// past the values already determined.
 
+		// Axis options can specify values as dates, but Scale always works with numbers
 		let allValues: number[] = [];
 		if (Array.isArray(axisOptions.values)) {
-			allValues = allValues.concat(axisOptions.values);
+			allValues = allValues.concat(axisOptions.values.map((val) => +val));
 		}
 		if (Array.isArray(axisOptions.gridlines)) {
-			allValues = allValues.concat(axisOptions.gridlines);
+			allValues = allValues.concat(axisOptions.gridlines.map((val) => +val));
 		}
 		min = Math.min(min, ...allValues);
 		max = Math.max(max, ...allValues);

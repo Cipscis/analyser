@@ -93,7 +93,7 @@ describe(`Scale`, () => {
 		expect(scale.max).toBe(axisOptions.max);
 	});
 
-	it(`can determine min and max from ChartData labels for an x axis`, () => {
+	it(`can determine min and max from string ChartData labels for an x axis`, () => {
 		const numberSummary = [
 			[, 'Group 1', 'Group 2'],
 			['1', 2, 3],
@@ -112,6 +112,48 @@ describe(`Scale`, () => {
 
 		expect(scale.min).toBe(1);
 		expect(scale.max).toBe(7);
+	});
+
+	it(`can determine min and max from number ChartData labels for an x axis`, () => {
+		const numberSummary = [
+			[, 'Group 1', 'Group 2'],
+			[1, 2, 3],
+			[4, 5, 6],
+			[7, 8, 9],
+		];
+
+		const chartData = getChartData(numberSummary);
+
+		const axisOptions = {};
+		const chartOptions = {
+			x: axisOptions,
+		};
+
+		const scale = new Scale(chartData, chartOptions, 'x');
+
+		expect(scale.min).toBe(1);
+		expect(scale.max).toBe(7);
+	});
+
+	it(`can determine min and max from Date ChartData labels for an x axis`, () => {
+		const numberSummary = [
+			[, 'Group 1', 'Group 2'],
+			[new Date(2000, 1, 1), 2, 3],
+			[new Date(2010, 1, 1), 5, 6],
+			[new Date(2020, 1, 1), 8, 9],
+		];
+
+		const chartData = getChartData(numberSummary);
+
+		const axisOptions = {};
+		const chartOptions = {
+			x: axisOptions,
+		};
+
+		const scale = new Scale(chartData, chartOptions, 'x');
+
+		expect(scale.min).toBe(+(new Date(2000, 1, 1)));
+		expect(scale.max).toBe(+(new Date(2020, 1, 1)));
 	});
 
 	it(`can have data min and max overridden by AxisOptions from ChartOptions for an x axis`, () => {
