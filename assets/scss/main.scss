@@ -1,10 +1,9 @@
 @import "theme.scss";
+@import "mixins.scss";
 
 @import "reset.scss";
 
 @import "typography.scss";
-
-@import "content.scss";
 
 html {
 	font-family: Arial, sans-serif;
@@ -14,3 +13,6 @@ html {
 	max-width: 800px;
 	margin: 60px auto;
 }
+
+@import "content.scss";
+@import "chart.scss";
