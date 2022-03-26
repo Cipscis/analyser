@@ -258,7 +258,8 @@ function getAxisValuesBase(scale: Scale, axisValues: Exclude<AxisOptionsQuantita
 		const numValues = axisValues + 1;
 		values = scale.getSeries(numValues);
 	} else if (axisValues.length > 0) {
-		// TODO: I don't understand why the type assertions here are necessary
+		// These type assertions are necessary because of how `Array.prototype.every` has been typed
+		// https://stackoverflow.com/questions/71012370/narrowing-a-union-of-array-types-using-array-every
 		if ((axisValues as unknown[]).every((val: unknown): val is number => typeof val === 'number')) {
 			values = axisValues as number[];
 		} else {

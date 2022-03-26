@@ -13,8 +13,311 @@
 			<div class="content">
 				<h1>Analyser</h1>
 
-				<p>Explain what your package does.</p>
+				<p>Analyser is a package for analysing and charting data in TypeScript.</p>
 			</div>
+		</section>
+
+		<section>
+			<div class="content">
+				<h2 id="installation">Installation <a class="anchor" href="#installation"></a></h2>
+
+				<p>You can install Analyser as an npm package:</p>
+
+				<code>npm install @cipscis/analyser --save</code>
+			</div>
+		</section>
+
+		<section>
+			<div class="content">
+				<h2 id="usage">Usage <a class="anchor" href="#usage"></a></h2>
+
+				<p>The first step to analysing data with Analyser is loading it. The <code><a href="#methods-loadFile">loadFile</a></code> method can be used to load data from a CSV file, using <a href="https://cipscis.github.io/csv" target="_blank">@cipscis/csv</a> internally for parsing and <a href="#usage-transformers">transformers</a> to determine types and do any necessary cleaning or recoding.</p>
+
+				<p><code>loadFile</code> returns a <code><a href="#interfaces-DataConfig">DataConfig</a></code> object, which can be used to analyse the data using <a href="#usage-filtering">filtering</a> functions to filter the rows of data and <a href="#usage-grouping">grouping</a> functions to create summaries.</p>
+
+				<p>Those summaries can then be used to <a href="#usage-graphs">create graphs</a>.</p>
+			</div>
+
+			<section>
+				<div class="content">
+					<h2 id="usage-transformers">Transformers <a class="anchor" href="#usage-transformers"></a></h2>
+
+					<p>Analyser provides a number of <a href="#interfaces-TransformerFn">transformer functions</a> for converting strings in CSV cells into common types. These can be imported from <code>'@cipscis/analyser/tranformers'</code>.</p>
+
+					<p>There are also some utility functions provided here for creating custom some simple transformers.</p>
+				</div>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-boolean">boolean <a class="anchor" href="#usage-transformers-boolean"></a></h3>
+
+						<p>If a value is <code>'true'</code> or <code>'false'</code>, ignoring case and any leading or trailing whitespace, then it is converted to the relevant boolean value.</p>
+
+						<p>If a cell has a value that doesn't match either of those strings, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-number">number <a class="anchor" href="#usage-transformers-number"></a></h3>
+
+						<p>If a cell's value looks like a number, it will be converted to a number. Analyser expects string representations of numbers to use the <code>'.'</code> character for a decimal point, and optionally the <code>','</code> character for separators within the number.</p>
+
+						<p>If a string looks like a number and also ends with a <code>'%'</code> character, it will be divided by <code>100</code> to convert it into a percentage.</p>
+
+						<p>If a cell has a value that doesn't look like a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-value">value <a class="anchor" href="#usage-transformers-value"></a></h3>
+
+						<p><code>value</code> combines the <a href="#usage-transformers-boolean">boolean</a> and <a href="#usage-transformers-number">number</a> transformers.</p>
+
+						<p>If a cell looks like it contains a boolean, it will be converted to a boolean. Otherwise, if it looks like it contains a number, it will be converted to a number.</p>
+
+						<p>If a cell has a value but it doesn't look like a boolean or a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-array">array <a class="anchor" href="#usage-transformers-array"></a></h3>
+
+						<code>array(separator: string | RegExp, limit?: number): <a href="#interfaces-transformerFn">TransformerFn</a>&lt;string[]&gt;</code>
+
+						<p>The <code>array</code> function provided by Analyser can be used to create a <a href="#interfaces-TransformerFn">transformer function</a> that converts a string into an array of strings.</p>
+
+						<p>The arguments taken by the <code>array</code> helper function are the same as those used by <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" target="_blank">String.prototype.split</a></code>.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-booleanCustom">booleanCustom <a class="anchor" href="#usage-transformers-booleanCustom"></a></h3>
+
+						<code>booleanCustom(truthy: string | RegExp = 'true', falsey: string | RegExp = 'false'): <a href="#interfaces-TransformerFn">TransformerFn</a>&lt;boolean&gt;</code>
+
+						<p>The <code>booleanCustom</code> helper function can be used to create a custom <a href="#interfaces-TransformerFn">transformer function</a> for converting a string into boolean values.</p>
+
+						<p>If a cell matches the string or regular expression in the <code>truthy</code> argument, it will be converted to <code>true</code>. Otherwise, if it matches the string or regular expression in the <code>falsey</code> argument, it will be converted to <code>false</code>.</p>
+
+						<p>If strings are specified, the matching is case insensitive. Leading or trailing whitespace is also ignored. If case or leading or trailing whitespace should be treated as a warning, you can use a case insensitive regular expression such as <code>/^true$/</code> instead.</p>
+
+						<p>If a cell has a value that matches neither argument, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-transformers-enumValue">enumValue <a class="anchor" href="#usage-transformers-enumValue"></a></h3>
+
+						<code>enumValue(enums: Record&lt;string, string&gt;, recodeMap?: Record&lt;string, string&gt;): <a href="#interfaces-TransformerFn">TransformerFn</a>&lt;string&gt;</code>
+
+						<p>The <code>enumValue</code> helper function can be used to create a custom <a href="#interfaces-TransformerFn">transformer function</a> that ensures that the value of every cell in a column exists within a <a href="https://www.typescriptlang.org/docs/handbook/enums.html" target="_blank">TypeScript enum</a>.</p>
+
+						<p>If a cell has a value that already exists within the passed <code>enum</code>, then it will not be transformed.</p>
+
+						<p>However, if a cell has a value that is not within the <code>enum</code>, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+
+						<p><code>enumValue</code> has an optional second parameter that can be used to convert strings that don't exist within the <code>enum</code> into strings that are members. These transformations are applied before the value's membership is checked.</p>
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h2 id="usage-filtering">Filtering <a class="anchor" href="#usage-filtering"></a></h2>
+
+					<p class="todo">TODO</p>
+				</div>
+			</section>
+
+			<section>
+				<div class="content">
+					<h2 id="usage-grouping">Grouping <a class="anchor" href="#usage-grouping"></a></h2>
+
+					<p class="todo">TODO</p>
+				</div>
+			</section>
+
+			<section>
+				<div class="content">
+					<h2 id="usage-graphs">Graphs <a class="anchor" href="#usage-graphs"></a></h2>
+
+					<p class="todo">TODO</p>
+				</div>
+			</section>
+		</section>
+
+		<section>
+			<div class="content">
+				<h2 id="interfaces">Interfaces <a class="anchor" href="#interfaces"></a></h2>
+
+				<p class="todo">TODO</p>
+			</div>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-FileConfig">FileConfig <a class="anchor" href="interfaces-FileConfig"></a></h3>
+
+					<code class="code--block js-codebook__inert">
+					{
+						<a href="#interfaces-FileConfig-path">path</a>: string,
+						<a href="#interfaces-FileConfig-cols">cols</a>: Record&lt;string, string | number&gt;,
+
+						<a href="#interfaces-FileConfig-headerRows">headerRows</a>?: number,
+						<a href="#interfaces-FileConfig-footerRows">footerRows</a>?: number,
+
+						<a href="#interfaces-FileConfig-aliases">aliases</a>?: string[][],
+						<a href="#interfaces-FileConfig-transform">transform</a>?: Record&lt;string, <a href="#interfaces-TransformerFn">TransformerFn</a>&gt;,
+					}
+					</code>
+
+					<p>A FileConfig object tells Analyser everything it needs to know to process a file, including where it is and what sort of contents to expect.</p>
+
+					<p>A FileConfig object can be created directly, but because of how TypeScript's generic type inference is limited to functions it is recommended to use the <code><a href="#methods-fileConfig">fileConfig</a></code> method provided when working with TypeScript in order to improve both type checking when creating the object autocompletion prompts for column names after the file has been read.</p>
+
+					<section>
+						<h4 id="interfaces-FileConfig-path"><code>path</code> <a class="anchor" href="#interfaces-FileConfig-path"></a></h4>
+
+						<p>This string is used to <a href="https://developer.mozilla.org/en-US/docs/Web/API/fetch" target="_blank">fetch</a> the CSV file to be processed.</p>
+					</section>
+
+					<section>
+						<h4 id="interfaces-FileConfig-cols"><code>cols</code> <a class="anchor" href="#interfaces-FileConfig-cols"></a></h4>
+
+						<p>The <code>cols</code> object specifies the names of each column to be processed. Not every column present in the file needs to be specified, but you should specify each column that you wish to access.</p>
+
+						<p>If the value assigned to a column here is a string, it will be passed through <code><a href="#methods-getColNumber">getColNumber</a></code> to convert it into a number.</p>
+					</section>
+
+					<section>
+						<h4 id="interfaces-FileConfig-headerRows"><code>headerRows</code> <a class="anchor" href="#interfaces-FileConfig-headerRows"></a></h4>
+
+						<p>An optional integer to specify how many rows at the start of the CSV file should be ignored, such as header rows.</p>
+					</section>
+
+					<section>
+						<h4 id="interfaces-FileConfig-footerRows"><code>footerRows</code> <a class="anchor" href="#interfaces-FileConfig-footerRows"></a></h4>
+
+						<p>An optional integer to specify how many rows at the end of the CSV file should be ignored, such as total rows.</p>
+					</section>
+
+					<section>
+						<h4 id="interfaces-FileConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-FileConfig-aliases"></a></h4>
+
+						<p>When <a href="#usage-filtering">filtering</a>, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
+
+						<p>Each element in the <code>aliases</code> array is an array of strings, where each string is treated as being equal to each other string in the array when filtering the data.</p>
+					</section>
+
+					<section>
+						<h4 id="interfaces-FileConfig-transform"><code>transform</code> <a class="anchor" href="#interfaces-FileConfig-transform"></a></h4>
+
+						<p>The <code>transform</code> object instructs Analyser on what type of data each row contains.</p>
+
+						<p>It can have a property for each property in the <code>cols</code> object, and the value of each of these properties must match the <code><a href="#interfaces-TransformerFn">TransformerFn</a></code> interface.</p>
+
+						<p>Any column without a transformer function will be treated as an array of strings.</p>
+					</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-DataConfig">DataConfig <a class="anchor" href="interfaces-DataConfig"></a></h3>
+
+					<p class="todo">TODO</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-TransformerFn">TransformerFn <a class="anchor" href="interfaces-TransformerFn"></a></h3>
+
+					<code>TransformerFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends any[] ? T : (T | null)</code>
+
+					<p>Transformer functions are used to convert strings in a CSV file into typed data that can be further analysed.</p>
+
+					<p>For most types, you can use one of the <a href="#usage-transformers">transformers</a> provided by Analyser.</p>
+
+					<p>For more complex data, though, you may need to create a custom transformer function. These functions always take a string argument and return either:</p>
+
+					<ul>
+						<li>An array, which may be empty</li>
+						<li>A non-array value, or null if the data did not match the anticipated format</li>
+					</ul>
+
+					<p>In some circumstances, Analyser will also pass a <code>locationIdentifier</code> string that can be used when logging an error in order to identify where in the data that error occurred.</p>
+			</section>
+		</section>
+
+		<section>
+			<div class="content">
+				<h2 id="methods">Methods <a class="anchor" href="#methods"></a></h2>
+
+				<p class="todo">TODO</p>
+			</div>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-fileConfig">fileConfig <a class="anchor" href="methods-fileConfig"></a></h3>
+
+					<code>fileConfig(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): <a href="#interfaces-FileConfig">FileConfig</a></code>
+
+					<p>This function doesn't do anything itself, it just returns the object passed to it. However, when working with TypeScript using a function in this way is necessary in order for the TypeScript compiler to correctly infer the generic string type based on the specified column names for the data.</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-loadFile">loadFile <a class="anchor" href="methods-loadFile"></a></h3>
+
+					<code>loadFile(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): Promise&lt;<a href="#interfaces-DataConfig">DataConfig</a>&gt;</code>
+
+					<p>The <code>loadFile</code> method loads a single CSV file configured with a <a href="#interfaces-FileConfig">FileConfig</a> object.</p>
+
+					<p>If the file is loaded and processed successfully, the <code>Promise</code> returned by <code>loadFile</code> will resolve to a <a href="#interfaces-DataConfig">DataConfig</a> object.</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-getColNumber">getColNumber <a class="anchor" href="methods-getColNumber"></a></h3>
+
+					<code>getColNumber(colName: number | string): number | null</code>
+
+					<p><code>getColNumber</code> converts strings of the format used as column headings by spreadsheet software like Microsoft Excel into 0-indexed numbers.</p>
+
+					<p>For example, <code>'A'</code> would be converted to <code>0</code>, whereas <code>'ZE'</code> would be converted to <code>680</code>. This is case insensitive.</p>
+
+					<p>If a positive integer is passed into <code>getColNumber</code>, it will be returned unchanged.</p>
+
+					<p>Any other number, or any string containing an invalid character, will instead be converted to <code>null</code>.</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-getColNumbers">getColNumbers <a class="anchor" href="methods-getColNumbers"></a></h3>
+
+					<code>getColNumbers(colsConfig: Record&lt;string, number | string&gt;): Record&lt;string, number&gt;</code>
+
+					<p><code>getColNumbers</code> takes in a map of column names like the one that can be provided as part of a <code><a href="#interfaces-FileConfig">FileConfig</a></code> object, and transforms each property according to the same rules as <code><a href="#methods-getColNumber">getColNumber</a></code>.</p>
+
+					<p>If any of those transformations results in <code>null</code>, the property will be removed from the result.</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-bar">bar <a class="anchor" href="methods-bar"></a></h3>
+
+					<p class="todo">TODO</p>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="methods-line">line <a class="anchor" href="methods-line"></a></h3>
+
+					<p class="todo">TODO</p>
+			</section>
 		</section>
 
 		<!-- <section>

@@ -1,6 +1,9 @@
-// import * as analyser from '@cipscis/analyser';
-import { sum } from '../../../../dist/statistics.js';
-import * as analyser from '../../../../src/analyser.js';
+import * as codebook from '@cipscis/codebook';
+
+import * as analyser from '@cipscis/analyser';
+import { sum } from '@cipscis/analyser/statistics';
+
+codebook.tidy();
 
 const analyse = async function () {
 	const fileInfoA = analyser.fileConfig({

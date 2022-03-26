@@ -4,7 +4,7 @@
 
 ## Install
 
-Run `npm install github:cipscis/analyser#semver:1.x`
+Run `npm install @cipscis/analyser`
 
 ## Usage
 

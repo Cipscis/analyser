@@ -25,7 +25,9 @@ const config = {
 		fullySpecified: true,
 		plugins: [new ResolveTypeScriptPlugin()],
 		alias: {
-			'@cipscis/analyser': `${srcPath}/analyser.ts`,
+			'@cipscis/analyser$': `${srcPath}/analyser.ts`,
+			'@cipscis/analyser/transformers$': `${srcPath}/transformers.ts`,
+			'@cipscis/analyser/statistics$': `${srcPath}/statistics.ts`,
 		},
 	},
 	module: {
