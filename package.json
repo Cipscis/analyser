@@ -29,7 +29,7 @@
 	},
 	"license": "Hippocratic-2.1",
 	"devDependencies": {
-		"@cipscis/codebook": "^2.0.1",
+		"@cipscis/codebook": "^2.0.2",
 		"@types/jasmine": "^3.8.2",
 		"concurrently": "^6.1.0",
 		"dotenv": "^10.0.0",

@@ -1,3 +1,12 @@
+.content {
+	margin: 20px 0;
+}
+
+.content--autoscroll {
+	max-width: 100%;
+	overflow: auto;
+}
+
 .content p,
 .p {
 	margin: 20px 0;
@@ -15,13 +24,18 @@
 .code a,
 .a {
 	color: #0000EE;
+
+	&[href^="http"] {
+		&::after {
+			content: " 🡕";
+		}
+	}
 }
 
 .anchor {
 	text-decoration: none;
 	&::before {
 		content: "🔗";
-		speak: never;
 	}
 }
 
@@ -52,5 +66,16 @@
 		margin: 20px 0;
 
 		padding: 5px 12px;
+	}
+}
+
+.content table {
+	border-collapse: collapse;
+
+	td, th {
+		border: 1px solid $grey--light;
+		text-align: left;
+		vertical-align: top;
+		padding: 5px;
 	}
 }

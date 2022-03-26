@@ -5,7 +5,7 @@ Hamburg,Germany,1810,'No',"Bus,Train,Ferry",Olaf Scholz,"Katharina Fegebank,Pete
 Sydney,Australia,4841,'No',"Bus,Train,Ferry",Clover Moore,Clover Moore
 Hamilton,New Zealand,161.2,,Bus,Julia Hardaker,Andrew King
 Wellington,New Zealand,381.9,true,"Bus,Train,Ferry,Cable Car",Celia Wade-Brown,Justin Lester
-Christchurch,New Zealand,363.926,,Bus,Bob Parker,Lianne Dalziel
+Christchurch,New Zealand,363.926,false,Bus,Bob Parker,Lianne Dalziel
 Dunedin,New Zealand,114.347,,Bus,Dave Cull,Dave Cull
 Tauranga,New Zealand,110.338,,Bus,Stuart Crosby,Greg Brownless`;
 

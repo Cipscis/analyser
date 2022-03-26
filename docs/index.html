@@ -13,7 +13,7 @@
 			<div class="content">
 				<h1>Analyser</h1>
 
-				<p>Analyser is a package for analysing and charting data in TypeScript.</p>
+				<p>Analyser is a package for analysing and charting data in TypeScript, made available under the <a href="https://firstdonoharm.dev/" target="_blank">Hippocratic Licence</a>.</p>
 			</div>
 		</section>
 
@@ -24,6 +24,68 @@
 				<p>You can install Analyser as an npm package:</p>
 
 				<code>npm install @cipscis/analyser --save</code>
+
+				<p>The main Analyser code can be imported with:</p>
+
+				<code>import * as analyser from '@cipscis/analyser';</code>
+
+				<p>Some parts of Analyser can also be accessed via submodules.</p>
+
+				<p><a href="#statistics">Statistical helper functions</a>:</p>
+
+				<code>import { statistics } from '@cipscis/analyser';</code>
+				<code>import * as statistics from '@cipscis/analyser/statistics';</code>
+
+				<p><a href="#usage-transformers">Transformer functions</a>:</p>
+
+				<code>import { transformers } from '@cipscis/analyser';</code>
+				<code>import * as transformers from '@cipscis/analyser/transformers';</code>
+			</div>
+		</section>
+
+		<section class="js-codebook__set" data-codebook-set="example-data">
+			<div class="content">
+				<h2 id="example-data">Example data <a class="anchor" href="#example-data"></a></h2>
+
+				<p>This documentation uses example data:</p>
+			</div>
+
+			<script type="text/plain" class="js-codebook__block" data-codebook-html="html-example-data">
+				const csvString = await (await fetch('/assets/data/city example.csv')).text();
+				const data = csv.parse(csvString);
+
+				const table = `<table>
+					${data.map((row, i) => `<tr>
+						${row.map((cell) => `<${i ? 'td' : 'th'}>
+							${cell}
+						</${i ? 'td' : 'th'}>`).join('')}
+					</tr>`).join('')}
+				</table>`;
+
+				html(table);
+			</script>
+
+			<div class="content content--autoscroll" id="html-example-data">
+				<p>A table showing the example data will load here.</p>
+			</div>
+
+			<div class="content">
+				<p>Some of the code examples are editable, using <code><a href="cipscis.github.io/codebook" target="_blank">@cipscis/codebook</a></code>. The editable example code is marked with a ✏️, and their output is marked with a 📝.</p>
+			</div>
+
+			<div class="docs-example js-docs__example">
+				<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-codebook-example" data-codebook-html="html-codebook-example" contenteditable spellcheck="false">
+					log('You can log output');
+					html('<p>Or print <b>custom HTML</b></p>');
+				</script>
+
+				<div class="docs-example__controls">
+					<button class="docs-example__control js-docs__run">Run code</button>
+				</div>
+
+				<div class="docs-example__html" id="html-codebook-example"></div>
+
+				<samp class="docs-example__log js-docs__log" id="log-codebook-example"></samp>
 			</div>
 		</section>
 
@@ -47,17 +109,42 @@
 					<p>There are also some utility functions provided here for creating custom some simple transformers.</p>
 				</div>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers-boolean">
 					<div class="content">
 						<h3 id="usage-transformers-boolean">boolean <a class="anchor" href="#usage-transformers-boolean"></a></h3>
 
 						<p>If a value is <code>'true'</code> or <code>'false'</code>, ignoring case and any leading or trailing whitespace, then it is converted to the relevant boolean value.</p>
 
 						<p>If a cell has a value that doesn't match either of those strings, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+
+						<div class="docs-example js-docs__example">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-boolean" data-codebook-html="html-usage-transformers-boolean" contenteditable spellcheck="false">
+								const fileConfig = analyser.fileConfig({
+									path: '/assets/data/city example.csv',
+									cols: {
+										CAPITAL: 'D',
+									},
+									headerRows: 1,
+									footerRows: 1,
+									transform: {
+										CAPITAL: analyser.transformers.boolean,
+									}
+								});
+
+								const { rows, cols } = await analyser.loadFile(fileConfig);
+								log(rows.getCol(cols.CAPITAL));
+							</script>
+
+							<div class="docs-example__controls">
+								<button class="docs-example__control js-docs__run">Run code</button>
+							</div>
+
+							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-boolean"></samp>
+						</div>
 					</div>
 				</section>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers-number">
 					<div class="content">
 						<h3 id="usage-transformers-number">number <a class="anchor" href="#usage-transformers-number"></a></h3>
 
@@ -66,10 +153,40 @@
 						<p>If a string looks like a number and also ends with a <code>'%'</code> character, it will be divided by <code>100</code> to convert it into a percentage.</p>
 
 						<p>If a cell has a value that doesn't look like a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
+
+						<div class="docs-example js-docs__example">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-number" data-codebook-html="html-usage-transformers-number" contenteditable spellcheck="false">
+								const fileConfig = analyser.fileConfig({
+									path: '/assets/data/city example.csv',
+									cols: {
+										POPULATION: 'C',
+									},
+									headerRows: 1,
+									footerRows: 1,
+									transform: {
+										POPULATION: analyser.transformers.number,
+									}
+								});
+
+								const { rows, cols } = await analyser.loadFile(fileConfig);
+								log(rows.getCol(cols.POPULATION));
+
+								log(
+									'Transforming a percentage:',
+									analyser.transformers.number('0.2%')
+								);
+							</script>
+
+							<div class="docs-example__controls">
+								<button class="docs-example__control js-docs__run">Run code</button>
+							</div>
+
+							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-number"></samp>
+						</div>
 					</div>
 				</section>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers-value">
 					<div class="content">
 						<h3 id="usage-transformers-value">value <a class="anchor" href="#usage-transformers-value"></a></h3>
 
@@ -79,9 +196,36 @@
 
 						<p>If a cell has a value but it doesn't look like a boolean or a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-value" data-codebook-html="html-usage-transformers-value" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									POPULATION: 'C',
+									CAPITAL: 'D',
+								},
+								headerRows: 1,
+								transform: {
+									POPULATION: analyser.transformers.value,
+									CAPITAL: analyser.transformers.value,
+								}
+							});
+
+							const { rows, cols } = await analyser.loadFile(fileConfig);
+							log(rows.getCol(cols.POPULATION));
+							log(rows.getCol(cols.CAPITAL));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-value"></samp>
+					</div>
 				</section>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers-array">
 					<div class="content">
 						<h3 id="usage-transformers-array">array <a class="anchor" href="#usage-transformers-array"></a></h3>
 
@@ -91,9 +235,33 @@
 
 						<p>The arguments taken by the <code>array</code> helper function are the same as those used by <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" target="_blank">String.prototype.split</a></code>.</p>
 					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-array" data-codebook-html="html-usage-transformers-array" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									PUBLIC_TRANSPORT: 'E',
+								},
+								headerRows: 1,
+								transform: {
+									PUBLIC_TRANSPORT: analyser.transformers.array(','),
+								}
+							});
+
+							const { rows, cols } = await analyser.loadFile(fileConfig);
+							log(rows.getCol(cols.PUBLIC_TRANSPORT));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-array"></samp>
+					</div>
 				</section>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers-booleanCustom">
 					<div class="content">
 						<h3 id="usage-transformers-booleanCustom">booleanCustom <a class="anchor" href="#usage-transformers-booleanCustom"></a></h3>
 
@@ -107,9 +275,33 @@
 
 						<p>If a cell has a value that matches neither argument, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-booleanCustom" data-codebook-html="html-usage-transformers-booleanCustom" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									CAPITAL: 'D',
+								},
+								headerRows: 1,
+								transform: {
+									CAPITAL: analyser.transformers.booleanCustom('true', /^'No'$|^false$/),
+								}
+							});
+
+							const { rows, cols } = await analyser.loadFile(fileConfig);
+							log(rows.getCol(cols.CAPITAL));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-booleanCustom"></samp>
+					</div>
 				</section>
 
-				<section>
+				<section class="js-codebook__set" data-codebook-set="usage-transformers--enumValue">
 					<div class="content">
 						<h3 id="usage-transformers-enumValue">enumValue <a class="anchor" href="#usage-transformers-enumValue"></a></h3>
 
@@ -122,6 +314,42 @@
 						<p>However, if a cell has a value that is not within the <code>enum</code>, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 
 						<p><code>enumValue</code> has an optional second parameter that can be used to convert strings that don't exist within the <code>enum</code> into strings that are members. These transformations are applied before the value's membership is checked.</p>
+
+						<div class="docs-example js-docs__example">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-enumValue" data-codebook-html="html-usage-transformers-enumValue" contenteditable spellcheck="false">
+								// When working in TypeScript, this would be a string enum
+								const countries = {
+									Aotearoa: 'Aotearoa',
+									Australia: 'Australia',
+									Germany: 'Germany',
+								};
+
+								const countriesMap = {
+									'New Zealand': 'Aotearoa',
+								};
+
+								const fileConfig = analyser.fileConfig({
+									path: '/assets/data/city example.csv',
+									cols: {
+										COUNTRY: 'B',
+									},
+									headerRows: 1,
+									footerRows: 1,
+									transform: {
+										COUNTRY: analyser.transformers.enumValue(countries, countriesMap),
+									}
+								});
+
+								const { rows, cols } = await analyser.loadFile(fileConfig);
+								log(rows.getCol(cols.COUNTRY));
+							</script>
+
+							<div class="docs-example__controls">
+								<button class="docs-example__control js-docs__run">Run code</button>
+							</div>
+
+							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-enumValue"></samp>
+						</div>
 					</div>
 				</section>
 			</section>
@@ -158,7 +386,7 @@
 				<p class="todo">TODO</p>
 			</div>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="FileConfig">
 				<div class="content">
 					<h3 id="interfaces-FileConfig">FileConfig <a class="anchor" href="interfaces-FileConfig"></a></h3>
 
@@ -178,42 +406,95 @@
 					<p>A FileConfig object tells Analyser everything it needs to know to process a file, including where it is and what sort of contents to expect.</p>
 
 					<p>A FileConfig object can be created directly, but because of how TypeScript's generic type inference is limited to functions it is recommended to use the <code><a href="#methods-fileConfig">fileConfig</a></code> method provided when working with TypeScript in order to improve both type checking when creating the object autocompletion prompts for column names after the file has been read.</p>
+				</div>
 
-					<section>
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-FileConfig" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/assets/data/city example.csv',
+							cols: {
+								NAME: 'A',
+								COUNTRY: 'B',
+								POP: 'C',
+								CAPITAL: 'D',
+								PUBLIC_TRANSPORT: 'E',
+								MAYOR_2012: 'F',
+								MAYOR_2018: 'G',
+							},
+
+							headerRows: 1,
+							footerRows: 1,
+
+							aliases: [
+								['Aotearoa', 'New Zealand'],
+							],
+							transform: {
+								POP: analyser.transformers.number,
+								CAPITAL: analyser.transformers.booleanCustom('true', '\'No\''),
+								PUBLIC_TRANSPORT: analyser.transformers.array(','),
+								MAYOR_2018: analyser.transformers.array(','),
+								MAYOR_2012: analyser.transformers.array(','),
+							},
+						});
+
+						const dataConfig = await analyser.loadFile(fileConfig);
+
+						log('First row:', dataConfig.rows[0]);
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-FileConfig"></samp>
+				</div>
+
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-path"><code>path</code> <a class="anchor" href="#interfaces-FileConfig-path"></a></h4>
 
 						<p>This string is used to <a href="https://developer.mozilla.org/en-US/docs/Web/API/fetch" target="_blank">fetch</a> the CSV file to be processed.</p>
-					</section>
+					</div>
+				</section>
 
-					<section>
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-cols"><code>cols</code> <a class="anchor" href="#interfaces-FileConfig-cols"></a></h4>
 
 						<p>The <code>cols</code> object specifies the names of each column to be processed. Not every column present in the file needs to be specified, but you should specify each column that you wish to access.</p>
 
 						<p>If the value assigned to a column here is a string, it will be passed through <code><a href="#methods-getColNumber">getColNumber</a></code> to convert it into a number.</p>
-					</section>
+					</div>
+				</section>
 
-					<section>
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-headerRows"><code>headerRows</code> <a class="anchor" href="#interfaces-FileConfig-headerRows"></a></h4>
 
 						<p>An optional integer to specify how many rows at the start of the CSV file should be ignored, such as header rows.</p>
-					</section>
+					</div>
+				</section>
 
-					<section>
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-footerRows"><code>footerRows</code> <a class="anchor" href="#interfaces-FileConfig-footerRows"></a></h4>
 
 						<p>An optional integer to specify how many rows at the end of the CSV file should be ignored, such as total rows.</p>
-					</section>
+					</div>
+				</section>
 
-					<section>
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-FileConfig-aliases"></a></h4>
 
 						<p>When <a href="#usage-filtering">filtering</a>, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
 
 						<p>Each element in the <code>aliases</code> array is an array of strings, where each string is treated as being equal to each other string in the array when filtering the data.</p>
-					</section>
+					</div>
+				</section>
 
-					<section>
+				<section>
+					<div class="content">
 						<h4 id="interfaces-FileConfig-transform"><code>transform</code> <a class="anchor" href="#interfaces-FileConfig-transform"></a></h4>
 
 						<p>The <code>transform</code> object instructs Analyser on what type of data each row contains.</p>
@@ -221,7 +502,8 @@
 						<p>It can have a property for each property in the <code>cols</code> object, and the value of each of these properties must match the <code><a href="#interfaces-TransformerFn">TransformerFn</a></code> interface.</p>
 
 						<p>Any column without a transformer function will be treated as an array of strings.</p>
-					</section>
+					</div>
+				</section>
 			</section>
 
 			<section>
@@ -229,6 +511,7 @@
 					<h3 id="interfaces-DataConfig">DataConfig <a class="anchor" href="interfaces-DataConfig"></a></h3>
 
 					<p class="todo">TODO</p>
+				</div>
 			</section>
 
 			<section>
@@ -249,6 +532,7 @@
 					</ul>
 
 					<p>In some circumstances, Analyser will also pass a <code>locationIdentifier</code> string that can be used when logging an error in order to identify where in the data that error occurred.</p>
+				</div>
 			</section>
 		</section>
 
@@ -266,6 +550,7 @@
 					<code>fileConfig(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): <a href="#interfaces-FileConfig">FileConfig</a></code>
 
 					<p>This function doesn't do anything itself, it just returns the object passed to it. However, when working with TypeScript using a function in this way is necessary in order for the TypeScript compiler to correctly infer the generic string type based on the specified column names for the data.</p>
+				</div>
 			</section>
 
 			<section>
@@ -277,6 +562,7 @@
 					<p>The <code>loadFile</code> method loads a single CSV file configured with a <a href="#interfaces-FileConfig">FileConfig</a> object.</p>
 
 					<p>If the file is loaded and processed successfully, the <code>Promise</code> returned by <code>loadFile</code> will resolve to a <a href="#interfaces-DataConfig">DataConfig</a> object.</p>
+				</div>
 			</section>
 
 			<section>
@@ -292,6 +578,7 @@
 					<p>If a positive integer is passed into <code>getColNumber</code>, it will be returned unchanged.</p>
 
 					<p>Any other number, or any string containing an invalid character, will instead be converted to <code>null</code>.</p>
+				</div>
 			</section>
 
 			<section>
@@ -303,6 +590,7 @@
 					<p><code>getColNumbers</code> takes in a map of column names like the one that can be provided as part of a <code><a href="#interfaces-FileConfig">FileConfig</a></code> object, and transforms each property according to the same rules as <code><a href="#methods-getColNumber">getColNumber</a></code>.</p>
 
 					<p>If any of those transformations results in <code>null</code>, the property will be removed from the result.</p>
+				</div>
 			</section>
 
 			<section>
@@ -310,6 +598,7 @@
 					<h3 id="methods-bar">bar <a class="anchor" href="methods-bar"></a></h3>
 
 					<p class="todo">TODO</p>
+				</div>
 			</section>
 
 			<section>
@@ -317,36 +606,33 @@
 					<h3 id="methods-line">line <a class="anchor" href="methods-line"></a></h3>
 
 					<p class="todo">TODO</p>
+				</div>
 			</section>
 		</section>
 
-		<!-- <section>
+		<section>
 			<div class="content">
-				<h2>Method</h2>
+				<h2 id="statistics">Statistical helper functions <a class="anchor" href="statistics"></a></h2>
 
-				<code>method(argA, argB)</code>
-
-				<p>Explain what the method does.</p>
-
-				<h3>Arguments</h3>
-
-				<h4>argA</h4>
-
-				<p>Explain what the argument does.</p>
-
-				<h4>argB</h4>
-
-				<p>Explain what the argument does.</p>
-
-				<h3>Examples</h3>
-
-				<p>Put an example here, using code in <code>/docs/assets/js/src/main.js</code>.</p>
+				<p class="todo">TODO</p>
 			</div>
-		</section> -->
 
-		<section id="bar-chart"></section>
+			<section>
+				<div class="content">
+					<h3 id="statistics-sum">sum <a class="anchor" href="statistics-sum"></a></h3>
 
-		<section id="line-chart"></section>
+					<p class="todo">TODO</p>
+				</div>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="statistics-mean">mean <a class="anchor" href="statistics-mean"></a></h3>
+
+					<p class="todo">TODO</p>
+				</div>
+			</section>
+		</section>
 	</main>
 </body>
 

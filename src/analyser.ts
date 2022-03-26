@@ -16,6 +16,11 @@ export { loadFile } from './file-processing.js';
 export { TransformerFn } from './transformers.js';
 export * as transformers from './transformers.js';
 
+////////////////
+// STATISTICS //
+////////////////
+export * as statistics from './statistics.js';
+
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////

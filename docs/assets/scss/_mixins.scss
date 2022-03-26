@@ -1,2 +1,5 @@
-@import "mixins/reset.scss";
-@import "mixins/a11y.scss";
+@import "mixins/reset";
+@import "mixins/a11y";
+@import "mixins/layout";
+
+@import "mixins/components";
