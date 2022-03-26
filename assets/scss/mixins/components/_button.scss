@@ -1,0 +1,16 @@
+@mixin button {
+	@include button-reset;
+
+	padding: 5px 10px;
+	background: $grey--lightest;
+	border: 1px solid $grey--dark;
+	border-radius: 5px;
+	color: $grey--darker;
+
+	transition: all 0.3s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		background: $white;
+	}
+}

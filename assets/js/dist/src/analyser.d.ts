@@ -5,6 +5,7 @@ export declare type AnalyserRows = InstanceType<typeof AnalyserRowsClass>;
 export { loadFile } from './file-processing.js';
 export { TransformerFn } from './transformers.js';
 export * as transformers from './transformers.js';
+export * as statistics from './statistics.js';
 export { getColNumber, getColNumbers } from './helpers.js';
 export { bar } from './charts/bar.js';
 export { line } from './charts/line.js';

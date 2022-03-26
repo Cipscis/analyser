@@ -1,9 +1,9 @@
-@import "theme.scss";
-@import "mixins.scss";
+@import "theme";
+@import "mixins";
 
-@import "reset.scss";
+@import "reset";
 
-@import "typography.scss";
+@import "typography";
 
 
 html {
@@ -11,14 +11,15 @@ html {
 }
 
 .layout {
-	max-width: 800px;
+	max-width: 1200px;
 	margin: 60px auto;
+	padding: 0 20px;
 }
 
 .todo {
 	background: yellow;
 }
 
-@import "content.scss";
-@import "chart.scss";
-@import "codebook.scss";
+@import "content";
+@import "chart";
+@import "docs";

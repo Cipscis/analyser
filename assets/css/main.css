@@ -64,12 +64,22 @@ html {
 }
 
 .layout {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 60px auto;
+  padding: 0 20px;
 }
 
 .todo {
   background: yellow;
+}
+
+.content {
+  margin: 20px 0;
+}
+
+.content--autoscroll {
+  max-width: 100%;
+  overflow: auto;
 }
 
 .content p,
@@ -89,8 +99,19 @@ html {
 .p a,
 .content code a,
 .code a,
+.docs-example .docs-example__log a,
+.docs-example .docs-example__code a,
 .a {
   color: #0000EE;
+}
+.content p a[href^=http]::after,
+.p a[href^=http]::after,
+.content code a[href^=http]::after,
+.code a[href^=http]::after,
+.docs-example .docs-example__log a[href^=http]::after,
+.docs-example .docs-example__code a[href^=http]::after,
+.a[href^=http]::after {
+  content: " 🡕";
 }
 
 .anchor {
@@ -98,11 +119,12 @@ html {
 }
 .anchor::before {
   content: "🔗";
-  speak: never;
 }
 
 .content code,
-.code {
+.code,
+.docs-example .docs-example__log,
+.docs-example .docs-example__code {
   display: inline-block;
   vertical-align: bottom;
   line-height: 1.5;
@@ -122,6 +144,16 @@ html {
   display: block;
   margin: 20px 0;
   padding: 5px 12px;
+}
+
+.content table {
+  border-collapse: collapse;
+}
+.content table td, .content table th {
+  border: 1px solid #999999;
+  text-align: left;
+  vertical-align: top;
+  padding: 5px;
 }
 
 .chart {
@@ -417,36 +449,89 @@ html {
   cursor: pointer;
 }
 
-.codebook__code,
-.codebook__log {
-  display: block;
-  margin: 20px 0;
-  line-height: 1.5;
-  background: #eeeeee;
-  color: #444444;
-  padding: 5px 12px;
-  border-radius: 5px;
-  font-family: monospace;
-  white-space: pre-wrap;
-  tab-size: 4;
-  -moz-tab-size: 4;
-  max-width: 100%;
-  overflow: auto;
-  position: relative;
-  padding-top: calc(5px + 1em + 5px);
+@supports (display: grid) {
+  .docs-example {
+    display: grid;
+    margin: 20px 0;
+  }
+  @media (max-width: 799px) {
+    .docs-example {
+      grid-template-areas: "code" "controls" "log" "html";
+    }
+  }
+  @media (min-width: 800px) {
+    .docs-example {
+      grid-template-areas: "code log" "controls log" "html html";
+      grid-template-columns: 60% 40%;
+      grid-template-rows: auto 1fr auto;
+    }
+  }
 }
-.codebook__code::before,
-.codebook__log::before {
+.docs-example .docs-example__code {
+  min-height: 3em;
+  grid-area: code;
+}
+.docs-example .docs-example__log {
+  min-height: 3em;
+  grid-area: log;
+}
+@media (max-width: 799px) {
+  .docs-example .docs-example__log {
+    margin-top: 20px;
+  }
+}
+@media (min-width: 800px) {
+  .docs-example .docs-example__log {
+    margin-left: 20px;
+  }
+}
+.docs-example .docs-example__html {
+  grid-area: html;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+}
+.docs-example .docs-example__controls {
+  grid-area: controls;
+  margin-top: 20px;
+}
+.docs-example .docs-example__control {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+  padding: 5px 10px;
+  background: #eeeeee;
+  border: 1px solid #444444;
+  border-radius: 5px;
+  color: #333333;
+  transition: all 0.3s ease-in-out;
+}
+.docs-example .docs-example__control:hover, .docs-example .docs-example__control:focus-visible {
+  background: #ffffff;
+}
+.docs-example .docs-example__control--error {
+  border-color: #f00;
+}
+.docs-example .docs-example__code[contenteditable]:not([contenteditable=false]),
+.docs-example .docs-example__log,
+.docs-example .docs-example__html {
+  position: relative;
+  padding-right: 2em;
+}
+.docs-example .docs-example__code[contenteditable]:not([contenteditable=false])::after,
+.docs-example .docs-example__log::after,
+.docs-example .docs-example__html::after {
   position: absolute;
   top: 5px;
-  left: 12px;
-  pointer-events: none;
+  right: 5px;
+  opacity: 0.5;
 }
-
-.codebook__code::before {
-  content: "📖";
+.docs-example .docs-example__code[contenteditable]:not([contenteditable=false])::after {
+  content: "✏️";
 }
-
-.codebook__log::before {
+.docs-example .docs-example__log::after, .docs-example .docs-example__html::after {
   content: "📝";
 }
