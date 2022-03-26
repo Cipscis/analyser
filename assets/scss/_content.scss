@@ -9,6 +9,22 @@
 	}
 }
 
+.content p a,
+.p a,
+.content code a,
+.code a,
+.a {
+	color: #0000EE;
+}
+
+.anchor {
+	text-decoration: none;
+	&::before {
+		content: "🔗";
+		speak: never;
+	}
+}
+
 .content code,
 .code {
 	display: inline-block;

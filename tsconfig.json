@@ -1,0 +1,21 @@
+{
+	"include": ["assets/js/src/**/*"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"declaration": true,
+		"sourceMap": true,
+		"outDir": "./assets/js/dist",
+		"strict": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": "../",
+		"paths": {
+			"@cipscis/analyser": ["./src/analyser.js"],
+			"@cipscis/analyser/transformers": ["./src/transformers.js"],
+			"@cipscis/analyser/statistics": ["./src/statistics.js"]
+		},
+	}
+}
