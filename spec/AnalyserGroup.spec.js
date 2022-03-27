@@ -57,7 +57,7 @@ describe(`AnalyserGroup`, () => {
 		}
 
 		expect(groupArr.length).toBe(5);
-		expect(groupArr[0].length).toBe(5);
+		expect(groupArr[0].length).toBe(6);
 		expect(groupArr[1].length).toBe(2);
 		expect(groupArr[2].length).toBe(0);
 		expect(groupArr[3].length).toBe(0);
@@ -103,7 +103,7 @@ describe(`AnalyserGroup`, () => {
 		}
 
 		expect(splitArr.length).toBe(2);
-		expect(splitArr[0].length).toBe(7);
+		expect(splitArr[0].length).toBe(8);
 		expect(splitArr[1].length).toBe(1);
 	});
 

@@ -16,8 +16,6 @@ interface Grouper {
  */
 function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Grouper {
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number, splitting?: number | number[], right: boolean = true): AnalyserGroup {
-		// Ignore aliases for now, and don't worry about splitting
-
 		// First, collect enums
 		const enums: Set<unknown> = new Set();
 		for (let row of rows) {
@@ -109,6 +107,10 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 				} else {
 					throw new TypeError(`Cannot split values based on a number unless each of those values is a number.`);
 				}
+
+				// The first and last sets should be unbounded
+				setLimits[0][0] = -Infinity;
+				setLimits[setLimits.length - 1][1] = Infinity;
 			} else if (Array.isArray(splitting)) {
 				if (splitting.length === 0) {
 					throw new RangeError(`At least one number is required for the 'splitPoints' argument.`);
