@@ -365,7 +365,79 @@
 				<div class="content">
 					<h2 id="usage-filtering">Filtering <a class="anchor" href="#usage-filtering"></a></h2>
 
-					<p class="todo">TODO</p>
+					<p>The <code><a href="#interfaces-DataConfig">DataConfig</a></code> object exposes a function called <code><a href="#interfaces-DataConfig-by">by</a></code>, which is used for filtering the <code><a href="#interfaces-AnalyserRows">AnalyserRows</code></a> exposed in the <code>DataConfig</code>'s <code><a href="#interfaces-DataConfig-rows">rows</a></code> property.</p>
+
+					<p>This function effectively has any <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> baked in. It also provides a simplified way of filtering rows of data based on the values of specific columns, which allows for chaining to create more complex filters.</p>
+
+					<code>(colIndex: number, values: any): Function</code><br />
+					<code>(colIndex: number, values: any[]): Function</code><br />
+					<code>(colIndex: number, values: (value: any) => boolean): Function</code>
+
+					<p>There are three different ways to call <code>by</code>. Each involves first specifying a column index, typically taken from the <code><a href="#interfaces-DataConfig-cols">cols</a></code> or <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code> objects, then specifying some way of filtering based on the value of that column.</p>
+
+					<p>The simplest form simply specifies a single value to match. If a cell's value matches the specified value, or if the cell's value is an array containing the specified value, it will pass the filter. This matching process respects any specified <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
+
+					<p>The next form allows multiple values to be specified via an array. If a cell's value matches any of these values, or if the cell's value is an array containing any of them, it will pass the filter. Like the single value option, this matching process respects any specified <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
+
+					<p>The most complex form allows a function to be passed, which takes the value of the cell as its only argument and resolves to a boolean. If this function returns <code>true</code> for a particular row, it will pass the filter. This method of filtering will not automatically respect <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
+
+					<p>The function returned by <code>by</code> can be passed to <code>Array.prototype.filter</code>, but it also has two methods that can allow for chaining to create more complex filter functions. These methods both have the same signature as <code>by</code>, and are called <code>andBy</code> and <code>orBy</code>.</p>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-filtering" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									NAME: 'A',
+									COUNTRY: 'B',
+									POP: 'C',
+									CAPITAL: 'D',
+									PUBLIC_TRANSPORT: 'E',
+									MAYOR_2012: 'F',
+									MAYOR_2018: 'G',
+								},
+
+								headerRows: 1,
+								footerRows: 1,
+
+								aliases: [
+									['Aotearoa', 'New Zealand'],
+								],
+								transform: {
+									POP: analyser.transformers.number,
+									CAPITAL: analyser.transformers.booleanCustom('true', '\'No\''),
+									PUBLIC_TRANSPORT: analyser.transformers.array(','),
+									MAYOR_2018: analyser.transformers.array(','),
+									MAYOR_2012: analyser.transformers.array(','),
+								},
+							});
+
+							const { rows, cols, by } = await analyser.loadFile(fileConfig);
+
+							const germanCities = rows.filter(
+								by(cols.COUNTRY, 'Germany')
+							);
+							log('German cities:', germanCities.getCol(cols.NAME));
+
+							const largeCitiesWithTrainOrFerry = rows.filter(
+								by(cols.POP, (population) => population > 1000)
+								.andBy(cols.PUBLIC_TRANSPORT, ['Train', 'Ferry'])
+							);
+							log('Large cities with train or ferry services:', largeCitiesWithTrainOrFerry.getCol(cols.NAME));
+
+							const largeOrCapitalCities = rows.filter(
+								by(cols.CAPITAL, true)
+								.orBy(cols.POP, (population) => population > 1000)
+							);
+							log('Large or capital cities:', largeOrCapitalCities.getCol(cols.NAME));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-usage-filtering"></samp>
+					</div>
 				</div>
 			</section>
 
