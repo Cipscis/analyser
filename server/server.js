@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT;
 const projectName = process.env.PROJECT_NAME;
 
-app.use(express.static('docs'));
+app.use(express.static('docs', { maxAge: 300000 }));
 
 if (projectName) {
 	// GitHub Pages publishes projects to <username>.github.io/<projectname>
