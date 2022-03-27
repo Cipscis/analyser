@@ -11,6 +11,6 @@ declare class AnalyserRows extends Array<unknown[]> {
      * Adds a new column to AnalyserRows, and returns its index.
      */
     addCol<T>(creator: (row: any[], index: number) => T): number;
-    addCol<T>(creator: T[]): number;
+    addCol<T>(newRow: T[]): number;
 }
 export { AnalyserRows };

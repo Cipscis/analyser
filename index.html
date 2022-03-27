@@ -31,15 +31,15 @@
 
 				<p>Some parts of Analyser can also be accessed via submodules.</p>
 
-				<p><a href="#statistics">Statistical helper functions</a>:</p>
-
-				<code>import { statistics } from '@cipscis/analyser';</code>
-				<code>import * as statistics from '@cipscis/analyser/statistics';</code>
-
 				<p><a href="#usage-transformers">Transformer functions</a>:</p>
 
-				<code>import { transformers } from '@cipscis/analyser';</code>
+				<code>import { transformers } from '@cipscis/analyser';</code><br />
 				<code>import * as transformers from '@cipscis/analyser/transformers';</code>
+
+				<p><a href="#statistics">Statistical helper functions</a>:</p>
+
+				<code>import { statistics } from '@cipscis/analyser';</code><br />
+				<code>import * as statistics from '@cipscis/analyser/statistics';</code>
 			</div>
 		</section>
 
@@ -70,13 +70,15 @@
 			</div>
 
 			<div class="content">
-				<p>Some of the code examples are editable, using <code><a href="cipscis.github.io/codebook" target="_blank">@cipscis/codebook</a></code>. The editable example code is marked with a ✏️, and their output is marked with a 📝.</p>
+				<p>The code examples in this documentation are editable, and run using <code><a href="cipscis.github.io/codebook" target="_blank">@cipscis/codebook</a></code>. Editable code is marked with a ✏️, and its output is marked with a 📝.</p>
+
+				<p>To ensure the examples' <code>log</code> and <code>html</code> helper functions work correctly, make sure you use <code>await</code> so all asynchronous code finishes before reaching the end of the example.</p>
 			</div>
 
 			<div class="docs-example js-docs__example">
 				<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-codebook-example" data-codebook-html="html-codebook-example" contenteditable spellcheck="false">
 					log('You can log output');
-					html('<p>Or print <b>custom HTML</b></p>');
+					html('<p>Some examples can <b>print custom HTML</b></p>');
 				</script>
 
 				<div class="docs-example__controls">
@@ -107,6 +109,11 @@
 					<p>Analyser provides a number of <a href="#interfaces-TransformerFn">transformer functions</a> for converting strings in CSV cells into common types. These can be imported from <code>'@cipscis/analyser/tranformers'</code>.</p>
 
 					<p>There are also some utility functions provided here for creating custom some simple transformers.</p>
+
+					<p>Each of these functions can be accessed either via <code>analyser.transformers</code> or by importing them from the <code>@cipscis/analyser/transformers</code> submodule:</p>
+
+					<code>import { transformers } from '@cipscis/analyser';</code><br />
+					<code>import * as transformers from '@cipscis/analyser/transformers';</code>
 				</div>
 
 				<section class="js-codebook__set" data-codebook-set="usage-transformers-boolean">
@@ -118,7 +125,7 @@
 						<p>If a cell has a value that doesn't match either of those strings, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-boolean" data-codebook-html="html-usage-transformers-boolean" contenteditable spellcheck="false">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-boolean" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
 									path: '/assets/data/city example.csv',
 									cols: {
@@ -155,7 +162,7 @@
 						<p>If a cell has a value that doesn't look like a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-number" data-codebook-html="html-usage-transformers-number" contenteditable spellcheck="false">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-number" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
 									path: '/assets/data/city example.csv',
 									cols: {
@@ -198,7 +205,7 @@
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-value" data-codebook-html="html-usage-transformers-value" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-value" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/assets/data/city example.csv',
 								cols: {
@@ -237,7 +244,7 @@
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-array" data-codebook-html="html-usage-transformers-array" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-array" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/assets/data/city example.csv',
 								cols: {
@@ -277,7 +284,7 @@
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-booleanCustom" data-codebook-html="html-usage-transformers-booleanCustom" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-booleanCustom" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/assets/data/city example.csv',
 								cols: {
@@ -316,7 +323,7 @@
 						<p><code>enumValue</code> has an optional second parameter that can be used to convert strings that don't exist within the <code>enum</code> into strings that are members. These transformations are applied before the value's membership is checked.</p>
 
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-enumValue" data-codebook-html="html-usage-transformers-enumValue" contenteditable spellcheck="false">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-enumValue" contenteditable spellcheck="false">
 								// When working in TypeScript, this would be a string enum
 								const countries = {
 									Aotearoa: 'Aotearoa',
@@ -388,7 +395,7 @@
 
 			<section class="js-codebook__set" data-codebook-set="FileConfig">
 				<div class="content">
-					<h3 id="interfaces-FileConfig">FileConfig <a class="anchor" href="interfaces-FileConfig"></a></h3>
+					<h3 id="interfaces-FileConfig">FileConfig <a class="anchor" href="#interfaces-FileConfig"></a></h3>
 
 					<code class="code--block js-codebook__inert">
 					{
@@ -403,9 +410,9 @@
 					}
 					</code>
 
-					<p>A FileConfig object tells Analyser everything it needs to know to process a file, including where it is and what sort of contents to expect.</p>
+					<p>A <code>FileConfig</code> object tells Analyser everything it needs to know to process a file, including where it is and what sort of contents to expect.</p>
 
-					<p>A FileConfig object can be created directly, but because of how TypeScript's generic type inference is limited to functions it is recommended to use the <code><a href="#methods-fileConfig">fileConfig</a></code> method provided when working with TypeScript in order to improve both type checking when creating the object autocompletion prompts for column names after the file has been read.</p>
+					<p>A <code>FileConfig</code> object can be created directly, but because of how TypeScript's generic type inference is limited to functions it is recommended to use the <code><a href="#methods-fileConfig">fileConfig</a></code> method provided when working with TypeScript in order to improve both type checking when creating the object and autocompletion prompts for column names after the file has been read.</p>
 				</div>
 
 				<div class="docs-example js-docs__example">
@@ -437,9 +444,9 @@
 							},
 						});
 
-						const dataConfig = await analyser.loadFile(fileConfig);
+						const { rows } = await analyser.loadFile(fileConfig);
 
-						log('First row:', dataConfig.rows[0]);
+						log('First row:', rows[0]);
 					</script>
 
 					<div class="docs-example__controls">
@@ -487,7 +494,7 @@
 					<div class="content">
 						<h4 id="interfaces-FileConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-FileConfig-aliases"></a></h4>
 
-						<p>When <a href="#usage-filtering">filtering</a>, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
+						<p>When <a href="#usage-filtering">filtering</a> and <a href="#usage-grouping">grouping</a> data, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
 
 						<p>Each element in the <code>aliases</code> array is an array of strings, where each string is treated as being equal to each other string in the array when filtering the data.</p>
 					</div>
@@ -508,15 +515,180 @@
 
 			<section>
 				<div class="content">
-					<h3 id="interfaces-DataConfig">DataConfig <a class="anchor" href="interfaces-DataConfig"></a></h3>
+					<h3 id="interfaces-DataConfig">DataConfig <a class="anchor" href="#interfaces-DataConfig"></a></h3>
 
-					<p class="todo">TODO</p>
+					<code class="code--block js-codebook__inert">
+						{
+							rows: <a href="#interfaces-AnalyserRows">AnalyserRows</a>,
+
+							cols: Record&lt;string, number&gt;,
+							addedCols: Record&lt;string, number&gt;,
+
+							by: <a href="#usage-filtering">Filterer</a>,
+							group: <a href="usage-grouping">Grouper</a>,
+
+							aliases?: string[][],
+						}
+					</code>
+
+					<p>A <code>DataConfig</code> object is returned by <code><a href="#methods-loadFile">loadFile</a></code> when its <code>Promise</code> resolves. It exposes several properties that can be used to read and analyse the processed data.</p>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-rows"><code>rows</code> <a class="anchor" href="#interfaces-DataConfig-rows"></a></h4>
+
+							<p>The <code>rows</code> object is an <code><a href="#interfaces-AnalyserRows">AnalyserRows</a></code>, which contains all the data processed by <code><a href="#methods-loadFile">loadFile</a></code>.</p>
+						</div>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-cols"><code>cols</code> <a class="anchor" href="#interfaces-DataConfig-cols"></a></h4>
+
+							<p>The <code>cols</code> object maps the column names specified in your <code><a href="#interfaces-FileConfig">FileConfig</a></code> configuration, and maps them onto numbers used to index elements of the <code>rows</code> object.</p>
+						</div>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-addedCols"><code>addedCols</code> <a class="anchor" href="#interfaces-DataConfig-addedCols"></a></h4>
+
+							<p>The <code>addedCols</code> object is available as a helper when working with TypeScript. It is intended to store the indexes of new columns created via <code><a href="#interfaces-AnalyserRows-addCol">addCol</a></code>.</p>
+
+							<p>This is possible with the <code>cols</code> object in JavaScript, but in TypeScript it has a more specific type to allow configured column names to be autocompleted, so the more generic <code>addedCols</code> object is available to allow storage of new columns without losing that autocompletion of <code>cols</code>.</p>
+						</div>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-by"><code>by</code> <a class="anchor" href="#interfaces-DataConfig-by"></a></h4>
+
+							<p>The <code>by</code> function is used for <a href="#usage-filtering">filtering</a>, with any specified aliases baked in.</p>
+						</div>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-group"><code>group</code> <a class="anchor" href="#interfaces-DataConfig-group"></a></h4>
+
+							<p>The <code>group</code> function is used for <a href="#usage-grouping">grouping</a>, with any specified aliases based in.</p>
+						</div>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="interfaces-DataConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-DataConfig-aliases"></a></h4>
+
+							<p>If the <code><a href="#interfaces-FileConfig">FileConfig</a></code> had its <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> property specified, a copy is also made available here.</p>
+						</div>
+					</section>
 				</div>
 			</section>
 
 			<section>
 				<div class="content">
-					<h3 id="interfaces-TransformerFn">TransformerFn <a class="anchor" href="interfaces-TransformerFn"></a></h3>
+					<h3 id="interfaces-AnalyserRows">AnalyserRows <a class="anchor" href="#interfaces-AnalyserRows"></a></h3>
+
+					<p>The <code>AnalyserRows</code> interface is a modified <code>Array</code> with two additional methods. Aside from these methods, it can be treated the same as any regular <code>Array</code>, for example by calling methods such as <code>Array.prototype.filter</code>.</p>
+
+					<p>An <code>AnalyserRows</code> object is exposed on the <code><a href="#interfaces-DataConfig">DataConfig</a></code> object returned by <code><a href="#methods-loadFile">loadFile</a></code>, and is typically used alongside the <code><a href="#interfaces-DataConfig-cols">cols</a></code> object exposed alongside it.</p>
+				</div>
+
+				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserRows-getCol">
+					<div class="content">
+						<h4 id="interfaces-AnalyserRows-getCol">getCol <a class="anchor" href="#interfaces-AnalyserRows-getCol"></a></h4>
+
+						<code>getCol(colNum: number): unknown[]</code>
+
+						<p>The <code>getCol</code> function returns one of an <code>AnalyserRows</code>'s columns as an array. Its return value is typed as <code>unknown[]</code>, so when working with TypeScript you will need to apply typeguards or use type assertions based on the <a href="#usage-transformers">transformers</a> you used when processing the data.</p>
+
+						<p>Typically, its <code>colNum</code> argument will be retrieved from either the <code><a href="#interfaces-DataConfig-cols">cols</a></code> or the <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code> properties of the <code><a href="#interfaces-DataConfig">DataConfig</a></code> where the <code>AnalyserRows</code> originated.</p>
+					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-getCol" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									NAME: 'A',
+									POPULATION: 'C',
+								},
+								headerRows: 1,
+								footerRows: 1,
+								transform: {
+									POPULATION: analyser.transformers.number,
+								}
+							});
+
+							const { rows, cols } = await analyser.loadFile(fileConfig);
+							log(rows.getCol(cols.NAME));
+							log(rows.getCol(cols.POPULATION));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserRows-getCol"></samp>
+					</div>
+				</section>
+
+				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserRows-addCol">
+					<div class="content">
+						<h4 id="interfaces-AnalyserRows-addCol">addCol <a class="anchor" href="#interfaces-AnalyserRows-addCol"></a></h4>
+
+						<code>addCol(creator: (row: any[], index: number) => any): number</code><br />
+						<code>addCol(newRow: any[]): number</code><br />
+
+						<p>The <code>addCol</code> method is used to add a new row to an <code>AnalyserRows</code> object.</p>
+
+						<p>To ensure the <code>AnalyserRows</code> continues to contain rows all of the same length, it is recommended that this method only be called on an original <code>AnalyserRows</code> object, not on one that has been created by <a href="#usage-filtering">filtering</a>.</p>
+
+						<p>There are two methods of calling <code>addCol</code>. The primary method relies on a <code>creator</code> function, which works similarly to a function passed to <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" target="_blank">Array.prototype.map</a></code>. This <code>creator</code> function takes a single row (as an array of cells) and that row's index, and creates the value that row should have in the new column.</p>
+
+						<p>The second method of calling <code>addCol</code> simply passes a newly constructed column in entirely, as an array. This array must be of the same length as the <code>AnalyserRows</code> being added to.</p>
+
+						<p>Regardless which was called, <code>addCol</code> returns the index of the new column. This can be stored in the <code><a href="#interfaces-DataConfig-cols">cols</a></code> object or, when working with TypeScript, in the <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code>.</p>
+					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-addCol" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									POP_THOUSANDS: 'C',
+									PUBLIC_TRANSPORT: 'E',
+								},
+								headerRows: 1,
+								footerRows: 1,
+								transform: {
+									POP_THOUSANDS: analyser.transformers.number,
+									PUBLIC_TRANSPORT: analyser.transformers.array(','),
+								}
+							});
+
+							const { rows, cols, addedCols } = await analyser.loadFile(fileConfig);
+
+							addedCols.POP = rows.addCol((row) => row[cols.POP_THOUSANDS] * 1000);
+							log(rows.getCol(addedCols.POP));
+
+							const hasTrainCol = rows.map((row) => row[cols.PUBLIC_TRANSPORT].includes('Train'));
+							addedCols.HAS_TRAIN = rows.addCol(hasTrainCol);
+							log(rows.getCol(addedCols.HAS_TRAIN));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserRows-addCol"></samp>
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-TransformerFn">TransformerFn <a class="anchor" href="#interfaces-TransformerFn"></a></h3>
 
 					<code>TransformerFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends any[] ? T : (T | null)</code>
 
@@ -543,19 +715,44 @@
 				<p class="todo">TODO</p>
 			</div>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="methods-fileConfig">
 				<div class="content">
-					<h3 id="methods-fileConfig">fileConfig <a class="anchor" href="methods-fileConfig"></a></h3>
+					<h3 id="methods-fileConfig">fileConfig <a class="anchor" href="#methods-fileConfig"></a></h3>
 
 					<code>fileConfig(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): <a href="#interfaces-FileConfig">FileConfig</a></code>
 
 					<p>This function doesn't do anything itself, it just returns the object passed to it. However, when working with TypeScript using a function in this way is necessary in order for the TypeScript compiler to correctly infer the generic string type based on the specified column names for the data.</p>
 				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-fileConfig" contenteditable spellcheck="false">
+						// Passing this object through analyser.fileConfig ensures
+						// TypeScript would infer its type as FileConfig<'CITY'|'COUNTRY'>
+						// This allows column names to be autocompleted after
+						// the file is loaded, unlike using FileConfig<string>
+
+						const fileConfig = analyser.fileConfig({
+							path: '/assets/data/city example.csv',
+							cols: {
+								CITY: 'A',
+								COUNTRY: 'B',
+							},
+						});
+
+						log(fileConfig);
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-fileConfig"></samp>
+				</div>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="methods-loadFile">
 				<div class="content">
-					<h3 id="methods-loadFile">loadFile <a class="anchor" href="methods-loadFile"></a></h3>
+					<h3 id="methods-loadFile">loadFile <a class="anchor" href="#methods-loadFile"></a></h3>
 
 					<code>loadFile(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): Promise&lt;<a href="#interfaces-DataConfig">DataConfig</a>&gt;</code>
 
@@ -563,11 +760,33 @@
 
 					<p>If the file is loaded and processed successfully, the <code>Promise</code> returned by <code>loadFile</code> will resolve to a <a href="#interfaces-DataConfig">DataConfig</a> object.</p>
 				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-loadFile" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/assets/data/city example.csv',
+							cols: {
+								CITY: 'A',
+								COUNTRY: 'B',
+							},
+						});
+
+						const dataConfig = await analyser.loadFile(fileConfig);
+
+						log(Object.keys(dataConfig));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-loadFile"></samp>
+				</div>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="methods-getColNumber">
 				<div class="content">
-					<h3 id="methods-getColNumber">getColNumber <a class="anchor" href="methods-getColNumber"></a></h3>
+					<h3 id="methods-getColNumber">getColNumber <a class="anchor" href="#methods-getColNumber"></a></h3>
 
 					<code>getColNumber(colName: number | string): number | null</code>
 
@@ -579,11 +798,29 @@
 
 					<p>Any other number, or any string containing an invalid character, will instead be converted to <code>null</code>.</p>
 				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-getColNumber" contenteditable spellcheck="false">
+						log(`'A': ${analyser.getColNumber('A')}`);
+						log(`'ZE': ${analyser.getColNumber('ZE')}`);
+						log(`0: ${analyser.getColNumber(0)}`);
+						log(`12: ${analyser.getColNumber(12)}`);
+						log(`-1: ${analyser.getColNumber(-1)}`);
+						log(`1.5: ${analyser.getColNumber(1.5)}`);
+						log(`'invalid string': ${analyser.getColNumber('invalid string')}`);
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-getColNumber"></samp>
+				</div>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="methods-getColNumbers">
 				<div class="content">
-					<h3 id="methods-getColNumbers">getColNumbers <a class="anchor" href="methods-getColNumbers"></a></h3>
+					<h3 id="methods-getColNumbers">getColNumbers <a class="anchor" href="#methods-getColNumbers"></a></h3>
 
 					<code>getColNumbers(colsConfig: Record&lt;string, number | string&gt;): Record&lt;string, number&gt;</code>
 
@@ -591,11 +828,31 @@
 
 					<p>If any of those transformations results in <code>null</code>, the property will be removed from the result.</p>
 				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-getColNumbers" contenteditable spellcheck="false">
+						log(analyser.getColNumbers({
+							'A': 'A',
+							'ZE': 'ZE',
+							0: 0,
+							12: 12,
+							'-1': -1,
+							'1.5': 1.5,
+							'invalid string': 'invalid string',
+						}));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-getColNumbers"></samp>
+				</div>
 			</section>
 
 			<section>
 				<div class="content">
-					<h3 id="methods-bar">bar <a class="anchor" href="methods-bar"></a></h3>
+					<h3 id="methods-bar">bar <a class="anchor" href="#methods-bar"></a></h3>
 
 					<p class="todo">TODO</p>
 				</div>
@@ -603,7 +860,7 @@
 
 			<section>
 				<div class="content">
-					<h3 id="methods-line">line <a class="anchor" href="methods-line"></a></h3>
+					<h3 id="methods-line">line <a class="anchor" href="#methods-line"></a></h3>
 
 					<p class="todo">TODO</p>
 				</div>
@@ -612,24 +869,57 @@
 
 		<section>
 			<div class="content">
-				<h2 id="statistics">Statistical helper functions <a class="anchor" href="statistics"></a></h2>
+				<h2 id="statistics">Statistical helper functions <a class="anchor" href="#statistics"></a></h2>
 
-				<p class="todo">TODO</p>
+				<p>Analyser provides some statistical helper functions. These functions can be accessed either via <code>analyser.statistics</code> or by importing them from the <code>@cipscis/analyser/statistics</code> submodule:</p>
+
+				<code>import { statistics } from '@cipscis/analyser';</code><br />
+				<code>import * as statistics from '@cipscis/analyser/statistics';</code>
 			</div>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="statistics-sum">
 				<div class="content">
-					<h3 id="statistics-sum">sum <a class="anchor" href="statistics-sum"></a></h3>
+					<h3 id="statistics-sum">sum <a class="anchor" href="#statistics-sum"></a></h3>
 
-					<p class="todo">TODO</p>
+					<code>sum(...arr: number[] | [number[]]): number</code>
+
+					<p>The <code>sum</code> method sums an array of numbers, either taking them all as a single array argument or as many number arguments.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-statistics-sum" contenteditable spellcheck="false">
+						log(analyser.statistics.sum(1, 2, 3, 4, 5));
+						log(analyser.statistics.sum([1, 2, 3, 4, 5]));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-statistics-sum"></samp>
 				</div>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="statistics-mean"">
 				<div class="content">
-					<h3 id="statistics-mean">mean <a class="anchor" href="statistics-mean"></a></h3>
+					<h3 id="statistics-mean">mean <a class="anchor" href="#statistics-mean"></a></h3>
 
-					<p class="todo">TODO</p>
+					<code>mean(...arr: number[] | [number[]]): number</code>
+
+					<p>The <code>mean</code> method returns the mean of an array of numbers, either taking them all as a single array argument or as many number arguments.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-statistics-mean" contenteditable spellcheck="false">
+						log(analyser.statistics.mean(1, 2, 3, 4, 5));
+						log(analyser.statistics.mean([1, 2, 3, 4, 5]));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-statistics-mean"></samp>
 				</div>
 			</section>
 		</section>

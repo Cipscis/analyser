@@ -519,7 +519,6 @@ html {
 .docs-example .docs-example__log,
 .docs-example .docs-example__html {
   position: relative;
-  padding-right: 2em;
 }
 .docs-example .docs-example__code[contenteditable]:not([contenteditable=false])::after,
 .docs-example .docs-example__log::after,
