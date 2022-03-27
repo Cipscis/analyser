@@ -361,7 +361,7 @@
 				</section>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="usage-filtering">
 				<div class="content">
 					<h2 id="usage-filtering">Filtering <a class="anchor" href="#usage-filtering"></a></h2>
 
@@ -441,11 +441,74 @@
 				</div>
 			</section>
 
-			<section>
+			<section class="js-codebook__set" data-codebook-set="usage-grouping">
 				<div class="content">
 					<h2 id="usage-grouping">Grouping <a class="anchor" href="#usage-grouping"></a></h2>
 
-					<p class="todo">TODO</p>
+					<p>The <code><a href="#interfaces-DataConfig">DataConfig</a></code> object exposes a function called <code><a href="#interfaces-DataConfig-group">group</a></code>, which is used for grouping the <code><a href="#interfaces-AnalyserRows">AnalyserRows</a></code> exposed in the <code>DataConfig</code>'s <code><a href="#interfaces-DataConfig-rows">rows</a></code> property.</p>
+
+					<p>These groups can then be used to produce summaries of the data, which in turn can be used to create <a href="#usage-graphs">graphs</a>.</p>
+
+					<p>The <code>group</code> function effectively has any <a href="#interfaces-FileConfig-aliases">aliases</a> baked in, with any values in a set of aliases treated as though they were the first value in the set. That first value does not need to appear in the data, but it will always be used in any <code><a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code> created by <code>group</code>.</p>
+
+					<p><code>group</code> has three overrides:</p>
+
+					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code><br />
+					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number, numGroups: number, right: boolean = true): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code><br />
+					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number, splitPoints: number[], right: boolean = true): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code>
+
+					<p>When grouping by discrete data, the first override should always be used. The other two overrides provide different methods for dividing continuous data into groups.</p>
+
+					<p>If the <code>numGroups</code> argument is provided with a number, <code>group</code> will split the continuous data into that many groups of the same range. For example, if the data ranges from <code>0</code> to <code>100</code> and the <code>numGroups</code> argument is <code>5</code>, the first group would contain data from <code>0</code> to <code>20</code>.</p>
+
+					<p>Otherwise, the <code>splitPoints</code> argument can be provided with an array of numbers, which will be used as the points where the groups will be split.</p>
+
+					<p>For both of the continuous data overloads, there is an optional <code>right</code> argument that determines which end of a group is open. If <code>right</code> is <code>true</code> (its default value), then values equal to the upper limit of a group will be included. Otherwise, values equal to a group's lower limit will be included instead.</p>
+
+					<p>However, the first and last group will always include values at their outer boundaries, since they will be determined based on the minimum and maximum values in the data set.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-grouping" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/assets/data/city example.csv',
+							cols: {
+								NAME: 'A',
+								COUNTRY: 'B',
+								POP: 'C',
+							},
+
+							headerRows: 1,
+							footerRows: 1,
+
+							aliases: [
+								['Aotearoa', 'New Zealand'],
+							],
+							transform: {
+								POP: analyser.transformers.number,
+							},
+						});
+
+						const { rows, cols, group } = await analyser.loadFile(fileConfig);
+
+						const groupByCountry = group(rows, cols.COUNTRY);
+						log('Grouped by country:');
+						groupByCountry.forEach((groupRows, name) => log(name, groupRows.length));
+
+						const groupByPopulation = group(rows, cols.POP, 5);
+						log('Grouped by population:');
+						groupByPopulation.forEach((groupRows, name) => log(name, groupRows.length));
+
+						const groupByPopulationCustom = group(rows, cols.POP, [50, 200, 1000]);
+						log('Grouped by population (custom split points):');
+						groupByPopulationCustom.forEach((groupRows, name) => log(name, groupRows.length));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-usage-grouping"></samp>
 				</div>
 			</section>
 
@@ -756,6 +819,14 @@
 						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserRows-addCol"></samp>
 					</div>
 				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-AnalyserGroup">AnalyserGroup <a class="anchor" href="#interfaces-AnalyserGroup"></a></h3>
+
+					<p class="todo">TODO</p>
+				</div>
 			</section>
 
 			<section>
