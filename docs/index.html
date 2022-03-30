@@ -516,6 +516,284 @@
 				<div class="content">
 					<h2 id="usage-graphs">Graphs <a class="anchor" href="#usage-graphs"></a></h2>
 
+					<p>Once data has been processed and analysed, Analyser is able to produce some forms of graphs from numerical summaries of data created through <code><a href="#interfaces-AnalyserGroup-summarise">AnalyserGroup.summarise()</a></code>.</p>
+
+					<p>These graphs are created using HTML and some SVG, and rely on Analyser's CSS to make them appear correctly. They are designed to be reasonably accessible to screen reader users. The base CSS for them is written in Sass, and can be found in <code>~/docs/assets/scss/_chart.scss</code>.</p>
+
+					<p>The methods Analyser uses to create graphs rely on some common interfaces for configuring their labels and axes.
+				</div>
+
+				<section>
+					<div class="content">
+						<h3 id="usage-graphs-ChartOptions">ChartOptions</h3>
+
+						<code class="code--block js-codebook__inert">
+							<a href="#usage-graphs-ChartOptions-title">title</a>?: string,
+							<a href="#usage-graphs-ChartOptions-legend">legend</a>?: boolean,
+
+							<a href="#usage-graphs-ChartOptions-colours">colours</a>?: Record&lt;string, string&gt;,
+
+							<a href="#usage-graphs-ChartOptions-x">x</a>?: <a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a> | <a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a>,
+							<a href="#usage-graphs-ChartOptions-y">y</a>?: <a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a>,
+
+							<a href="#usage-graphs-ChartOptions-stacked">stacked</a>?: boolean,
+						</code>
+
+						<p>All charts share a common <code>ChartOptions</code> interface, with only minor differences between chart types.</p>
+					</div>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-title"><code>title</code> <a class="anchor" href="#usage-graphs-ChartOptions-title"></a></h4>
+						</div>
+
+						<p>The title to display above the graph.</p>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-legend"><code>legend</code> <a class="anchor" href="#usage-graphs-ChartOptions-legend"></a></h4>
+						</div>
+
+						<p>Whether or not a legend should be displayed. The position of the legend can be controlled via CSS.</p>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-colours"><code>colours</code> <a class="anchor" href="#usage-graphs-ChartOptions-colours"></a></h4>
+						</div>
+
+						<p>An object representing what colours each group of data included on the graph should be. The property names of this object should line up with the names of the summaries that have been created.</p>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-x"><code>x</code> <a class="anchor" href="#usage-graphs-ChartOptions-x"></a></h4>
+						</div>
+
+						<p>The configuration options for a graph's x axis might be quantitative or qualitative, depending on the type of chart. This option uses either the <code><a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a></code> or <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface depending on what is required by the graph.</p>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-y"><code>y</code> <a class="anchor" href="#usage-graphs-ChartOptions-y"></a></h4>
+						</div>
+
+						<p>A graph's y axis is always configured using the <code><a href="usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface.</p>
+					</section>
+
+					<section>
+						<div class="content">
+							<h4 id="usage-graphs-ChartOptions-stacked"><code>stacked</code> <a class="anchor" href="#usage-graphs-ChartOptions-stacked"></a></h4>
+						</div>
+
+						<p>Analyser's <a href="#usage-graphs-bar">bar graphs</a> support the <code>stacked</code> property to generate a stacked bar chart.</p>
+					</section>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative <a class="anchor" href="#usage-graphs-AxisOptionsQualitative"></a></h3>
+
+					<code class="code--block js-codebook__inert">
+						{
+							<a href="#usage-graphs-AxisOptionsQualitative-title">title</a>?: string,
+
+							<a href="#usage-graphs-AxisOptionsQualitative-numberFormat">numberFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> | ((value: number) => string),
+							<a href="#usage-graphs-AxisOptionsQualitative-dateFormat">dateFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> | ((value: Date) => string),
+
+							<a href="#usage-graphs-AxisOptionsQualitative-labels">labels</a>?: any[],
+						}
+					</code>
+				</div>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-title"><code>title</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-title"></a></h4>
+
+						<p>The axis title.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-numberFormat"><code>numberFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-numberFormat"></a></h4>
+
+						<p>If any of the axis's values are numbers, the <code>numberFormat</code> property will determine how those numbers are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> object or by passing a custom function that takes in a number and returns a string.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-dateFormat"><code>dateFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-dateFormat"></a></h4>
+
+						<p>If any of the axis's values are dates, the <code>dateFormat</code> property will determine how those dates are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> or by passing a custom function that takes in a <code>Date</code> and returns a string.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-labels"><code>labels</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-labels"></a></h4>
+
+						<p class="todo">TODO</p>
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative"></a></h3>
+
+					<code class="code--block js-codebook__inert">
+						{
+							<a href="#usage-graphs-AxisOptionsQuantitative-title">title</a>?: string,
+
+							<a href="#usage-graphs-AxisOptionsQuantitative-numberFormat">numberFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> | ((value: number) => string),
+							<a href="#usage-graphs-AxisOptionsQuantitative-dateFormat">dateFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> | ((value: Date) => string),
+
+							<a href="#usage-graphs-AxisOptionsQuantitative-values">values</a>?: number | number[] | Date[],
+							<a href="#usage-graphs-AxisOptionsQuantitative-gridlines">gridlines</a>?: number | number[] | Date[],
+
+							<a href="#usage-graphs-AxisOptionsQuantitative-max">max</a>?: number | 'auto',
+							<a href="#usage-graphs-AxisOptionsQuantitative-min">min</a>?: number | 'auto',
+						}
+					</code>
+				</div>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-title"><code>title</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-title"></a></h4>
+
+						<p>The axis title.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-numberFormat"><code>numberFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-numberFormat"></a></h4>
+
+						<p>If any of the axis's values are numbers, the <code>numberFormat</code> property will determine how those numbers are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> object or by passing a custom function that takes in a number and returns a string.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-dateFormat"><code>dateFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-dateFormat"></a></h4>
+
+						<p>If any of the axis's values are dates, the <code>dateFormat</code> property will determine how those dates are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> or by passing a custom function that takes in a <code>Date</code> and returns a string.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-values"><code>values</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-values"></a></h4>
+
+						<p class="todo">TODO</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-gridlines"><code>gridlines</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-gridlines"></a></h4>
+
+						<p class="todo">TODO</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-max"><code>max</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-max"></a></h4>
+
+						<p class="todo">TODO</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="usage-graphs-AxisOptionsQualitative-min"><code>min</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-min"></a></h4>
+
+						<p class="todo">TODO</p>
+					</div>
+				</section>
+			</section>
+
+			<section class="js-codebook__set" data-codebook-set="usage-graphs-bar">
+				<div class="content">
+					<h3 id="usage-graphs-bar">bar <a class="anchor" href="#usage-graphs-bar"></a></h3>
+
+					<code><span class="todo">bar(summary: AnalyserSummar, options?: BarChartOptions)</span></code>
+
+					<p>Bar charts have a qualitative x axis, so use the <code><a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a></code> interface for configuring their x axis.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-graphs-bar" data-codebook-html="html-usage-graphs-bar" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/assets/data/city example.csv',
+							cols: {
+								COUNTRY: 'B',
+								POPULATION: 'C',
+							},
+							headerRows: 1,
+							footerRows: 1,
+							transform: {
+								POPULATION: analyser.transformers.number,
+							},
+							aliases: [
+								['Aotearoa', 'New Zealand'],
+							],
+						});
+
+						const { rows, cols, group } = await analyser.loadFile(fileConfig);
+
+						const countryGroup = group(rows, cols.COUNTRY);
+
+						const countSummary = countryGroup.summarise();
+						log('Count of cities by country:', countSummary);
+
+						const barChartHtml = analyser.bar(countSummary, {
+							title: 'Mean city population',
+							legend: true,
+
+							colours: {
+								'Count': '#ff0000',
+							},
+
+							x: {
+								title: 'Country',
+
+								labels: ['Aotearoa', 'Germany', 'Australia'],
+							},
+							y: {
+								title: 'Population',
+
+								numberFormat: new Intl.NumberFormat('en-nz', { useGrouping: 'always', roundingIncrement: 1 }),
+
+								max: 10,
+								min: 0,
+							},
+
+							stacked: true,
+						});
+
+						html(barChartHtml);
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<div class="docs-example__html" id="html-usage-graphs-bar"></div>
+
+					<samp class="docs-example__log js-docs__log" id="log-usage-graphs-bar" data-codebook-html="html-usage-graphs-bar"></samp>
+				</div>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="usage-graphs-line">line <a class="anchor" href="#usage-graphs-line"></a></h3>
+
 					<p class="todo">TODO</p>
 				</div>
 			</section>
@@ -524,8 +802,6 @@
 		<section>
 			<div class="content">
 				<h2 id="interfaces">Interfaces <a class="anchor" href="#interfaces"></a></h2>
-
-				<p class="todo">TODO</p>
 			</div>
 
 			<section class="js-codebook__set" data-codebook-set="FileConfig">
@@ -724,7 +1000,7 @@
 				<div class="content">
 					<h3 id="interfaces-AnalyserRows">AnalyserRows <a class="anchor" href="#interfaces-AnalyserRows"></a></h3>
 
-					<p>The <code>AnalyserRows</code> interface is a modified <code>Array</code> with two additional methods. Aside from these methods, it can be treated the same as any regular <code>Array</code>, for example by calling methods such as <code>Array.prototype.filter</code>.</p>
+					<p>The <code>AnalyserRows</code> class extends the native <code>Array</code> class by adding two additional methods. Aside from these methods, it can be treated the same as any regular <code>Array</code>, for example by calling methods such as <code>Array.prototype.filter</code>.</p>
 
 					<p>An <code>AnalyserRows</code> object is exposed on the <code><a href="#interfaces-DataConfig">DataConfig</a></code> object returned by <code><a href="#methods-loadFile">loadFile</a></code>, and is typically used alongside the <code><a href="#interfaces-DataConfig-cols">cols</a></code> object exposed alongside it.</p>
 				</div>
@@ -825,8 +1101,62 @@
 				<div class="content">
 					<h3 id="interfaces-AnalyserGroup">AnalyserGroup <a class="anchor" href="#interfaces-AnalyserGroup"></a></h3>
 
-					<p class="todo">TODO</p>
+					<p>The <code>AnalyserGroup</code> class extends the native <code>Map</code> class to add an additional method. It is primarily intended to be interacted with only through this method.</p>
 				</div>
+
+				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserGroup-summarise">
+					<div class="content">
+						<h4 id="interfaces-AnalyserGroup-summarise">summarise <a class="anchor" href="#interfaces-AnalyserGroup-summarise"></a></h4>
+
+						<code>summarise(summarisers?: Record&lt;string, (rows: AnalyserRows, groupName: any) => any&gt;): any[][]</code>
+
+						<p>The <code>summarise</code> method converts an <code>AnalyserGroup</code> into a specially formatted 2D array made for easy viewing. The first row is a header row, giving the name of each summary, and the first column gives the name of each group from the <code>AnalyserGroup</code> used to create it. The other cells each contain a particular summary of that group.</p>
+
+						<p>By default, if not passed a <code>summarisers</code> argument, the default "Count" summary will be used, which calculates the number of rows in each group.</p>
+
+						<p>More complex summaries can be passed to the <code>summarise</code> function as an object where each property is a function that takes an <code>AnalyserRows</code> and the name of its group and produces some result.</p>
+
+						<p>Summaries that all produce numeric results can then be used to <a href="#usage-graphs">create graphs</a>.</p>
+					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserGroup-summarise" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/assets/data/city example.csv',
+								cols: {
+									COUNTRY: 'B',
+									POPULATION: 'C',
+								},
+								headerRows: 1,
+								footerRows: 1,
+								transform: {
+									POPULATION: analyser.transformers.number,
+								},
+								aliases: [
+									['Aotearoa', 'New Zealand'],
+								],
+							});
+
+							const { rows, cols, group } = await analyser.loadFile(fileConfig);
+
+							const countryGroup = group(rows, cols.COUNTRY);
+
+							const countSummary = countryGroup.summarise();
+							log('Count of cities by country:', countSummary);
+
+							const meanPopulationSummary = countryGroup.summarise({
+								mean: (rows, groupName) => analyser.statistics.mean(rows.getCol(cols.POPULATION)),
+							});
+							log('Mean city population by country:', meanPopulationSummary);
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserGroup-summarise"></samp>
+					</div>
+				</section>
 			</section>
 
 			<section>
@@ -854,8 +1184,6 @@
 		<section>
 			<div class="content">
 				<h2 id="methods">Methods <a class="anchor" href="#methods"></a></h2>
-
-				<p class="todo">TODO</p>
 			</div>
 
 			<section class="js-codebook__set" data-codebook-set="methods-fileConfig">
@@ -990,22 +1318,6 @@
 					</div>
 
 					<samp class="docs-example__log js-docs__log" id="log-methods-getColNumbers"></samp>
-				</div>
-			</section>
-
-			<section>
-				<div class="content">
-					<h3 id="methods-bar">bar <a class="anchor" href="#methods-bar"></a></h3>
-
-					<p class="todo">TODO</p>
-				</div>
-			</section>
-
-			<section>
-				<div class="content">
-					<h3 id="methods-line">line <a class="anchor" href="#methods-line"></a></h3>
-
-					<p class="todo">TODO</p>
 				</div>
 			</section>
 		</section>
