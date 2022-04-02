@@ -5,6 +5,7 @@ import * as analyser from '@cipscis/analyser';
 
 const selectors = Object.freeze({
 	example: '.js-docs__example',
+	block: '.js-docs__example .js-codebook__block[contenteditable]',
 	run: '.js-docs__run',
 	log: '.js-docs__log',
 
@@ -19,6 +20,8 @@ const classes = Object.freeze({
 	error: 'docs-example__control--error',
 } as const);
 
+let $currentBlock: HTMLElement | null = null;
+
 function init() {
 	_initEvents();
 
@@ -27,10 +30,17 @@ function init() {
 
 function _initEvents() {
 	const $runSetButtons = document.querySelectorAll<HTMLElement>(selectors.run);
-
 	$runSetButtons.forEach(($runSetButton) => {
 		$runSetButton.addEventListener('click', _runSetEvent);
 	});
+
+	const $blocks = document.querySelectorAll<HTMLElement>(selectors.block);
+	$blocks.forEach(($block) => {
+		$block.addEventListener('blur', _clearCurrentBlock);
+		$block.addEventListener('input', _markAsCurrentBlock);
+		$block.addEventListener('keydown', _markAsCurrentBlockOnArrowDown);
+	});
+	document.addEventListener('keydown', _handleTabInsertion);
 }
 
 function _runInitialSets() {
@@ -59,14 +69,52 @@ function _runSetEvent(this: HTMLElement, e: MouseEvent) {
 			const $log = $example?.querySelector(selectors.log);
 
 			if ($log) {
-				$log.innerHTML = reason.toString();
-			} else {
 				console.error(reason);
+				$log.innerHTML = reason.toString();
 			}
 		})
 		.finally(() => {
 			$runSetButton.setAttribute('aria-busy', 'false');
 		});
+}
+
+function _markAsCurrentBlock(this: HTMLElement, e: Event) {
+	$currentBlock = this;
+}
+
+function _markAsCurrentBlockOnArrowDown(this: HTMLElement, e: KeyboardEvent) {
+	if (
+		e.key === 'ArrowUp' ||
+		e.key === 'ArrowRight' ||
+		e.key === 'ArrowDown' ||
+		e.key === 'ArrowLeft'
+	) {
+		_markAsCurrentBlock.call(this, e);
+	}
+}
+
+function _clearCurrentBlock(this: HTMLElement, e: FocusEvent) {
+	$currentBlock = null;
+}
+
+function _handleTabInsertion(this: Document, e: KeyboardEvent) {
+	if (e.key !== 'Tab') {
+		return;
+	}
+
+	if ($currentBlock === null) {
+		return;
+	}
+
+	e.preventDefault();
+
+	const selection = this.getSelection();
+	const range = selection?.getRangeAt(0);
+	if (range) {
+		range.deleteContents();
+		range.insertNode(document.createTextNode('\t'));
+		range.collapse(false);
+	}
 }
 
 init();
