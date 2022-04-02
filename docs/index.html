@@ -43,14 +43,14 @@
 			</div>
 		</section>
 
-		<section class="js-codebook__set" data-codebook-set="example-data">
+		<section>
 			<div class="content">
 				<h2 id="example-data">Example data <a class="anchor" href="#example-data"></a></h2>
 
 				<p>This documentation uses example data:</p>
 			</div>
 
-			<script type="text/plain" class="js-codebook__block" data-codebook-html="html-example-data">
+			<script type="text/plain" class="js-codebook__block" data-codebook-html="html-example-data" data-codebook-set="example-data">
 				const csvString = await (await fetch('/assets/data/city example.csv')).text();
 				const data = csv.parse(csvString);
 
@@ -75,7 +75,7 @@
 				<p>To ensure the examples' <code>log</code> and <code>html</code> helper functions work correctly, make sure you use <code>await</code> so all asynchronous code finishes before reaching the end of the example.</p>
 			</div>
 
-			<div class="docs-example js-docs__example">
+			<div class="docs-example js-docs__example js-codebook__set" data-codebook-set="example-output">
 				<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-codebook-example" data-codebook-html="html-codebook-example" contenteditable spellcheck="false">
 					log('You can log output');
 					html('<p>Some examples can <b>print custom HTML</b></p>');
@@ -636,7 +636,9 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-labels"><code>labels</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-labels"></a></h4>
 
-						<p class="todo">TODO</p>
+						<p>The labels to display on the axis. If absent, these labels will be gathered automatically from the <a href="#interfaces-AnalyserGroup-summarise">summary</a> used to create the graph.</p>
+
+						<p>This property can be used to customise the order of the data, and to exclude certain items from appearing on the graph. If a label that doesn't exist in the data is added, empty data will be generated to be used for it.</p>
 					</div>
 				</section>
 			</section>
@@ -689,7 +691,15 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-values"><code>values</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-values"></a></h4>
 
-						<p class="todo">TODO</p>
+						<p>This property can be used to specify the values that appear on a quantitative axis.</p>
+
+						<p>If it is a <code>number</code>, Analyser will generate that many equally spaced values between the minimum and maximum values.</p>
+
+						<p>If it is a <code>number[]</code>, Analyser will display each of the numbers in the array on the axis and no other values.</p>
+
+						<p>Note that, when using the <code>number</code> form, the minimum value <em>does not count</em> against the number of values. This is for ease of use when working with data with a baseline at <code>0</code>, so a number of values that is a divisor of the maximum value (or, for data without a <code>0</code> minimum, a divisor of the range of the data) that will cause integer values to be generated.</p>
+
+						<p>This allows for easier generation of values in many circumstances, for example specifying <code>values</code> of <code>5</code> for an axis that goes from <code>0</code> to <code>5000</code> will result in a value at each interval of <code>1000</code>.</p>
 					</div>
 				</section>
 
@@ -697,7 +707,7 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-gridlines"><code>gridlines</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-gridlines"></a></h4>
 
-						<p class="todo">TODO</p>
+						<p>The <code>gridlines</code> property works the same as the <code><a href="#usage-graphs-AxisOptionsQualitative-values">values</a></code> property, except instead of generating values to display on the axis it generates gridlines to extend from the axis.</p>
 					</div>
 				</section>
 
@@ -705,7 +715,11 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-max"><code>max</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-max"></a></h4>
 
-						<p class="todo">TODO</p>
+						<p>Setting <code>max</code> to a <code>number</code> will override the maximum value of the axis.</p>
+
+						<p>Alternately, setting <code>max</code> to the string <code>'auto'</code> will allow Analyser to try to intelligently determine the maximum value. It does this by rounding the maximum value in the data up to the nearest multiple of the largest power of 10 beneath it. So, for example, <code>13</code> would round up to <code>20</code> whereas <code>723</code> would round up to <code>800</code>.</p>
+
+						<p>If both <code>max</code> and <code><a href="#usage-graphs-AxisOptionsQualitative-min">min</a></code> are absent, the maximum and minimum values in the data will be used. However, if either one of them is set then the other will default to <code>'auto'</code> behaviour.</p>
 					</div>
 				</section>
 
@@ -713,7 +727,7 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-min"><code>min</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-min"></a></h4>
 
-						<p class="todo">TODO</p>
+						<p>Like the <code><a href="#usage-graphs-AxisOptionsQualitative-max">max</a></code> property, <code>min</code> can be used to override the minimum value of an axis. If set to <code>'auto'</code> Analyser will determine a sensible minimum value in the same way as with <code>max</code>, except it will instead start with the minimum value in the data and round down.</p>
 					</div>
 				</section>
 			</section>
@@ -749,28 +763,30 @@
 
 						const countryGroup = group(rows, cols.COUNTRY);
 
-						const countSummary = countryGroup.summarise();
-						log('Count of cities by country:', countSummary);
+						const meanPopulationSummary = countryGroup.summarise({
+							mean: (rows) => analyser.statistics.mean(rows.getCol(cols.POPULATION)),
+						});
+						log('Mean city population by country:', meanPopulationSummary);
 
-						const barChartHtml = analyser.bar(countSummary, {
+						const barChartHtml = analyser.bar(meanPopulationSummary, {
 							title: 'Mean city population',
 							legend: true,
 
 							colours: {
-								'Count': '#ff0000',
+								'mean': '#ff0000',
 							},
 
 							x: {
 								title: 'Country',
 
-								labels: ['Aotearoa', 'Germany', 'Australia'],
+								labels: ['Australia', 'Germany', 'Aotearoa'],
 							},
 							y: {
 								title: 'Population',
 
 								numberFormat: new Intl.NumberFormat('en-nz', { useGrouping: 'always', roundingIncrement: 1 }),
 
-								max: 10,
+								values: 5,
 								min: 0,
 							},
 
@@ -786,7 +802,7 @@
 
 					<div class="docs-example__html" id="html-usage-graphs-bar"></div>
 
-					<samp class="docs-example__log js-docs__log" id="log-usage-graphs-bar" data-codebook-html="html-usage-graphs-bar"></samp>
+					<samp class="docs-example__log js-docs__log" id="log-usage-graphs-bar"></samp>
 				</div>
 			</section>
 
@@ -794,7 +810,21 @@
 				<div class="content">
 					<h3 id="usage-graphs-line">line <a class="anchor" href="#usage-graphs-line"></a></h3>
 
-					<p class="todo">TODO</p>
+					<code><span class="todo">line(summary: AnalyserSummar, options?: LineChartOptions)</span></code>
+
+					<p>Line charts have a quantitative x axis, so use the <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface for configuring their x axis.</p>
+				</div>
+
+				<div class="docs-example js-docs__example todo">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-graphs-line" data-codebook-html="html-usage-graphs-line" contenteditable spellcheck="false"></script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<div class="docs-example__html" id="html-usage-graphs-line"></div>
+
+					<samp class="docs-example__log js-docs__log" id="log-usage-graphs-line"></samp>
 				</div>
 			</section>
 		</section>
