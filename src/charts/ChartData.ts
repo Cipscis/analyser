@@ -16,6 +16,11 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 	const [[, ...groupNames]] = summary; // Ignore first 'Value' entry in first row
 	let [, ...valueRows] = summary; // Ignore first row of group names
 
+	// If all the values are dates or numbers, sort valueRows based on label then re-extract
+	if (valueRows.every((row): row is [Date | number, ...any[]] => row[0] instanceof Date || typeof row[0] === 'number')) {
+		valueRows = valueRows.sort((a, b) => +a[0] - +b[0]);
+	}
+
 	// Extract the labels
 	let labels = valueRows.map((row) => row[0]);
 
