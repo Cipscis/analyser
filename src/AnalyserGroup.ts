@@ -3,7 +3,7 @@ import { AnalyserRows } from './AnalyserRows.js';
 /**
  * A function for summarising a set of AnalyserRows
  */
-type AnalyserSummariser<T = any, G = any> = (rows: AnalyserRows, groupName: G) => T;
+type AnalyserSummariser<T = unknown, G = unknown> = (rows: AnalyserRows, groupName: G) => T;
 
 /**
  * A group of AnalyserSummariser functions
@@ -22,14 +22,14 @@ type DefaultSummaryName = keyof typeof defaultSummarisers;
  * After the first header row, each row represents a set of AnalyserRows grouped by the value given in the first cell.
  * After the first column, each column represents a summary of a group of AnalyserRows. The name of the summary is given in the first cell.
  */
-export type AnalyserSummary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[any, ...any[]][]];
+export type AnalyserSummary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[unknown, ...unknown[]][]];
 
 interface AnalyserGroupOptions {
 	discrete?: boolean,
 }
 
-export class AnalyserGroup extends Map<any, AnalyserRows> {
-	#discrete: boolean
+export class AnalyserGroup extends Map<unknown, AnalyserRows> {
+	#discrete: boolean;
 
 	constructor(options?: AnalyserGroupOptions) {
 		super();
@@ -53,11 +53,11 @@ export class AnalyserGroup extends Map<any, AnalyserRows> {
 		const summaryNames = Object.keys(summarisers) as (DefaultSummaryName)[] | SummaryName[];
 		const summaryHeaderRow = ['Value', ...summaryNames] as const;
 
-		let summaryValueRows: [any, ...any[]][] = [];
-		for (let [groupName, rows] of this.entries()) {
-			const summaryRow: [any, ...any[]] = [groupName];
+		let summaryValueRows: [unknown, ...unknown[]][] = [];
+		for (const [groupName, rows] of this.entries()) {
+			const summaryRow: [unknown, ...unknown[]] = [groupName];
 
-			for (let [, summariser] of Object.entries<AnalyserSummariser>(summarisers)) {
+			for (const [, summariser] of Object.entries<AnalyserSummariser>(summarisers)) {
 				const rowSummary = summariser(rows, groupName);
 				summaryRow.push(rowSummary);
 			}

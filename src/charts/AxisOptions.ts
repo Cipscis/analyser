@@ -6,7 +6,7 @@ interface AxisOptionsBase {
 }
 
 export interface AxisOptionsQualitative extends AxisOptionsBase {
-	labels?: any[],
+	labels?: string[],
 }
 
 export interface AxisOptionsQuantitative extends AxisOptionsBase {
@@ -15,6 +15,6 @@ export interface AxisOptionsQuantitative extends AxisOptionsBase {
 
 	max?: number | 'auto',
 	min?: number | 'auto',
-};
+}
 
 export type AxisOptions = AxisOptionsQualitative | AxisOptionsQuantitative;

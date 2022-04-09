@@ -27,7 +27,7 @@ class AnalyserRows extends Array<unknown[]> {
 		}
 
 		const col: unknown[] = [];
-		for (let row of this) {
+		for (const row of this) {
 			col.push(row[colNum]);
 		}
 
@@ -37,9 +37,9 @@ class AnalyserRows extends Array<unknown[]> {
 	/**
 	 * Adds a new column to AnalyserRows, and returns its index.
 	 */
-	addCol<T>(creator: (row: any[], index: number) => T): number
+	addCol<T>(creator: (row: unknown[], index: number) => T): number
 	addCol<T>(newRow: T[]): number
-	addCol<T>(creator: ((row: any[], index: number) => T) | T[]): number {
+	addCol<T>(creator: ((row: unknown[], index: number) => T) | T[]): number {
 		const colIndex = this[0].length;
 
 		if (Array.isArray(creator)) {
@@ -47,11 +47,11 @@ class AnalyserRows extends Array<unknown[]> {
 				throw new Error(`New column of length ${creator.length} cannot be added. It must be of length ${this.length}.`);
 			}
 
-			for (let [i, row] of this.entries()) {
+			for (const [i, row] of this.entries()) {
 				row.push(creator[i]);
 			}
 		} else {
-			for (let [i, row] of this.entries()) {
+			for (const [i, row] of this.entries()) {
 				row.push(creator(row, i));
 			}
 		}

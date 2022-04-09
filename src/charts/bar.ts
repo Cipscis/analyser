@@ -52,7 +52,7 @@ function renderBars<GroupName extends string>(chartData: ChartData<GroupName>, o
 							>
 								${renderTooltip(chartData, group, label, options)}
 							</div>
-						</li>`
+						</li>`;
 						return str;
 					}).join('')}
 				</ul>
@@ -68,4 +68,4 @@ export function bar<GroupName extends string>(summary: AnalyserSummary<GroupName
 	const chart = renderChart(chartData, bars, options);
 
 	return chart;
-};
+}

@@ -58,27 +58,27 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 	}
 
 	if (fileConfig.transform) {
-		for (let colName in fileConfig.transform) {
+		for (const colName in fileConfig.transform) {
 			if (!(colName in dataConfig.cols)) {
 				console.warn(`Column '${colName}' specified in transform not found in cols.`);
 			} else {
 				const colNum = dataConfig.cols[colName];
 				const transformFn = fileConfig.transform[colName];
 
-				// Some of these conditions are ignored because they're intended to help when TypeScript isn't being used
+				// These conditions are intended to help when TypeScript isn't being used
 				if (transformFn === transformers.array) {
 					throw new Error(`The 'array' transformer cannot be used directly. Please pass a 'separator' argument.`);
 				} else if (transformFn === transformers.booleanCustom) {
 					throw new Error(`The 'booleanCustom' transformer cannot be used directly. Please invoke it to create a transformer function.`);
-				// @ts-ignore
+				// @ts-expect-error This check is only intended to catch errors if an incorrectly typed value is passed
 				} else if (transformFn === transformers.enumValue) {
 					throw new Error(`The 'enumValue' transformer cannot be used directly. Please pass an 'enums' argument.`);
 				}
 
-				for (let row of rows) {
+				for (const [index, row] of rows.entries()) {
 					if (transformFn) {
-						const locationIdentifier = `column ${colName}, row ${rows.indexOf(row)}`;
-						row[colNum] = transformFn(row[colNum], locationIdentifier);
+						const locationIdentifier = `column ${colName}, row ${index}`;
+						dataConfig.rows[index][colNum] = transformFn(row[colNum], locationIdentifier);
 					}
 				}
 			}

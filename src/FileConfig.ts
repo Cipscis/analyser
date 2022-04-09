@@ -8,7 +8,7 @@ interface FileConfig<T extends string> {
 	footerRows?: number,
 
 	aliases?: string[][],
-	transform?: Partial<Record<T, TransformerFn<any>>>,
+	transform?: Partial<Record<T, TransformerFn<unknown>>>,
 }
 
 /**

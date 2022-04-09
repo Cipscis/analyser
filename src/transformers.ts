@@ -3,7 +3,7 @@
 //////////////////////////
 
 export interface TransformerFn<T> {
-	(value: string, locationIdentifier?: string): T extends any[] ? T : (T | null)
+	(value: string, locationIdentifier?: string): T extends unknown[] ? T : (T | null)
 }
 
 /**
@@ -149,7 +149,7 @@ export const number: TransformerFn<number> = (value: string, locationIdentifier?
 		}
 		return null;
 	}
-}
+};
 
 /**
  * Extracts boolean or number values from string representations if appropriate.
@@ -165,7 +165,7 @@ export const value: TransformerFn<boolean | number> = (value: string, locationId
 		console.warn(`Boolean or number value not found in '${value}' (${locationIdentifier})`);
 		return null;
 	}
-}
+};
 
 /**
  * Checks that the value, if it exists, is a member of an enum.
@@ -181,8 +181,8 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 	const enumValues: E[] = Object.values(enums);
 
 	function isEnumMember(val: unknown): val is E {
-		// Use `as any[]` so TypeScript doesn't complain when using Array.prototype.includes
-		return (enumValues as any[]).includes(val);
+		// Use `as unknown[]` so TypeScript doesn't complain when using Array.prototype.includes
+		return (enumValues as unknown[]).includes(val);
 	}
 
 	const transformer = ((value: string, locationIdentifier?: string) => {

@@ -1,12 +1,10 @@
-import { AnalyserRows } from './AnalyserRows.js';
-
-type FilterInput = ((value: any) => boolean) | any[] | Exclude<any, []>
+type FilterInput = ((value: unknown) => boolean) | unknown[] | Exclude<unknown, []>
 
 /**
  * A function used by Array.prototype.filter
  */
 interface FilterResolver {
-	(val: any, index: number, arr: any[]): boolean,
+	(val: unknown[], index: number, arr: unknown[][]): boolean,
 }
 
 /**
@@ -78,26 +76,18 @@ function _extendFilterFn(filterResolver: FilterResolver, aliases?: string[][]): 
  * If the value or values being checked against are strings, a set of
  * aliases can be used as well.
  */
-function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases?: string[][]): boolean {
+function _applyFilter(row: unknown[], colIndex: number, values: FilterInput, aliases?: string[][]): boolean {
 	if (typeof values === 'function') {
 		return values(row[colIndex]);
 	}
 
-	if (!Array.isArray(values)) {
-		values = [values];
-	}
+	const valuesArr = Array.isArray(values) ? values as unknown[] : [values];
 
 	const cell = row[colIndex];
-	let cellValues;
+	const cellValues = Array.isArray(cell) ? cell as unknown[] : [cell];
 
-	if (Array.isArray(cell)) {
-		cellValues = cell;
-	} else {
-		cellValues = [cell];
-	}
-
-	for (let cellValue of cellValues) {
-		for (let value of values) {
+	for (const cellValue of cellValues) {
+		for (const value of valuesArr) {
 			if (_matchAlias(value, cellValue, aliases)) {
 				return true;
 			}
@@ -111,13 +101,13 @@ function _applyFilter(row: any[], colIndex: number, values: FilterInput, aliases
  * Checks if the value of a cell matches the value passed,
  * optionally taking one or more sets of aliases to match.
  */
-function _matchAlias(cell: any, value: any, aliases?: string[][]): boolean {
+function _matchAlias(cell: unknown, value: unknown, aliases?: string[][]): boolean {
 	if (cell === value) {
 		return true;
 	}
 
 	if (aliases && typeof cell === 'string' && typeof value === 'string') {
-		for (let aliasList of aliases) {
+		for (const aliasList of aliases) {
 			if (aliasList.includes(cell) && aliasList.includes(value)) {
 				return true;
 			}

@@ -29,9 +29,9 @@ This project creates six npm tasks:
 
 * `npm start` runs both the `server` and `watch` tasks simultaneously.
 
-* `npm test` task compiles any TypeScript and runs any configured test suites using [Jasmine](https://jasmine.github.io/).
+* `npm test` lints and compiles any TypeScript, then runs any configured test suites using [Jasmine](https://jasmine.github.io/).
 
-* `npm run prepare` first removes directories containing compiled files, then compiles any TypeScript and runs any configured test suites using [Jasmine](https://jasmine.github.io/). You should never need to run this task manually, [the `prepare` script runs automatically](https://docs.npmjs.com/cli/v7/using-npm/scripts#life-cycle-scripts) when npm prepares your package for publishing.
+* `npm run prepare` first removes directories containing compiled files, then lints and compiles any TypeScript, then runs any configured test suites using [Jasmine](https://jasmine.github.io/). You should never need to run this task manually, [the `prepare` script runs automatically](https://docs.npmjs.com/cli/v7/using-npm/scripts#life-cycle-scripts) when npm prepares your package for publishing.
 
 Usually, you will just want to run `npm start`.
 
@@ -81,23 +81,29 @@ These dependencies are used when working on the project locally.
 
 * [Jasmine](https://jasmine.github.io/): Testing framework
 
-* [@types/jasmine](https://www.npmjs.com/package/@types/jasmine): TypeScript types for Jasmine
+	* [@types/jasmine](https://www.npmjs.com/package/@types/jasmine): TypeScript types for Jasmine
 
 * [sass](https://www.npmjs.com/package/sass): Compiling CSS from [Sass](https://sass-lang.com/)
 
-* [gulp-sass](https://www.npmjs.com/package/gulp-sass): Using the `sass` compiler with Gulp
+	* [gulp-sass](https://www.npmjs.com/package/gulp-sass): Using the `sass` compiler with Gulp
 
 * [Webpack](https://webpack.js.org/): For JavaScript dependency management, used with Gulp
 
-* [ts-loader](https://github.com/TypeStrong/ts-loader): For compiling TypeScript using Webpack
+	* [ts-loader](https://github.com/TypeStrong/ts-loader): For compiling TypeScript using Webpack
 
-* [resolve-typescript-plugin](https://github.com/softwareventures/resolve-typescript-plugin): For using ES Module syntax with Webpack's `ts-loader`
+	* [resolve-typescript-plugin](https://github.com/softwareventures/resolve-typescript-plugin): For using ES Module syntax with Webpack's `ts-loader`
 
 * [Express](https://expressjs.com/): Running a Node.js server, accessed at `http://localhost:<PORT>`
 
 * [Concurrently](https://www.npmjs.com/package/concurrently): Running server and development build tasks concurrently
 
 * [dotenv](https://www.npmjs.com/package/dotenv): Reading environment variables from [`.env`](#env) file
+
+* [eslint](https://www.npmjs.com/package/eslint): Linting TypeScript files
+
+	* [@typescript-eslint/eslint-plugin](https://www.npmjs.com/package/@typescript-eslint/eslint-plugin): Allows `eslint` to lint TypeScript
+
+	* [@typescript-eslint/parser](https://www.npmjs.com/package/@typescript-eslint/parser): Allows `eslint` to parse TypeScript
 
 ### Deploy
 

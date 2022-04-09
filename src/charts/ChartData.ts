@@ -1,8 +1,13 @@
 import { AnalyserSummary } from '../AnalyserGroup.js';
 import { ChartOptions } from './ChartOptions.js';
 
+/**
+ * Types that can be coerced to `number`
+ */
+type NumberLike = number | string | Date;
+
 export type ChartData<GroupName extends string = string> = {
-	labels: any[],
+	labels: NumberLike[],
 	groupNames: GroupName[],
 	groups: number[][],
 
@@ -17,8 +22,13 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 	let [, ...valueRows] = summary; // Ignore first row of group names
 
 	// If all the values are dates or numbers, sort valueRows based on label then re-extract
-	if (valueRows.every((row): row is [Date | number, ...any[]] => row[0] instanceof Date || typeof row[0] === 'number')) {
+	if (valueRows.every((row): row is [Date | number, ...unknown[]] => row[0] instanceof Date || typeof row[0] === 'number')) {
 		valueRows = valueRows.sort((a, b) => +a[0] - +b[0]);
+	}
+
+	// `valueRows` can contain any sort of values, but only values that can be converted to numbers can be used to create a chart
+	if (!valueRows.every((row): row is [NumberLike, ...unknown[]] => typeof row[0] === 'number' || typeof row[0] === 'string' || row[0] instanceof Date)) {
+		throw new TypeError(`Charts can only be created from data that can be converted to numbers.`);
 	}
 
 	// Extract the labels
@@ -29,7 +39,8 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		// Remove any labels not specified in the axis options
 		for (let i = 0; i < labels.length; i++) {
 			const label = labels[i];
-			if (options.x.labels.includes(label) === false) {
+			// Use `as unknown[]` so TypeScript doesn't complain when using Array.prototype.includes
+			if ((options.x.labels as unknown[]).includes(label) === false) {
 				labels.splice(i, 1);
 				valueRows.splice(i, 1);
 				i -= i;
@@ -40,7 +51,7 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		for (let i = 0; i < options.x.labels.length; i++) {
 			const label = options.x.labels[i];
 			if (labels.includes(label) === false) {
-				const emptyData: [string, ...0[]] = [label, ...(new Array(valueRows[0].length-1)).fill(0)];
+				const emptyData: [NumberLike, ...0[]] = [label, ...(new Array(valueRows[0].length-1)).fill(0)];
 				labels.splice(i, 0, label);
 				valueRows.splice(i, 0, emptyData);
 			}
@@ -60,14 +71,14 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 	}
 
 	// Transpose valueRows to get groups
-	const valueGroups: any[][] = [];
+	const valueGroups: unknown[][] = [];
 	for (let i = 0; i < valueRows.length; i++) {
 		// Start at j = 1 to ignore labels
 		for (let j = 1; j < valueRows[i].length; j++) {
 			if (typeof valueGroups[j] === 'undefined') {
 				valueGroups[j] = [];
 			}
-			valueGroups[j][i] = valueRows[i][j]
+			valueGroups[j][i] = valueRows[i][j];
 		}
 	}
 	// This method has given us an empty element at index 0, so remove it
@@ -82,7 +93,8 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 
 	// Filter out the same non-number groups from the groupNames list
 	const numberValueGroupNames = groupNames.filter(
-		(groupName, index) => numberValueGroups.includes(valueGroups[index])
+		// Using a type assertion here is safe because we're just checking for inclusion
+		(groupName, index) => (numberValueGroups as unknown[]).includes(valueGroups[index])
 	);
 
 	const chartData: ChartData<GroupName> = {

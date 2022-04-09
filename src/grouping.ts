@@ -18,11 +18,11 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number, splitting?: number | number[], right: boolean = true): AnalyserGroup {
 		// First, collect enums
 		const enums: Set<unknown> = new Set();
-		for (let row of rows) {
+		for (const row of rows) {
 			const cellValue = row[colNum];
 
 			if (Array.isArray(cellValue)) {
-				for (let value of cellValue) {
+				for (const value of cellValue) {
 					enums.add(value);
 				}
 			} else {
@@ -34,7 +34,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 			// Treat data as discrete
 
 			if (aliases) {
-				for (let val of enums) {
+				for (const val of enums) {
 					if (typeof val === 'string') {
 						// If the value is a string in one or more alias sets,
 						// ensure those sets will be used for grouping and
@@ -46,7 +46,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 						/** If the value appears in at least one alias list and **is** the canonical value */
 						let isCanonical = false;
 
-						for (let aliasList of aliases) {
+						for (const aliasList of aliases) {
 							if (aliasList.includes(val)) {
 								if (aliasList[0] === val) {
 									isCanonical = true;
@@ -72,7 +72,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 
 			// Then, interate through each enum and filter rows into groups
 			const group = new AnalyserGroup();
-			for (let val of enums) {
+			for (const val of enums) {
 				const matchingRows = rows.filter(by(colNum, val));
 				group.set(val, matchingRows);
 			}
@@ -92,7 +92,7 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 				// Sets are unordered, so create and sort an array (ascending)
 				const enumArr = new Array(...enums);
 
-				if (enumArr.every((x: any): x is number => typeof x === 'number')) {
+				if (enumArr.every((x: unknown): x is number => typeof x === 'number')) {
 					const values = enumArr.sort((a, b) => a - b);
 
 					const [min, max] = [values[0], values[values.length-1]];
@@ -135,37 +135,35 @@ function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Group
 
 			// Group rows based on set limits
 			const group = new AnalyserGroup({ discrete: false });
-			for (let row of rows) {
-				for (let set of setLimits) {
-					let setName = '';
-					let filterFn: ExtensibleFilterResolver;
+			for (const set of setLimits) {
+				let setName = '';
+				let filterFn: ExtensibleFilterResolver;
 
-					if (right) {
-						if (set[0] !== -Infinity) {
-							setName += `${set[0]} < `;
-						}
-						setName += `x`;
-						if (set[1] !== Infinity) {
-							setName += ` <= ${set[1]}`;
-						}
-
-						filterFn = by(colNum, (val: number) => set[0] < val && val <= set[1]);
-					} else {
-						if (set[0] !== -Infinity) {
-							setName += `${set[0]} <= `;
-						}
-						setName += `x`;
-						if (set[1] !== Infinity) {
-							setName += ` < ${set[1]}`;
-						}
-
-						filterFn = by(colNum, (val: number) => set[0] <= val && val < set[1]);
+				if (right) {
+					if (set[0] !== -Infinity) {
+						setName += `${set[0]} < `;
+					}
+					setName += `x`;
+					if (set[1] !== Infinity) {
+						setName += ` <= ${set[1]}`;
 					}
 
-					const matchingRows = rows.filter(filterFn);
+					filterFn = by(colNum, (val: number) => set[0] < val && val <= set[1]);
+				} else {
+					if (set[0] !== -Infinity) {
+						setName += `${set[0]} <= `;
+					}
+					setName += `x`;
+					if (set[1] !== Infinity) {
+						setName += ` < ${set[1]}`;
+					}
 
-					group.set(setName, matchingRows);
+					filterFn = by(colNum, (val: number) => set[0] <= val && val < set[1]);
 				}
+
+				const matchingRows = rows.filter(filterFn);
+
+				group.set(setName, matchingRows);
 			}
 
 			return group;

@@ -132,7 +132,6 @@ function xAxisMinimal<GroupName extends string>(chartData: ChartData<GroupName>,
 function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
 	const scale = new Scale(chartData, options, 'y');
 
-	const axisOptions = options?.y;
 	const { values } = getAxisGridlines(scale, options?.y);
 
 	// Render gridlines based on scale
@@ -145,7 +144,7 @@ function yGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 					<li class="chart__y-gridline" style="bottom: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>` :
 					'';
 
-				return gridlines
+				return gridlines;
 			}).join('')}
 		</ul>
 	`;
@@ -168,7 +167,7 @@ function xGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 						<li class="chart__x-gridline" style="left: ${Math.max(0, scale.getProportion(val)) * 100}%;"></li>` :
 						'';
 
-					return gridlines
+					return gridlines;
 				}).join('')}
 			</ul>
 		`;
@@ -177,7 +176,7 @@ function xGridlines<GroupName extends string>(chartData: ChartData<GroupName>, o
 	}
 }
 
-export function tooltip<GroupName extends string>(chartData: ChartData<GroupName>, group: number[], label: string, options?: ChartOptions<GroupName>): string {
+export function tooltip<GroupName extends string>(chartData: ChartData<GroupName>, group: number[], label: unknown, options?: ChartOptions<GroupName>): string {
 	const { labels, groups, groupNames } = chartData;
 	const groupIndex = groups.indexOf(group);
 	if (groupIndex === -1) {
@@ -186,7 +185,8 @@ export function tooltip<GroupName extends string>(chartData: ChartData<GroupName
 
 	const groupName = groupNames[groupIndex];
 
-	const labelIndex = labels.indexOf(label);
+	// Use `as unknown[]` so TypeScript doesn't complain when using Array.prototype.includes
+	const labelIndex = (labels as unknown[]).indexOf(label);
 	if (labelIndex === -1) {
 		throw new Error(`Cannot render tooltip: unrecognised label`);
 	}
@@ -273,7 +273,7 @@ function getAxisValuesBase(scale: Scale, axisValues: Exclude<AxisOptionsQuantita
 	return { values, dates };
 }
 
-function applyFormat(value: any, axisOptions?: AxisOptionsQuantitative): string {
+function applyFormat(value: unknown, axisOptions?: AxisOptionsQuantitative): string {
 	if (typeof value === 'number') {
 		if (axisOptions?.numberFormat) {
 			if (axisOptions.numberFormat instanceof Intl.NumberFormat) {

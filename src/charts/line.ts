@@ -39,9 +39,6 @@ function renderLines<GroupName extends string>(chartData: ChartData<GroupName>, 
 		</svg>
 
 		${groups.map((group, groupIndex) => {
-			const groupName = groupNames[groupIndex];
-			const colour = colours && colours[groupName];
-
 			const str = `
 				<ul class="chart__line__points">
 					${labels.map((label, labelIndex) => {
@@ -73,4 +70,4 @@ export function line<GroupName extends string>(summary: AnalyserSummary<GroupNam
 	const chart = renderChart(chartData, lines, options);
 
 	return chart;
-};
+}

@@ -19,8 +19,8 @@
 		"build": "gulp build",
 		"watch": "gulp",
 		"start": "concurrently --kill-others \"npm run server\" \"npm run watch\"",
-		"test": "tsc && jasmine",
-		"prepare": "gulp clean && tsc && jasmine"
+		"test": "eslint src/** && tsc && jasmine",
+		"prepare": "gulp clean && eslint src/** && tsc && jasmine"
 	},
 	"author": "Mark Hanna",
 	"repository": {
@@ -31,8 +31,11 @@
 	"devDependencies": {
 		"@cipscis/codebook": "^2.0.2",
 		"@types/jasmine": "^3.8.2",
+		"@typescript-eslint/eslint-plugin": "^5.18.0",
+		"@typescript-eslint/parser": "^5.18.0",
 		"concurrently": "^6.1.0",
 		"dotenv": "^10.0.0",
+		"eslint": "^8.13.0",
 		"express": "^4.17.1",
 		"gulp": "^4.0.2",
 		"gulp-sass": "^5.0.0",

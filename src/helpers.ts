@@ -46,7 +46,7 @@ function getColNumber<T extends number | string>(colName: T): number | null {
 function getColNumbers<T extends string>(colsConfig: Record<T, number | string>): Record<T, number> {
 	const newCols: Partial<Record<T, number>> = {};
 
-	for (let key in colsConfig) {
+	for (const key in colsConfig) {
 		const value = colsConfig[key];
 		const colNumber = getColNumber(value);
 

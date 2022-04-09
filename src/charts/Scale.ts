@@ -1,4 +1,3 @@
-import * as statistics from '../statistics.js';
 import { ChartData } from './ChartData.js';
 import { ChartOptions } from './ChartOptions.js';
 import { AxisOptionsQuantitative } from './AxisOptions.js';
@@ -14,7 +13,7 @@ export class Scale {
 
 	get width(): number {
 		return this.max - this.min;
-	};
+	}
 
 	constructor(options: ScaleOptions | ChartData, chartOptions?: ChartOptions, type?: 'y' | 'x') {
 		[this.min, this.max] = getMinMax(options, chartOptions, type);
@@ -277,7 +276,7 @@ function getMinMaxFromAxisOptions(axisOptions: AxisOptionsQuantitative, min: num
 			}
 
 			for (let iterations = 0; iterations < 1000; iterations++) {
-				let remainder = max % valueRoundTo;
+				const remainder = max % valueRoundTo;
 
 				if (remainder === 0 && max > 0) {
 					break;

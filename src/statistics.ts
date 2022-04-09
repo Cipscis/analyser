@@ -1,6 +1,6 @@
 function getNumArray(val: number[] | [number[]]): number[] {
 	if (
-		((value: any[]): value is [number[]] => {
+		((value: unknown[]): value is [number[]] => {
 			return value.length === 1 && Array.isArray(value[0]);
 		})(val)
 	) {
