@@ -4,7 +4,7 @@ interface AxisOptionsBase {
     dateFormat?: Intl.DateTimeFormat | ((value: Date) => string);
 }
 export interface AxisOptionsQualitative extends AxisOptionsBase {
-    labels?: any[];
+    labels?: string[];
 }
 export interface AxisOptionsQuantitative extends AxisOptionsBase {
     values?: number | number[] | Date[];

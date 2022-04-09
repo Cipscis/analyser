@@ -380,9 +380,9 @@
 
 					<p>This function effectively has any <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> baked in. It also provides a simplified way of filtering rows of data based on the values of specific columns, which allows for chaining to create more complex filters.</p>
 
-					<code>(colIndex: number, values: any): Function</code><br />
-					<code>(colIndex: number, values: any[]): Function</code><br />
-					<code>(colIndex: number, values: (value: any) => boolean): Function</code>
+					<code>(colIndex: number, values: unknown): Function</code><br />
+					<code>(colIndex: number, values: unknown[]): Function</code><br />
+					<code>(colIndex: number, values: (value: unknown) => boolean): Function</code>
 
 					<p>There are three different ways to call <code>by</code>. Each involves first specifying a column index, typically taken from the <code><a href="#interfaces-DataConfig-cols">cols</a></code> or <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code> objects, then specifying some way of filtering based on the value of that column.</p>
 
@@ -596,9 +596,9 @@
 					<section>
 						<div class="content">
 							<h4 id="usage-graphs-ChartOptions-stacked"><code>stacked</code> <a class="anchor" href="#usage-graphs-ChartOptions-stacked"></a></h4>
-						</div>
 
-						<p>Analyser's <a href="#usage-graphs-bar">bar graphs</a> support the <code>stacked</code> property to generate a stacked bar chart.</p>
+							<p>Analyser's <a href="#usage-graphs-bar">bar graphs</a> support the <code>stacked</code> property to generate a stacked bar chart.</p>
+						</div>
 					</section>
 				</section>
 			</section>
@@ -614,7 +614,7 @@
 							<a href="#usage-graphs-AxisOptionsQualitative-numberFormat">numberFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> | ((value: number) => string),
 							<a href="#usage-graphs-AxisOptionsQualitative-dateFormat">dateFormat</a>?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> | ((value: Date) => string),
 
-							<a href="#usage-graphs-AxisOptionsQualitative-labels">labels</a>?: any[],
+							<a href="#usage-graphs-AxisOptionsQualitative-labels">labels</a>?: string[],
 						}
 					</code>
 				</div>
@@ -747,7 +747,7 @@
 				<div class="content">
 					<h3 id="usage-graphs-bar">bar <a class="anchor" href="#usage-graphs-bar"></a></h3>
 
-					<code><span class="todo">bar(summary: AnalyserSummar, options?: BarChartOptions)</span></code>
+					<code><span class="todo">bar(summary: AnalyserSummary, options?: BarChartOptions)</span></code>
 
 					<p>Bar charts have a qualitative x axis, so use the <code><a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a></code> interface for configuring their x axis.</p>
 				</div>
@@ -821,7 +821,7 @@
 				<div class="content">
 					<h3 id="usage-graphs-line">line <a class="anchor" href="#usage-graphs-line"></a></h3>
 
-					<code><span class="todo">line(summary: AnalyserSummar, options?: LineChartOptions)</span></code>
+					<code><span class="todo">line(summary: AnalyserSummary, options?: LineChartOptions)</span></code>
 
 					<p>Line charts have a quantitative x axis, so use the <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface for configuring their x axis.</p>
 				</div>
@@ -1089,8 +1089,8 @@
 					<div class="content">
 						<h4 id="interfaces-AnalyserRows-addCol">addCol <a class="anchor" href="#interfaces-AnalyserRows-addCol"></a></h4>
 
-						<code>addCol(creator: (row: any[], index: number) => any): number</code><br />
-						<code>addCol(newRow: any[]): number</code><br />
+						<code>addCol&lt;T&gt;(creator: (row: unknown[], index: number) => T): number</code><br />
+						<code>addCol&lt;T&gt;(newRow: T[]): number</code><br />
 
 						<p>The <code>addCol</code> method is used to add a new row to an <code>AnalyserRows</code> object.</p>
 
@@ -1149,7 +1149,7 @@
 					<div class="content">
 						<h4 id="interfaces-AnalyserGroup-summarise">summarise <a class="anchor" href="#interfaces-AnalyserGroup-summarise"></a></h4>
 
-						<code>summarise(summarisers?: Record&lt;string, (rows: AnalyserRows, groupName: any) => any&gt;): any[][]</code>
+						<code>summarise(summarisers?: Record&lt;string, (rows: AnalyserRows, groupName: unknown) => unknown&gt;): unknown[][]</code>
 
 						<p>The <code>summarise</code> method converts an <code>AnalyserGroup</code> into a specially formatted 2D array made for easy viewing. The first row is a header row, giving the name of each summary, and the first column gives the name of each group from the <code>AnalyserGroup</code> used to create it. The other cells each contain a particular summary of that group.</p>
 
@@ -1204,7 +1204,7 @@
 				<div class="content">
 					<h3 id="interfaces-TransformerFn">TransformerFn <a class="anchor" href="#interfaces-TransformerFn"></a></h3>
 
-					<code>TransformerFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends any[] ? T : (T | null)</code>
+					<code>TransformerFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends unknown[] ? T : (T | null)</code>
 
 					<p>Transformer functions are used to convert strings in a CSV file into typed data that can be further analysed.</p>
 

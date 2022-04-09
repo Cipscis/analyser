@@ -5,7 +5,7 @@ interface FileConfig<T extends string> {
     headerRows?: number;
     footerRows?: number;
     aliases?: string[][];
-    transform?: Partial<Record<T, TransformerFn<any>>>;
+    transform?: Partial<Record<T, TransformerFn<unknown>>>;
 }
 /**
  * Use this function when creating a FileConfig object.

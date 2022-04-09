@@ -2,7 +2,7 @@ import { AnalyserRows } from './AnalyserRows.js';
 /**
  * A function for summarising a set of AnalyserRows
  */
-declare type AnalyserSummariser<T = any, G = any> = (rows: AnalyserRows, groupName: G) => T;
+declare type AnalyserSummariser<T = unknown, G = unknown> = (rows: AnalyserRows, groupName: G) => T;
 /**
  * A group of AnalyserSummariser functions
  */
@@ -18,11 +18,11 @@ declare type DefaultSummaryName = keyof typeof defaultSummarisers;
  * After the first header row, each row represents a set of AnalyserRows grouped by the value given in the first cell.
  * After the first column, each column represents a summary of a group of AnalyserRows. The name of the summary is given in the first cell.
  */
-export declare type AnalyserSummary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[any, ...any[]][]];
+export declare type AnalyserSummary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[unknown, ...unknown[]][]];
 interface AnalyserGroupOptions {
     discrete?: boolean;
 }
-export declare class AnalyserGroup extends Map<any, AnalyserRows> {
+export declare class AnalyserGroup extends Map<unknown, AnalyserRows> {
     #private;
     constructor(options?: AnalyserGroupOptions);
     /**

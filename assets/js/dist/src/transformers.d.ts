@@ -1,5 +1,5 @@
 export interface TransformerFn<T> {
-    (value: string, locationIdentifier?: string): T extends any[] ? T : (T | null);
+    (value: string, locationIdentifier?: string): T extends unknown[] ? T : (T | null);
 }
 /**
  * Splits a string into an array using String.prototype.split

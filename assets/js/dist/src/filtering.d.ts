@@ -1,9 +1,9 @@
-declare type FilterInput = ((value: any) => boolean) | any[] | Exclude<any, []>;
+declare type FilterInput = ((value: unknown) => boolean) | unknown[] | Exclude<unknown, []>;
 /**
  * A function used by Array.prototype.filter
  */
 interface FilterResolver {
-    (val: any, index: number, arr: any[]): boolean;
+    (val: unknown[], index: number, arr: unknown[][]): boolean;
 }
 /**
  * A FilterResolver that can be extended using FilterResolverExtender methods
