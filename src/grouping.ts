@@ -14,7 +14,7 @@ interface Grouper {
  * set of aliases, to create a summarisable group of AnalyserRows split
  * based on the specified column.
  */
-function createGroupFn (by: FilterResolverExtender, aliases?: string[][]): Grouper {
+function createGroupFn(by: FilterResolverExtender, aliases?: string[][]): Grouper {
 	const grouperFn: Grouper = function (rows: AnalyserRows, colNum: number, splitting?: number | number[], right: boolean = true): AnalyserGroup {
 		// First, collect enums
 		const enums: Set<unknown> = new Set();

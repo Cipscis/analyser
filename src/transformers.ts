@@ -99,7 +99,7 @@ export function booleanCustom(truthy: string | RegExp = 'true', falsey: string |
 		}
 
 		if (value) {
-			console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey} (${locationIdentifier})`);
+			console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey}${locationIdentifier ? `(${locationIdentifier})` : ''}`);
 		}
 		return null;
 	};
@@ -145,7 +145,7 @@ export const number: TransformerFn<number> = (value: string, locationIdentifier?
 		return +cleanValue;
 	} else {
 		if (value) {
-			console.warn(`Number value not found in '${value}' (${locationIdentifier})`);
+			console.warn(`Number value not found in '${value}'${locationIdentifier ? `(${locationIdentifier})` : ''}`);
 		}
 		return null;
 	}
@@ -162,7 +162,7 @@ export const value: TransformerFn<boolean | number> = (value: string, locationId
 	} else if (appearsNumber(value)) {
 		return number(value);
 	} else {
-		console.warn(`Boolean or number value not found in '${value}' (${locationIdentifier})`);
+		console.warn(`Boolean or number value not found in '${value}'${locationIdentifier ? `(${locationIdentifier})` : ''}`);
 		return null;
 	}
 };
@@ -199,7 +199,7 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 			return recodedValue;
 		}
 
-		console.warn(`Value '${value}' does not exist within ${enumValues.join(', ')} (${locationIdentifier})`);
+		console.warn(`Value '${value}' does not exist within ${enumValues.join(', ')}${locationIdentifier ? `(${locationIdentifier})` : ''}`);
 		return null;
 	}) as TransformerFn<E>;
 	// Need to use a type assertion here as TypeScript doesn't know how to use the generic constraint to resolve the conditional type

@@ -11,7 +11,7 @@ type AnalyserSummariser<T = unknown, G = unknown> = (rows: AnalyserRows, groupNa
 type AnalyserSummarisers<SummaryName extends string> = Record<SummaryName, AnalyserSummariser>;
 
 const defaultSummarisers = {
-	Count: (rows: AnalyserRows) => rows.length
+	Count: (rows: AnalyserRows) => rows.length,
 } as const;
 type DefaultSummaryName = keyof typeof defaultSummarisers;
 

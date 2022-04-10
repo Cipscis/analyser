@@ -51,7 +51,7 @@ export function getChartData<GroupName extends string>(summary: AnalyserSummary<
 		for (let i = 0; i < options.x.labels.length; i++) {
 			const label = options.x.labels[i];
 			if (labels.includes(label) === false) {
-				const emptyData: [NumberLike, ...0[]] = [label, ...(new Array(valueRows[0].length-1)).fill(0)];
+				const emptyData: [NumberLike, ...0[]] = [label, ...(new Array<0>(valueRows[0].length-1)).fill(0)];
 				labels.splice(i, 0, label);
 				valueRows.splice(i, 0, emptyData);
 			}

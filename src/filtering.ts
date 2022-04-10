@@ -1,3 +1,7 @@
+// This type actually just resolves to `unknown`, which isn't really correct.
+// It's intended to to only allow functions of the form (value: unknown) => boolean
+// and 1D arrays, but it needs to be able to accept values of type `unknown`.
+// This shortcoming is accounted for by a type check that potentially throws a TypeError
 type FilterInput = ((value: unknown) => boolean) | unknown[] | Exclude<unknown, []>
 
 /**
@@ -78,7 +82,13 @@ function _extendFilterFn(filterResolver: FilterResolver, aliases?: string[][]): 
  */
 function _applyFilter(row: unknown[], colIndex: number, values: FilterInput, aliases?: string[][]): boolean {
 	if (typeof values === 'function') {
-		return values(row[colIndex]);
+		const valueMatch: unknown = values(row[colIndex]);
+
+		if (typeof valueMatch === 'boolean') {
+			return valueMatch;
+		} else {
+			throw new TypeError(`The \`by\` filter method only accepts a function for its \`values\` argument if it returns a boolean value.`);
+		}
 	}
 
 	const valuesArr = Array.isArray(values) ? values as unknown[] : [values];

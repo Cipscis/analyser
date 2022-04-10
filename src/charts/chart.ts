@@ -26,7 +26,7 @@ export function chart<GroupName extends string>(chartData: ChartData<GroupName>,
 }
 
 function title<GroupName extends string>(options: ChartOptions<GroupName>): string {
-	return `<figcaption class="chart__title">${options.title}</figcaption>`;
+	return options.title ? `<figcaption class="chart__title">${options.title}</figcaption>` : '';
 }
 
 function legend<GroupName extends string>(chartData: ChartData<GroupName>, options?: ChartOptions<GroupName>): string {
@@ -36,7 +36,7 @@ function legend<GroupName extends string>(chartData: ChartData<GroupName>, optio
 
 			<ul class="chart__legend__items">
 				${chartData.groupNames.map((groupName, index) => {
-					const colour = options?.colours && options.colours[groupName];
+					const colour: string | undefined = options?.colours && options.colours[groupName];
 
 					const str = `<li class="chart__legend__item">
 						<span class="chart__legend__item__swatch"${colour ? ` style="background-color: ${colour};"` : ''}></span>
