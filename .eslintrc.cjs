@@ -49,6 +49,14 @@ module.exports = {
 		// I don't mind type coercion in string literal expressions
 		'@typescript-eslint/restrict-template-expressions': 'off',
 
+		// Using `any[]` for rest arguments can sometimes be necessary
+		'@typescript-eslint/no-explicit-any': [
+			'warn',
+			{
+				ignoreRestArgs: true,
+			},
+		],
+
 		////////////////////////
 		// Debugging warnings //
 		////////////////////////
