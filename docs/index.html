@@ -62,7 +62,7 @@
 			</div>
 
 			<script type="text/plain" class="js-codebook__block" data-codebook-html="html-example-data" data-codebook-set="example-data">
-				const csvString = await (await fetch('/assets/data/city example.csv')).text();
+				const csvString = await (await fetch('/analyser/assets/data/city example.csv')).text();
 				const data = csv.parse(csvString);
 
 				const table = `<table>
@@ -138,7 +138,7 @@
 						<div class="docs-example js-docs__example">
 							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-boolean" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
-									path: '/assets/data/city example.csv',
+									path: '/analyser/assets/data/city example.csv',
 									cols: {
 										CAPITAL: 'D',
 									},
@@ -175,7 +175,7 @@
 						<div class="docs-example js-docs__example">
 							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-number" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
-									path: '/assets/data/city example.csv',
+									path: '/analyser/assets/data/city example.csv',
 									cols: {
 										POPULATION: 'C',
 									},
@@ -218,7 +218,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-value" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									POPULATION: 'C',
 									CAPITAL: 'D',
@@ -257,7 +257,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-array" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									PUBLIC_TRANSPORT: 'E',
 								},
@@ -297,7 +297,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-booleanCustom" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									CAPITAL: 'D',
 								},
@@ -347,7 +347,7 @@
 								};
 
 								const fileConfig = analyser.fileConfig({
-									path: '/assets/data/city example.csv',
+									path: '/analyser/assets/data/city example.csv',
 									cols: {
 										COUNTRY: 'B',
 									},
@@ -397,7 +397,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-filtering" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									NAME: 'A',
 									COUNTRY: 'B',
@@ -482,7 +482,7 @@
 				<div class="docs-example js-docs__example">
 					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-grouping" contenteditable spellcheck="false">
 						const fileConfig = analyser.fileConfig({
-							path: '/assets/data/city example.csv',
+							path: '/analyser/assets/data/city example.csv',
 							cols: {
 								NAME: 'A',
 								COUNTRY: 'B',
@@ -755,7 +755,7 @@
 				<div class="docs-example js-docs__example">
 					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-graphs-bar" data-codebook-html="html-usage-graphs-bar" contenteditable spellcheck="false">
 						const fileConfig = analyser.fileConfig({
-							path: '/assets/data/city example.csv',
+							path: '/analyser/assets/data/city example.csv',
 							cols: {
 								COUNTRY: 'B',
 								POPULATION: 'C',
@@ -870,7 +870,7 @@
 				<div class="docs-example js-docs__example">
 					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-FileConfig" contenteditable spellcheck="false">
 						const fileConfig = analyser.fileConfig({
-							path: '/assets/data/city example.csv',
+							path: '/analyser/assets/data/city example.csv',
 							cols: {
 								NAME: 'A',
 								COUNTRY: 'B',
@@ -1060,7 +1060,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-getCol" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									NAME: 'A',
 									POPULATION: 'C',
@@ -1106,7 +1106,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-addCol" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									POP_THOUSANDS: 'C',
 									PUBLIC_TRANSPORT: 'E',
@@ -1163,7 +1163,7 @@
 					<div class="docs-example js-docs__example">
 						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserGroup-summarise" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
-								path: '/assets/data/city example.csv',
+								path: '/analyser/assets/data/city example.csv',
 								cols: {
 									COUNTRY: 'B',
 									POPULATION: 'C',
@@ -1244,7 +1244,7 @@
 						// the file is loaded, unlike using FileConfig<string>
 
 						const fileConfig = analyser.fileConfig({
-							path: '/assets/data/city example.csv',
+							path: '/analyser/assets/data/city example.csv',
 							cols: {
 								CITY: 'A',
 								COUNTRY: 'B',
@@ -1276,7 +1276,7 @@
 				<div class="docs-example js-docs__example">
 					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-loadFile" contenteditable spellcheck="false">
 						const fileConfig = analyser.fileConfig({
-							path: '/assets/data/city example.csv',
+							path: '/analyser/assets/data/city example.csv',
 							cols: {
 								CITY: 'A',
 								COUNTRY: 'B',
