@@ -856,6 +856,7 @@
 
 						<a href="#interfaces-FileConfig-headerRows">headerRows</a>?: number,
 						<a href="#interfaces-FileConfig-footerRows">footerRows</a>?: number,
+						<a href="#interfaces-FileConfig-ignoreRows">ignoreRows</a>?: (row: string[], cols: Record&lt;string, number&gt;) => boolean,
 
 						<a href="#interfaces-FileConfig-aliases">aliases</a>?: string[][],
 						<a href="#interfaces-FileConfig-transform">transform</a>?: Record&lt;string, <a href="#interfaces-TransformerFn">TransformerFn</a>&gt;,
@@ -939,6 +940,14 @@
 						<h4 id="interfaces-FileConfig-footerRows"><code>footerRows</code> <a class="anchor" href="#interfaces-FileConfig-footerRows"></a></h4>
 
 						<p>An optional integer to specify how many rows at the end of the CSV file should be ignored, such as total rows.</p>
+					</div>
+				</section>
+
+				<section>
+					<div class="content">
+						<h4 id="interfaces-FileConfig-ignoreRows"><code>ignoreRows</code> <a class="anchor" href="#interfaces-FileConfig-ignoreRows"></a></h4>
+
+						<p>An optional function that should return <code>true</code> when it's passed any row that should be ignored. These rows are removed before any of the <a href="#interfaces-FileConfig-transformers">transformers</a> are applied, so all elements of the row at this point will be strings. An <code>ignoreRows</code> function will also have access to the transformed <code>cols</code> object, so it can be used to index the <code>row</code> argument.</p>
 					</div>
 				</section>
 

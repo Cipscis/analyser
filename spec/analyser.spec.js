@@ -119,5 +119,16 @@ describe(`analyser`, () => {
 			expect(rows.length).toBe(9);
 			expect(rows[rows.length-1][cols.NAME]).toBe('Dunedin');
 		});
+
+		it(`trims ignored rows`, async() => {
+			const fileConfig = Object.assign({}, exampleAConfig);
+			fileConfig.ignoreRows = (row, cols) => row[cols.NAME] === 'Auckland' || row[cols.NAME] === 'Tauranga';
+
+			const { rows, cols } = await analyser.loadFile(fileConfig);
+
+			expect(rows.length).toBe(7);
+			expect(rows[0][cols.NAME]).toBe('Taupō');
+			expect(rows[rows.length-1][cols.NAME]).toBe('Dunedin');
+		});
 	});
 });

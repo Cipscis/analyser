@@ -42,12 +42,31 @@ function _processData<T extends string>(rows: string[][], fileConfig: FileConfig
 		rows.splice(-fileConfig.footerRows);
 	}
 
+	const cols = getColNumbers(fileConfig.cols);
+
+	// Remove any specified rows to ignore
+	const { ignoreRows } = fileConfig;
+	if (ignoreRows) {
+		// Find all rows that match the `ignoreRows` function
+		const rowsToIgnore = rows.filter((row) => ignoreRows(row, cols));
+
+		// If we found any rows to ignore, remove them
+		if (rowsToIgnore.length > 0) {
+			for (let i = rows.length-1; i >= 0; i--) {
+				const row = rows[i];
+				if (rowsToIgnore.includes(row)) {
+					rows.splice(i, 1);
+				}
+			}
+		}
+	}
+
 	const by = createFilterFn(fileConfig.aliases);
 	const group = createGroupFn(by, fileConfig.aliases);
 
 	const dataConfig: DataConfig<T> = {
 		rows: new AnalyserRows(rows),
-		cols: getColNumbers(fileConfig.cols),
+		cols,
 		addedCols: {},
 		by,
 		group,
