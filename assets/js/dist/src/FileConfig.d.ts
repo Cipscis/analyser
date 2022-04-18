@@ -4,6 +4,7 @@ interface FileConfig<T extends string> {
     cols: Record<T, string | number>;
     headerRows?: number;
     footerRows?: number;
+    ignoreRows?: (row: string[], cols: Record<T, number>) => boolean;
     aliases?: string[][];
     transform?: Partial<Record<T, TransformerFn<unknown>>>;
 }
