@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### TODO:
 
+* Expose Chart CSS so it can be consumed (e.g. as a SCSS @import) by a project using this package
+
 * Processing
 * * (New feature) Allow combining sets of processed data
 

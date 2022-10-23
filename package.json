@@ -11,7 +11,8 @@
 	},
 	"type": "module",
 	"files": [
-		"dist/**/*"
+		"dist/**/*",
+		"chart.css"
 	],
 	"types": "dist/analyser.d.ts",
 	"scripts": {

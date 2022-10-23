@@ -1,0 +1,358 @@
+@use "sass:math";
+
+@import "mixins/reset";
+
+$colour-default: #333;
+$colour-axis-line: #999;
+$colour-gridline: #ccc;
+
+.chart {
+	page-break-inside: avoid;
+
+	display: grid;
+	grid-template-areas:
+		"title title"
+		"y chart"
+		". x";
+
+	grid-template-columns: calc(1em + 11ch) 1fr;
+
+	isolation: isolate;
+}
+
+.chart__title {
+	display: block;
+
+	margin-bottom: 1.5em;
+}
+
+.chart__area {
+	grid-area: chart;
+	aspect-ratio: 16 / 9;
+
+	position: relative;
+	z-index: 1;
+}
+
+///////////
+// TITLE //
+///////////
+.chart__title {
+	grid-area: title;
+}
+
+////////////
+// LEGEND //
+////////////
+.chart__legend {
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	padding: 0.2em 0.4em;
+	border: 1px solid currentColor;
+}
+
+// .chart__legend__title {}
+
+.chart__legend__items {
+	@include list-reset;
+}
+
+.chart__legend__item {
+	display: flex;
+	align-items: center;
+}
+
+.chart__legend__item__swatch {
+	width: 1em;
+	height: 1em;
+	margin-right: 1em;
+
+	background: $colour-default;
+}
+
+.chart__legend__item__name {
+	word-wrap: nowrap;
+}
+
+//////////
+// AXES //
+//////////
+.chart__y-axis {
+	grid-area: y;
+	position: relative;
+
+	border-right: 1px solid $colour-axis-line;
+	// Padding to leave space for axis label
+	padding-left: 1em;
+
+	margin-top: -1px;
+	// Extra 2px to make gridline and axis borders align
+	height: calc(100% + 2px);
+}
+
+.chart__y-axis__title {
+	position: absolute;
+	top: 50%;
+	right: 100%;
+
+	transform-origin: 0 0;
+	transform: translateX(100%) rotate(-90deg) translateX(-50%);
+
+	white-space: nowrap;
+	line-height: 1;
+}
+
+.chart__y-axis__value-list {
+	@include list-reset;
+	height: 100%;
+
+	position: relative;
+}
+
+.chart__y-axis__value {
+	position: absolute;
+	right: 0;
+
+	transform: translate(0, 50%);
+
+	width: 100%;
+	text-align: right;
+	padding-right: 1ch;
+}
+
+.chart__x-axis {
+	grid-area: x;
+	position: relative;
+
+	border-top: 1px solid $colour-axis-line;
+	// Padding to leave space for axis label
+	padding-bottom: 1em;
+
+	margin-left: -1px;
+	// Extra 2px to make gridline and axis borders align
+	width: calc(100% + 2px);
+}
+
+.chart__x-axis__title {
+	position: absolute;
+	top: 100%;
+	right: 50%;
+
+	transform: translate(50%, -100%);
+
+	white-space: nowrap;
+	line-height: 1;
+}
+
+// Labels are for qualitative axes
+.chart__x-axis__label-list {
+	@include list-reset;
+
+	display: flex;
+	justify-content: space-between;
+}
+
+.chart__x-axis__label {
+	flex: 1 1 0;
+	width: 0;
+
+	text-align: center;
+}
+
+// Values are for quantitative axes
+.chart__x-axis__value-list {
+	@include list-reset;
+	height: 1.5em; // Line height of values
+
+	position: relative;
+}
+
+.chart__x-axis__value {
+	position: absolute;
+	top: 0;
+
+	transform: translateX(-50%);
+
+	text-align: center;
+	line-height: 1.5;
+}
+
+///////////////
+// GRIDLINES //
+///////////////
+.chart__y-gridlines,
+.chart__x-gridlines {
+	@include list-reset;
+
+	position: absolute;
+	left: 0;
+	top: 0;
+
+	width: 100%;
+	height: 100%;
+
+	// Gridlines go behind everything else and are not interactive
+	pointer-events: none;
+	z-index: -1;
+}
+
+.chart__y-gridline,
+.chart__x-gridline {
+	position: absolute;
+	background: $colour-gridline;
+}
+
+.chart__y-gridline {
+	left: 0;
+	width: 100%;
+	height: 1px;
+}
+.chart__x-gridline {
+	top: 0;
+	height: 100%;
+	width: 1px;
+}
+
+//////////////
+// TOOLTIPS //
+//////////////
+.chart__tooltip {
+	padding: 5px;
+	background: rgba(white, 0.9);
+	border: 1px solid black;
+		position: absolute;
+		z-index: 1;
+
+	// Extend area 1em below so the tooltip won't disappear when moving the cursor over it without applying focus
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: -1em;
+	}
+
+	position: absolute;
+	z-index: 1;
+
+	.chart__bar__area:not(:hover):not(:focus) &,
+	.chart__line__point:not(:hover):not(:focus) & {
+		@include sr-only;
+	}
+	.chart__bar__area:hover,
+	.chart__line__point:hover & & {
+		// Ensure anything being hovered over is on top
+		z-index: 2;
+	}
+
+	.chart__bar__area & {
+		bottom: 100%;
+		right: 50%;
+		transform: translate(50%, -1em);
+	}
+
+	.chart__line__point & {
+		transform: translate(-50%, calc(-100% - 1em));
+	}
+}
+
+//////////
+// BARS //
+//////////
+.chart__bar-groups {
+	@include list-reset;
+
+	display: flex;
+	justify-content: space-between;
+
+	height: 100%;
+}
+
+.chart__bar-group {
+	position: relative;
+
+	flex: 1 1 0;
+	width: 0;
+
+	height: 100%;
+	display: flex;
+
+	margin: 0 2%;
+}
+
+.chart__bar-group-bars {
+	@include list-reset;
+
+	padding: 0;
+	width: 100%;
+	display: flex;
+}
+
+.chart__bar-group-bars--stacked {
+	flex-direction: column;
+	justify-content: flex-end;
+	.chart__bar {
+		flex: 0 0 auto;
+	}
+}
+
+.chart__bar {
+	position: relative;
+	flex: 1 1 0%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	// Tell browsers not to hide the background colour when printing
+	color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+.chart__bar__area {
+	width: 100%;
+	height: 100%;
+	flex: 0 0 100%;
+
+	background: $colour-default;
+	cursor: pointer;
+
+	position: relative;
+}
+
+///////////
+// LINES //
+///////////
+.chart__lines {
+	display: block;
+	width: 100%;
+	height: 100%;
+
+	aspect-ratio: 16 / 9;
+}
+
+.chart__line {
+	fill: none;
+	vector-effect: non-scaling-stroke;
+	stroke: $colour-default;
+	stroke-width: 3;
+	stroke-linecap: round;
+}
+
+.chart__line__points {
+	@include list-reset;
+}
+
+.chart__line__point {
+	position: absolute;
+	transform: translate(-50%, 50%);
+
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+
+	cursor: pointer;
+}
