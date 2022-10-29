@@ -28,7 +28,7 @@ module.exports = {
 		// Sometimes it's useful to leave a name for an unused argument,
 		// in case it might be used in the future
 		'@typescript-eslint/no-unused-vars': [
-			'error',
+			'warn',
 			{
 				vars: 'all',
 				args: 'none',
@@ -192,12 +192,7 @@ module.exports = {
 			'always',
 		],
 		'space-before-function-paren': [
-			'error',
-			{
-				anonymous: 'always',
-				named: 'never',
-				asyncArrow: 'always',
-			},
+			'off',
 		],
 		'space-in-parens': [
 			'error',
@@ -231,6 +226,15 @@ module.exports = {
 			'error',
 			{
 				assertionStyle: 'as',
+			},
+		],
+
+		'@typescript-eslint/space-before-function-paren': [
+			'error',
+			{
+				anonymous: 'always',
+				named: 'never',
+				asyncArrow: 'always',
 			},
 		],
 	}
