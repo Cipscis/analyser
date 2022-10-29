@@ -1,24 +1,48 @@
 import { loadFile } from '../../../../src/new/index.js';
 import * as types from '../../../../src/new/types/index.js';
 
+import { fileConfig } from '../../../../src/new/FileConfig.js';
+
+const config = fileConfig({
+	path: '/assets/data/city example.csv',
+
+	cols: {
+		name: ['A', types.string],
+		country: ['B', types.string],
+		pop: ['C', types.number],
+	},
+
+	aliases: [
+		['Aotearoa', 'New Zealand'],
+	],
+
+	headerRows: 1,
+	ignoreRows: (row) => row.name === 'Total',
+});
+
 loadFile({
 	path: '/assets/data/city example.csv',
 
 	cols: {
 		name: ['A', types.string],
+		country: ['B', types.string],
 		pop: ['C', types.number],
 	},
 
 	headerRows: 1,
 	ignoreRows: (row) => row.name === 'Total',
 }).then((processedData) => {
+// loadFile(config).then((processedData) => {
 	const rows = processedData.rows;
-	const by = processedData.by;
+	const matchAlias = processedData.matchAlias;
 
 	console.log(rows);
 
-	// The `by` function doesn't know how to infer column types, because the `ColName` generic type hasn't been inferred correctly
-	// console.log(rows.filter(by('pop', (pop) => pop > 50)));
+	console.log(rows.filter(
+		(row) => matchAlias(row.country, 'New Zealand')
+	));
+
+	rows.filter((row) => row.pop && row.pop > 50);
 });
 
 

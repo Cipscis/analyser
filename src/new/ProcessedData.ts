@@ -1,4 +1,3 @@
-import { FilterResolverExtender } from './filtering.js';
 import { Data } from './Data.js';
 
 export type ProcessedData<
@@ -7,7 +6,6 @@ export type ProcessedData<
 > = {
 	rows: Data<RowShape>;
 
-	by: FilterResolverExtender<ColName, RowShape>;
-
 	aliases?: string[][];
+	matchAlias: (valueA: unknown, valueB: unknown) => boolean;
 };

@@ -19,3 +19,9 @@ export type FileConfig<
 
 	aliases?: string[][];
 };
+
+export function fileConfig<
+	RowShape extends Record<string, unknown>,
+>(fileConfig: FileConfig<keyof RowShape & string, RowShape>) {
+	return fileConfig;
+}

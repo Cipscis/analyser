@@ -3,15 +3,13 @@ import { parse as parseCSV } from '@cipscis/csv';
 import { FileConfig } from './FileConfig.js';
 import { ProcessedData } from './ProcessedData.js';
 import { Data } from './Data.js';
-import { createFilterFn } from './filtering.js';
 
 /**
  * Load a single CSV file and process its contents.
  */
 export async function loadFile<
-	ColName extends string,
-	RowShape extends Record<ColName, unknown>,
->(fileConfig: FileConfig<ColName, RowShape>): Promise<ProcessedData<ColName, RowShape>> {
+	RowShape extends Record<string, unknown>,
+>(fileConfig: FileConfig<keyof RowShape & string, RowShape>): Promise<ProcessedData<keyof RowShape & string, RowShape>> {
 	const response = await fetch(fileConfig.path);
 
 	if (response.ok) {
@@ -92,7 +90,7 @@ function processData<
 	const processedData: ProcessedData<ColName, RowShape> = {
 		rows: new Data(typedRows),
 
-		by: createFilterFn(fileConfig.aliases),
+		matchAlias: (valueA, valueB) => matchWithAlias(valueA, valueB, fileConfig.aliases),
 	};
 
 	// Persist any aliases from the `fileConfig`
@@ -166,4 +164,27 @@ function getColNumber(index: number | string): number | null {
 	}
 
 	return colNumber;
+}
+
+/**
+ * Checks if two values match, optionally taking a set of aliases where groups of strings are treated as equal.
+ */
+function matchWithAlias(valueA: unknown, valueB: unknown, aliases?: string[][]): boolean {
+	if (valueA === valueB) {
+		return true;
+	}
+
+	if (
+		aliases &&
+		typeof valueA === 'string' &&
+		typeof valueB === 'string'
+	) {
+		for (const aliasGroup of aliases) {
+			if (aliasGroup.includes(valueA) && aliasGroup.includes(valueB)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
