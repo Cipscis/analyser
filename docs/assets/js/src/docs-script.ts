@@ -31,11 +31,8 @@ loadFile({
 
 	headerRows: 1,
 	ignoreRows: (row) => row.name === 'Total',
-}).then((processedData) => {
-// loadFile(config).then((processedData) => {
-	const rows = processedData.rows;
-	const matchAlias = processedData.matchAlias;
-
+}).then(({ rows, matchAlias }) => {
+// loadFile(config).then(({ rows, matchAlias }) => {
 	console.log(rows);
 
 	console.log(rows.filter(
@@ -43,6 +40,9 @@ loadFile({
 	));
 
 	rows.filter((row) => row.pop && row.pop > 50);
+
+	const newRows = rows.addCol('test', () => 1);
+	console.log(newRows.map((({ test }) => test)));
 });
 
 
