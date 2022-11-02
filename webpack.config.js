@@ -5,9 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = fileURLToPath(import.meta.url);
 
-import resolveTypeScriptPluginModule from 'resolve-typescript-plugin';
-const ResolveTypeScriptPlugin = resolveTypeScriptPluginModule.default;
-
 const srcPath = path.resolve(__dirname, '../src');
 const entryPath = './docs/assets/js/src';
 const distPath = path.resolve(__dirname, '../docs/assets/js/dist');
@@ -23,7 +20,9 @@ const config = {
 	},
 	resolve: {
 		fullySpecified: true,
-		plugins: [new ResolveTypeScriptPlugin()],
+		extensionAlias: {
+			'.js': ['.ts', '.js'],
+		},
 		alias: {
 			'@cipscis/analyser$': `${srcPath}/analyser.ts`,
 			'@cipscis/analyser/transformers$': `${srcPath}/transformers.ts`,
