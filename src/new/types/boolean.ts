@@ -6,7 +6,7 @@ import { TypeFn } from './TypeFn.js';
  * If the value doesn't match either test, a warning will be generated.
  */
 export function booleanCustom(truthy: string | RegExp, falsey: string | RegExp): TypeFn<boolean> {
-	const boolean: TypeFn<boolean> = function boolean(value, locationIdentifier) {
+	const boolean: TypeFn<boolean> = function boolean(value) {
 		if (typeof truthy === 'string') {
 			if (value === truthy) {
 				return true;
@@ -27,10 +27,7 @@ export function booleanCustom(truthy: string | RegExp, falsey: string | RegExp):
 			}
 		}
 
-		if (value) {
-			console.warn(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey}${locationIdentifier ? ` (${locationIdentifier})` : ''}`);
-		}
-		return null;
+		throw new Error(`Boolean value not found in '${value}', checking for ${truthy} or ${falsey}`);
 	};
 
 	return boolean;

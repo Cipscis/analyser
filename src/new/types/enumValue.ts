@@ -15,7 +15,7 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 		return (enumValues as unknown[]).includes(val);
 	}
 
-	const enumValue: TypeFn<E> = function enumValue(value, locationIdentifier) {
+	const enumValue: TypeFn<E> = function enumValue(value) {
 		if (!value) {
 			return null;
 		}
@@ -29,8 +29,7 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 			return recodedValue;
 		}
 
-		console.warn(`Value '${value}' does not exist within ${enumValues.join(', ')}${locationIdentifier ? ` (${locationIdentifier})` : ''}`);
-		return null;
+		throw new Error(`Value '${value}' does not exist within ${enumValues.join(', ')}`);
 	} as TypeFn<E>;
 	// Need to use a type assertion here as TypeScript doesn't know how to use the generic constraint to resolve the conditional type
 	// See https://stackoverflow.com/questions/70553130/typescript-generic-conditional-type-as-return-value-for-generic-function/70553240#70553240

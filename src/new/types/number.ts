@@ -29,7 +29,7 @@ function appearsPercentage(value: string): boolean {
  *
  * If the value doesn't appear like it represents a number, a warning will be generated.
  */
-export const number: TypeFn<number> = function number(value, locationIdentifier) {
+export const number: TypeFn<number> = function number(value) {
 	if (appearsNumber(value)) {
 		let cleanValue = cleanNumberLike(value);
 
@@ -49,9 +49,6 @@ export const number: TypeFn<number> = function number(value, locationIdentifier)
 
 		return Number(cleanValue);
 	} else {
-		if (value) {
-			console.warn(`Number value not found in '${value}'${locationIdentifier ? ` (${locationIdentifier})` : ''}`);
-		}
-		return null;
+		throw new Error(`Number value not found in '${value}'`);
 	}
 };

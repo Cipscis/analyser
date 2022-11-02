@@ -4,19 +4,30 @@ import { FileConfig } from './FileConfig.js';
 import { ProcessedData } from './ProcessedData.js';
 import { Data } from './Data.js';
 
+interface LoadFileOptions {
+	/** Set to false to allow continuing after type failure */
+	strict?: boolean;
+}
+
+const defaultOptions: LoadFileOptions = {
+	strict: true,
+};
+
 /**
  * Load a single CSV file and process its contents.
  */
 export async function loadFile<
 	RowShape extends Record<string, unknown>,
->(fileConfig: FileConfig<keyof RowShape & string, RowShape>): Promise<ProcessedData<keyof RowShape & string, RowShape>> {
+>(fileConfig: FileConfig<keyof RowShape & string, RowShape>, options?: LoadFileOptions): Promise<ProcessedData<keyof RowShape & string, RowShape>> {
+	const optionsWithDefaults: LoadFileOptions = Object.assign({}, defaultOptions, options ?? {});
+
 	const response = await fetch(fileConfig.path);
 
 	if (response.ok) {
 		const data = await response.text();
 
 		const rows = parseCSV(data);
-		const processedData = processData(rows, fileConfig);
+		const processedData = processData(rows, fileConfig, optionsWithDefaults);
 		return processedData;
 	}  else {
 		throw new Error(`Failed to fetch file at ${fileConfig.path}: ${response.status} ${response.statusText}`);
@@ -29,7 +40,7 @@ export async function loadFile<
 function processData<
 	ColName extends string,
 	RowShape extends Record<ColName, unknown>,
->(rows: readonly string[][], fileConfig: FileConfig<ColName, RowShape>): ProcessedData<ColName, RowShape> {
+>(rows: readonly string[][], fileConfig: FileConfig<ColName, RowShape>, options: LoadFileOptions): ProcessedData<ColName, RowShape> {
 	const dataRows = rows.map((row) => row.concat());
 
 	// Remove header rows
@@ -55,13 +66,31 @@ function processData<
 	});
 
 	// Transform each column into its configured type
-	const typedRows: RowShape[] = namedRows.map((row) => {
+	const typedRows: RowShape[] = namedRows.map((row, i) => {
 		const typedRow: Partial<RowShape> = {};
 
 		for (const colName in row) {
 			const transformFn = fileConfig.cols[colName][1];
 
-			typedRow[colName as ColName] = transformFn(row[colName]);
+			// Type functions will throw an error if their assumptions are violated
+			try {
+				typedRow[colName as ColName] = transformFn(row[colName]);
+			} catch (e) {
+				if (e instanceof Error) {
+					const locationIdentifier = `File: ${fileConfig.path}, Row: ${i}, Column: ${colName}`;
+					const message = `${e.message} (${locationIdentifier})`;
+
+					if (options.strict) {
+						console.error(message);
+					} else {
+						console.warn(message);
+					}
+				}
+
+				if (options.strict) {
+					throw e;
+				}
+			}
 		}
 
 		return typedRow as RowShape;
