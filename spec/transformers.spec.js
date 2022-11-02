@@ -1,4 +1,4 @@
-import * as analyser from '../dist/analyser.js';
+import * as analyser from '../dist/new/index.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
@@ -6,13 +6,7 @@ global.fetch = fetch;
 import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
-describe(`transformers`, () => {
-	// Suppress console warnings during tests
-	let consoleWarnSpy;
-	beforeEach(() => {
-		consoleWarnSpy = spyOn(console, 'warn');
-	});
-
+describe(`type functions`, () => {
 	const testTransformer = function (transformer, expectedResults) {
 		for (let [input, output] of expectedResults) {
 			expect(transformer(input)).toEqual(output);
@@ -25,18 +19,16 @@ describe(`transformers`, () => {
 				['Bus,Train', ['Bus', 'Train']],
 			]);
 
-			testTransformer(analyser.transformers.array(','), expectedOutput);
+			testTransformer(analyser.types.array(','), expectedOutput);
 		});
 
 		it(`can't be used directly as a transformer`, async () => {
 			const config = Object.assign({}, exampleAConfig);
-			config.transform = {
-				PUBLIC_TRANSPORT: analyser.transformers.array,
-			};
+			config.cols.PUBLIC_TRANSPORT[1] = analyser.types.array;
 
 			let errorThrown = false;
 			try {
-				const { rows } = await analyser.loadFile(config);
+				await analyser.loadFile(config);
 			} catch (e) {
 				errorThrown = true;
 			}
@@ -52,7 +44,7 @@ describe(`transformers`, () => {
 				['false', false],
 			]);
 
-			testTransformer(analyser.transformers.boolean, expectedResults);
+			testTransformer(analyser.types.boolean, expectedResults);
 		});
 
 		it(`is case insensitive`, () => {
@@ -65,7 +57,7 @@ describe(`transformers`, () => {
 				['FaLsE', false],
 			]);
 
-			testTransformer(analyser.transformers.boolean, expectedResults);
+			testTransformer(analyser.types.boolean, expectedResults);
 		});
 
 		it(`ignores leading or trailing whitespace`, () => {
@@ -78,24 +70,18 @@ describe(`transformers`, () => {
 				['	false	', false],
 			]);
 
-			testTransformer(analyser.transformers.boolean, expectedResults);
+			testTransformer(analyser.types.boolean, expectedResults);
 		});
 
-		it(`converts other strings into null`, () => {
-			(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(analyser.transformers.boolean(str)).toBe(null));
-		});
-
-		it(`generates a warning in the console if the value can't be converted`, () => {
+		it(`throws an error if the value can't be converted`, () => {
 			const expectedResults = new Map([
 				['another value', null],
 			]);
 
-			testTransformer(analyser.transformers.boolean, expectedResults);
-
-			expect(consoleWarnSpy).toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.boolean, expectedResults)).toThrowError();
 		});
 
-		it(`doesn't generate a warning in the console if the value can be converted`, () => {
+		it(`doesn't throw an error if the value can be converted`, () => {
 			const expectedResults = new Map([
 				[' true', true],
 				['true ', true],
@@ -105,9 +91,7 @@ describe(`transformers`, () => {
 				['	false	', false],
 			]);
 
-			testTransformer(analyser.transformers.boolean, expectedResults);
-
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.boolean, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -117,7 +101,7 @@ describe(`transformers`, () => {
 				['customTrue', true],
 				['customFalse', false],
 			]);
-			const boolean = analyser.transformers.booleanCustom('customTrue', 'customFalse');
+			const boolean = analyser.types.booleanCustom('customTrue', 'customFalse');
 
 			testTransformer(boolean, expectedResults);
 		});
@@ -129,17 +113,7 @@ describe(`transformers`, () => {
 				['customFalseString', false],
 				['Nooo', false],
 			]);
-			const boolean = analyser.transformers.booleanCustom(/true$|YES/i, /False|No/);
-
-			testTransformer(boolean, expectedResults);
-		});
-
-		it(`uses cleaned values (case insensitive, no leading or trailing whitespace) when testing against strings`, () => {
-			const expectedResults = new Map([
-				[' True', true],
-				['naH ', false],
-			]);
-			const boolean = analyser.transformers.booleanCustom('TRUE ', ' nah ');
+			const boolean = analyser.types.booleanCustom(/true$|YES/i, /False|No/);
 
 			testTransformer(boolean, expectedResults);
 		});
@@ -149,36 +123,27 @@ describe(`transformers`, () => {
 				[' yes', true],
 				[' NO', false],
 			]);
-			const boolean = analyser.transformers.booleanCustom(/ ye\w/, /\sNO/);
+			const boolean = analyser.types.booleanCustom(/ ye\w/, /\sNO/);
 
 			testTransformer(boolean, expectedResults);
 		});
 
-		it(`transforms strings that don't match its expectations to null`, () => {
-			const boolean = analyser.transformers.booleanCustom(/A/, /B/);
-			(['', 'yes', 'no', 'test', '100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(null));
-		});
-
-		it(`generates a warning in the console if the value can't be converted`, () => {
+		it(`throws an error if the value can't be converted`, () => {
 			const expectedResults = new Map([
 				['yes', null],
 				['NO', null],
 			]);
 
-			testTransformer(analyser.transformers.booleanCustom(/ ye\w/, /\sNO/), expectedResults);
-
-			expect(consoleWarnSpy).toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).toThrowError();
 		});
 
-		it(`doesn't generate a warning in the console if the value can be converted`, () => {
+		it(`doesn't throw an error if the value can be converted`, () => {
 			const expectedResults = new Map([
 				[' yes', true],
 				[' NO', false],
 			]);
 
-			testTransformer(analyser.transformers.booleanCustom(/ ye\w/, /\sNO/), expectedResults);
-
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -190,7 +155,7 @@ describe(`transformers`, () => {
 				['+2.5', 2.5],
 			]);
 
-			testTransformer(analyser.transformers.number, expectedResults);
+			testTransformer(analyser.types.number, expectedResults);
 		});
 
 		it(`ignores commas in number strings`, () => {
@@ -200,7 +165,7 @@ describe(`transformers`, () => {
 			]);
 
 			for (let [input, output] of expectedResults) {
-				expect(analyser.transformers.number(input)).toBe(output);
+				expect(analyser.types.number(input)).toBe(output);
 			}
 		});
 
@@ -213,16 +178,11 @@ describe(`transformers`, () => {
 			]);
 
 			for (let [input, output] of expectedResults) {
-				expect(analyser.transformers.number(input)).toBe(output);
+				expect(analyser.types.number(input)).toBe(output);
 			}
 		});
 
-		it(`transforms strings that don't match its expectations to null`, () => {
-			const boolean = analyser.transformers.number;
-			(['', 'yes', 'no', 'test', 'a100', 'true a', 'falsey']).forEach((str) => expect(boolean(str)).toBe(null));
-		});
-
-		it(`generates a warning in the console if the value can't be converted`, () => {
+		it(`throws an error if the value can't be converted`, () => {
 			const expectedResults = new Map([
 				['a100%', null],
 				['a10%', null],
@@ -230,12 +190,10 @@ describe(`transformers`, () => {
 				['a81.23%', null],
 			]);
 
-			testTransformer(analyser.transformers.number, expectedResults);
-
-			expect(consoleWarnSpy).toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.number, expectedResults)).toThrowError();
 		});
 
-		it(`doesn't generate a warning in the console if the value can be converted`, () => {
+		it(`doesn't throw an error if the value can be converted`, () => {
 			const expectedResults = new Map([
 				['100%', 1],
 				['10%', 0.1],
@@ -243,9 +201,7 @@ describe(`transformers`, () => {
 				['81.23%', 0.8123],
 			]);
 
-			testTransformer(analyser.transformers.number, expectedResults);
-
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.number, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -257,7 +213,7 @@ describe(`transformers`, () => {
 				[' false', false],
 			]);
 
-			testTransformer(analyser.transformers.value, expectedResults);
+			testTransformer(analyser.types.value, expectedResults);
 		});
 
 		it(`extracts number values from strings, if present`, () => {
@@ -266,37 +222,20 @@ describe(`transformers`, () => {
 				['50.64%', 0.5064],
 			]);
 
-			testTransformer(analyser.transformers.value, expectedResults);
+			testTransformer(analyser.types.value, expectedResults);
 		});
 
-		it(`transforms strings to null if it can't extract a value`, () => {
-			const expectedResults = new Map([
-				['test', null],
-				['fifteen', null],
-				['', null],
-				['true', true],
-				['True', true],
-				[' false', false],
-				['-1,000', -1000],
-				['50.64%', 0.5064],
-			]);
-
-			testTransformer(analyser.transformers.value, expectedResults);
-		});
-
-		it(`generates a warning in the console if the value can't be converted`, () => {
+		it(`throws an error if the value can't be converted`, () => {
 			const expectedResults = new Map([
 				['test', null],
 				['fifteen', null],
 				['', null],
 			]);
 
-			testTransformer(analyser.transformers.value, expectedResults);
-
-			expect(consoleWarnSpy).toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.value, expectedResults)).toThrowError();
 		});
 
-		it(`doesn't generate a warning in the console if the value can be converted`, () => {
+		it(`doesn't throw an error if the value can be converted`, () => {
 			const expectedResults = new Map([
 				['true', true],
 				['True', true],
@@ -305,9 +244,7 @@ describe(`transformers`, () => {
 				['50.64%', 0.5064],
 			]);
 
-			testTransformer(analyser.transformers.value, expectedResults);
-
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.value, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -319,37 +256,32 @@ describe(`transformers`, () => {
 			['1']: '1',
 		};
 
-		it(`doesn't modify valid values, and converts invalid values to null`, () => {
-			const expectedResults = new Map([
-				[testEnum.test, testEnum.test],
-				[testEnum.val, testEnum.val],
-				[testEnum['1'], testEnum['1']],
-				['another value', null],
-			]);
-
-			testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
-		});
-
-		it(`generates a warning in the console if the value doesn't exist in the passed enum`, () => {
-			const expectedResults = new Map([
-				['another value', null],
-			]);
-
-			testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
-
-			expect(consoleWarnSpy).toHaveBeenCalled();
-		});
-
-		it(`doesn't generate a warning in the console if the value exists in the passed enum`, () => {
+		it(`doesn't modify valid values`, () => {
 			const expectedResults = new Map([
 				[testEnum.test, testEnum.test],
 				[testEnum.val, testEnum.val],
 				[testEnum['1'], testEnum['1']],
 			]);
 
-			testTransformer(analyser.transformers.enumValue(testEnum), expectedResults);
+			testTransformer(analyser.types.enumValue(testEnum), expectedResults);
+		});
 
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+		it(`throws an error if the value doesn't exist in the passed enum`, () => {
+			const expectedResults = new Map([
+				['another value', null],
+			]);
+
+			expect(() => testTransformer(analyser.types.enumValue(testEnum), expectedResults)).toThrowError();
+		});
+
+		it(`doesn't throw an error if the value exists in the passed enum`, () => {
+			const expectedResults = new Map([
+				[testEnum.test, testEnum.test],
+				[testEnum.val, testEnum.val],
+				[testEnum['1'], testEnum['1']],
+			]);
+
+			expect(() => testTransformer(analyser.types.enumValue(testEnum), expectedResults)).not.toThrowError();
 		});
 
 		it(`can transform values based on a recodeMap`, () => {
@@ -360,9 +292,7 @@ describe(`transformers`, () => {
 				['another value', testEnum.val],
 			]);
 
-			testTransformer(analyser.transformers.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults);
-
-			expect(consoleWarnSpy).not.toHaveBeenCalled();
+			expect(() => testTransformer(analyser.types.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults)).not.toThrowError();
 		});
 	});
 });

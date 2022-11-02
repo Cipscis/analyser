@@ -3,6 +3,7 @@ import { parse as parseCSV } from '@cipscis/csv';
 import { FileConfig } from './FileConfig.js';
 import { ProcessedData } from './ProcessedData.js';
 import { Data } from './Data.js';
+import * as types from './types/index.js';
 
 interface LoadFileOptions {
 	/** Set to false to allow continuing after type failure */
@@ -72,6 +73,16 @@ function processData<
 		for (const colName in row) {
 			const transformFn = fileConfig.cols[colName][1];
 
+			// These conditions are intended to help when TypeScript isn't being used
+			if (transformFn === types.array) {
+				throw new Error(`The 'array' type function cannot be used directly. Please pass a 'separator' argument.`);
+			} else if (transformFn === types.booleanCustom) {
+				throw new Error(`The 'booleanCustom' type function cannot be used directly. Please pass 'truthy' and 'falsey' arguments.`);
+			// @ts-expect-error This check is only intended to catch errors if an incorrectly typed value is passed
+			} else if (transformFn === types.enumValue) {
+				throw new Error(`The 'enumValue' type function cannot be used directly. Please pass an 'enums' argument.`);
+			}
+
 			// Type functions will throw an error if their assumptions are violated
 			try {
 				typedRow[colName as ColName] = transformFn(row[colName]);
@@ -114,10 +125,8 @@ function processData<
 		}
 	}
 
-	// TODO: `group`
-
 	const processedData: ProcessedData<ColName, RowShape> = {
-		rows: new Data(typedRows),
+		rows: new Data(typedRows, fileConfig.aliases),
 
 		matchAlias: (valueA, valueB) => matchWithAlias(valueA, valueB, fileConfig.aliases),
 	};
@@ -196,9 +205,20 @@ export function getColNumber(index: number | string): number | null {
 }
 
 /**
+ * Checks is a single `matchValue` matches one or more `testValues`, optionally taking a set of aliases where groups of strings are treated as equal.
+ */
+export function matchWithAlias(testValues: unknown, matchValue: unknown, aliases?: readonly string[][]): boolean {
+	if (Array.isArray(testValues)) {
+		return testValues.some((testValue) => matchWithAliasSingle(testValue, matchValue, aliases));
+	} else {
+		return matchWithAliasSingle(testValues, matchValue, aliases);
+	}
+}
+
+/**
  * Checks if two values match, optionally taking a set of aliases where groups of strings are treated as equal.
  */
-function matchWithAlias(valueA: unknown, valueB: unknown, aliases?: string[][]): boolean {
+function matchWithAliasSingle(valueA: unknown, valueB: unknown, aliases?: readonly string[][]): boolean {
 	if (valueA === valueB) {
 		return true;
 	}

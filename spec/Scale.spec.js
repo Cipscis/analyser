@@ -1,4 +1,4 @@
-import * as analyser from '../dist/analyser.js';
+import * as analyser from '../dist/new/index.js';
 import * as statistics from '../dist/statistics.js';
 
 import { fetch } from './mocks/fetch.mock.js';
@@ -18,19 +18,15 @@ describe(`Scale`, () => {
 	});
 
 	let rows;
-	let cols;
-	let group;
 	let summary;
 
 	beforeEach(async () => {
 		const dataConfig = await analyser.loadFile(exampleAConfig);
 		rows = dataConfig.rows;
-		cols = dataConfig.cols;
-		group = dataConfig.group;
 
-		summary = group(rows, cols.NAME).summarise({
-			population: (rows) => statistics.sum(rows.getCol(cols.POPULATION)),
-			pop_half: (rows) => statistics.sum(rows.getCol(cols.POPULATION) / 2),
+		summary = rows.groupBy('NAME').summarise({
+			population: (rows) => statistics.sum(rows.map(({ POPULATION }) => POPULATION)),
+			pop_half: (rows) => statistics.sum(rows.map(({ POPULATION }) => POPULATION) / 2),
 		});
 	});
 

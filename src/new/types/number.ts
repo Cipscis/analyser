@@ -21,7 +21,7 @@ function appearsNumber(value: string): boolean {
  * Checks if a string appears like it represents a percentage
  */
 function appearsPercentage(value: string): boolean {
-	return appearsNumber(value) && Boolean(value.match(/$%/));
+	return appearsNumber(value) && Boolean(value.match(/%$/));
 }
 
 /**

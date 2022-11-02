@@ -1,7 +1,7 @@
-import * as analyser from '../dist/analyser.js';
+import * as analyser from '../dist/new/index.js';
 import * as statistics from '../dist/statistics.js';
 
-import { AnalyserGroup } from '../dist/AnalyserGroup.js';
+import { DataGroup } from '../dist/new/DataGroup.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
@@ -10,37 +10,28 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`AnalyserGroup`, () => {
-	// Suppress console warnings during tests
-	beforeAll(() => {
-		spyOn(console, 'warn');
-	});
-
 	let rows;
-	let cols;
-	let group;
 
 	beforeEach(async () => {
 		const dataConfig = await analyser.loadFile(exampleAConfig);
 		rows = dataConfig.rows;
-		cols = dataConfig.cols;
-		group = dataConfig.group;
 	});
 
-	it(`can be created by using the 'group' function`, () => {
-		const countryGroup = group(rows, cols.COUNTRY);
+	it(`can be created by using the 'groupBy' function`, () => {
+		const countryGroup = rows.groupBy('COUNTRY');
 
-		expect(countryGroup).toBeInstanceOf(AnalyserGroup);
+		expect(countryGroup).toBeInstanceOf(DataGroup);
 	});
 
 	it(`respects aliases when grouping by discrete string values`, () => {
-		const countryGroup = group(rows, cols.COUNTRY);
+		const countryGroup = rows.groupBy('COUNTRY');
 
 		expect(countryGroup.has('New Zealand')).toBe(true);
-		expect(countryGroup.has('Aoteator')).toBe(false);
+		expect(countryGroup.has('Aoteatora')).toBe(false);
 	});
 
 	it(`checks every value in an array when determining which groups a row belongs to`, () => {
-		const publicTransportGroup = group(rows, cols.PUBLIC_TRANSPORT);
+		const publicTransportGroup = rows.groupBy('PUBLIC_TRANSPORT');
 
 		expect(publicTransportGroup.get('Bus').length).toBe(9);
 		expect(publicTransportGroup.get('Train').length).toBe(5);
@@ -49,7 +40,7 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`can group rows by splitting continuous data into a specified number of bands`, () => {
-		const populationGroup = group(rows, cols.POPULATION, 5);
+		const populationGroup = rows.groupBy('POPULATION', 5);
 
 		const groupArr = [];
 		for (let [groupName, rows] of populationGroup) {
@@ -65,7 +56,7 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`can group rows by splitting continuous data at specified points`, () => {
-		const populationGroup = group(rows, cols.POPULATION, [300, 1000]);
+		const populationGroup = rows.groupBy('POPULATION', [300, 1000]);
 
 		const groupArr = [];
 		for (let [groupName, rows] of populationGroup) {
@@ -79,8 +70,8 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`respects the 'right' argument when splitting continuous data`, () => {
-		const populationGroupRight = group(rows, cols.POPULATION, [300, 1810], true);
-		const populationGroupLeft = group(rows, cols.POPULATION, [300, 1810], false);
+		const populationGroupRight = rows.groupBy('POPULATION', [300, 1810], true);
+		const populationGroupLeft = rows.groupBy('POPULATION', [300, 1810], false);
 
 		expect(populationGroupRight.get('300 < x <= 1810').length).toBe(4);
 		expect(populationGroupLeft.get('300 <= x < 1810').length).toBe(3);
@@ -88,14 +79,14 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`can split continuous data into two groups by specifying a single value`, () => {
-		const populationSplit = group(rows, cols.POPULATION, [1000]);
+		const populationSplit = rows.groupBy('POPULATION', [1000]);
 
 		expect(populationSplit.get('x <= 1000').length).toBe(6);
 		expect(populationSplit.get('1000 < x').length).toBe(3);
 	});
 
 	it(`can split continuous data into two groups by specifying the number 2`, () => {
-		const populationSplit = group(rows, cols.POPULATION, 2);
+		const populationSplit = rows.groupBy('POPULATION', 2);
 
 		const splitArr = [];
 		for (let [groupName, rows] of populationSplit) {
@@ -108,21 +99,21 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`throws an error if attempting to split into an invalid number of groups`, () => {
-		expect(() => group(rows, cols.POPULATION, 'test')).toThrowError();
-		expect(() => group(rows, cols.POPULATION, 1.2)).toThrowError();
-		expect(() => group(rows, cols.POPULATION, 1)).toThrowError();
-		expect(() => group(rows, cols.POPULATION, -1)).toThrowError();
-		expect(() => group(rows, cols.POPULATION, ['a'])).toThrowError();
-		expect(() => group(rows, cols.POPULATION, [])).toThrowError();
+		expect(() => rows.groupBy('POPULATION', 'test')).toThrowError();
+		expect(() => rows.groupBy('POPULATION', 1.2)).toThrowError();
+		expect(() => rows.groupBy('POPULATION', 1)).toThrowError();
+		expect(() => rows.groupBy('POPULATION', -1)).toThrowError();
+		expect(() => rows.groupBy('POPULATION', ['a'])).toThrowError();
+		expect(() => rows.groupBy('POPULATION', [])).toThrowError();
 	});
 
 	it(`can be summarised`, () => {
-		const countryGroup = group(rows, cols.COUNTRY);
+		const countryGroup = rows.groupBy('COUNTRY');
 
 		const summary = countryGroup.summarise({
 			number: (rows) => rows.length,
-			mean_population: (rows) => statistics.mean(rows.getCol(cols.POPULATION)),
-			max_population: (rows) => Math.max(...rows.getCol(cols.POPULATION)),
+			mean_population: (rows) => statistics.mean(rows.map(({ POPULATION}) => POPULATION)),
+			max_population: (rows) => Math.max(...rows.map(({ POPULATION }) => POPULATION)),
 			name: (rows, name) => name,
 		});
 
@@ -136,7 +127,7 @@ describe(`AnalyserGroup`, () => {
 	});
 
 	it(`Uses a default "Count" summariser if none are specified`, () => {
-		const countryGroup = group(rows, cols.COUNTRY);
+		const countryGroup = rows.groupBy('COUNTRY');
 
 		const summary = countryGroup.summarise();
 
