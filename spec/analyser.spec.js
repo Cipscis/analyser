@@ -1,4 +1,5 @@
-import * as analyser from '../dist/analyser.js';
+// import * as analyser from '../dist/analyser.js';
+import * as analyser from '../dist/new/index.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
@@ -7,12 +8,6 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`analyser`, () => {
-	// Suppress console warnings during tests
-	let consoleWarnSpy;
-	beforeEach(() => {
-		consoleWarnSpy = spyOn(console, 'warn');
-	});
-
 	describe(`getColNumber`, () => {
 		it(`converts a column name string into a number`, () => {
 			let colName = 'A';
@@ -56,11 +51,11 @@ describe(`analyser`, () => {
 	describe(`getColNumbers`, () => {
 		it(`converts an object of column names into an equivalent object of column numbers`, () => {
 			const colNames = {
-				A: 'A',
-				B: 'B',
-				AX: 'AX',
-				ZZZ: 'ZZZ',
-				posInt: 3,
+				A: ['A'],
+				B: ['B'],
+				AX: ['AX'],
+				ZZZ: ['ZZZ'],
+				posInt: [3],
 			};
 
 			const colNumbers = analyser.getColNumbers(colNames);
@@ -103,32 +98,32 @@ describe(`analyser`, () => {
 			fileConfig.headerRows = 1;
 			fileConfig.footerRows = 0;
 
-			const { rows, cols } = await analyser.loadFile(fileConfig);
+			const { rows } = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(9);
-			expect(rows[0][cols.NAME]).toBe('Auckland');
+			expect(rows[0].NAME).toBe('Auckland');
 		});
 
 		it(`trims footer rows`, async () => {
 			const fileConfig = Object.assign({}, exampleAConfig);
-			fileConfig.headerRows = 0;
+			fileConfig.headerRows = 1;
 			fileConfig.footerRows = 1;
 
-			const { rows, cols } = await analyser.loadFile(fileConfig);
+			const { rows } = await analyser.loadFile(fileConfig);
 
-			expect(rows.length).toBe(9);
-			expect(rows[rows.length-1][cols.NAME]).toBe('Dunedin');
+			expect(rows.length).toBe(8);
+			expect(rows[rows.length-1].NAME).toBe('Dunedin');
 		});
 
 		it(`trims ignored rows`, async() => {
 			const fileConfig = Object.assign({}, exampleAConfig);
-			fileConfig.ignoreRows = (row, cols) => row[cols.NAME] === 'Auckland' || row[cols.NAME] === 'Tauranga';
+			fileConfig.ignoreRows = (row) => row.NAME === 'Auckland' || row.NAME === 'Tauranga';
 
-			const { rows, cols } = await analyser.loadFile(fileConfig);
+			const { rows } = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(7);
-			expect(rows[0][cols.NAME]).toBe('Taupō');
-			expect(rows[rows.length-1][cols.NAME]).toBe('Dunedin');
+			expect(rows[0].NAME).toBe('Taupō');
+			expect(rows[rows.length-1].NAME).toBe('Dunedin');
 		});
 	});
 });

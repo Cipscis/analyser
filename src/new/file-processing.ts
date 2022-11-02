@@ -137,7 +137,7 @@ function processData<
  *
  * @param colsConfig - A map of column names to their indices
  */
-function getColNumbers<ColName extends string>(colsConfig: Record<ColName, readonly [string | number, ...unknown[]]>): Record<ColName, number> {
+export function getColNumbers<ColName extends string>(colsConfig: Record<ColName, readonly [string | number, ...unknown[]]>): Record<ColName, number> {
 	const entries = Object.entries<typeof colsConfig[keyof typeof colsConfig]>(colsConfig);
 
 	const mappedEntries = entries.map(([name, [index]]) => {
@@ -163,7 +163,7 @@ function getColNumbers<ColName extends string>(colsConfig: Record<ColName, reado
  *
  * If a non-negative integer is passed, it will be returned untransformed. Any other value, including an invalid string, will return null.
  */
-function getColNumber(index: number | string): number | null {
+export function getColNumber(index: number | string): number | null {
 	if (typeof index === 'number') {
 		if (Number.isInteger(index) && index >= 0) {
 			return index;
