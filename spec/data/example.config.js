@@ -7,13 +7,13 @@ import {
 const exampleAConfig = fileConfig({
 	path: 'city example.csv',
 	cols: {
-		NAME: ['A', types.string],
-		COUNTRY: ['B', types.string],
-		POPULATION: ['C', types.number],
-		CAPITAL: ['D', types.booleanCustom('true', /^('No'|false|)$/)],
-		PUBLIC_TRANSPORT: ['E', types.array(',')],
-		MAYOR_2012: ['F', types.string],
-		MAYOR_2018: ['G', types.string],
+		name: ['A', types.string],
+		country: ['B', types.string],
+		population: ['C', types.number],
+		capital: ['D', types.booleanCustom('true', /^('No'|false|)$/)],
+		publicTransport: ['E', types.array(',')],
+		mayor2012: ['F', types.string],
+		mayor2018: ['G', types.string],
 	},
 	aliases: [
 		['New Zealand', 'Aotearoa'],
@@ -24,9 +24,9 @@ const exampleAConfig = fileConfig({
 const exampleBConfig = {
 	path: 'city example 2.csv',
 	cols: {
-		NAME: ['A', types.string],
-		COUNTRY: ['B', types.string],
-		POPULATION: ['C', types.number],
+		name: ['A', types.string],
+		country: ['B', types.string],
+		population: ['C', types.number],
 	},
 	headerRows: 1,
 };
@@ -34,8 +34,8 @@ const exampleBConfig = {
 const exampleCConfig = {
 	path: 'city example 3.csv',
 	cols: {
-		YEAR: ['A', types.string],
-		POPULATION: ['B', types.number],
+		year: ['A', types.string],
+		population: ['B', types.number],
 	},
 	headerRows: 1,
 };

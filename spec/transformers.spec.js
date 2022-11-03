@@ -24,7 +24,7 @@ describe(`type functions`, () => {
 
 		it(`can't be used directly as a transformer`, async () => {
 			const config = Object.assign({}, exampleAConfig);
-			config.cols.PUBLIC_TRANSPORT[1] = analyser.types.array;
+			config.cols.publicTransport[1] = analyser.types.array;
 
 			let errorThrown = false;
 			try {

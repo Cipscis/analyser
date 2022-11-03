@@ -79,7 +79,8 @@ describe(`analyser`, () => {
 
 			const data = await analyser.loadFile(fileConfig);
 
-			expect(data).not.toBeInstanceOf(Array);
+			expect(data).toBeInstanceOf(Array);
+			expect(data[0]).not.toBeInstanceOf(Array);
 		});
 
 		it(`reads all rows from a file`, async () => {
@@ -88,7 +89,7 @@ describe(`analyser`, () => {
 				cols: {},
 			};
 
-			const { rows } = await analyser.loadFile(fileConfig);
+			const rows = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(10);
 		});
@@ -98,10 +99,10 @@ describe(`analyser`, () => {
 			fileConfig.headerRows = 1;
 			fileConfig.footerRows = 0;
 
-			const { rows } = await analyser.loadFile(fileConfig);
+			const rows = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(9);
-			expect(rows[0].NAME).toBe('Auckland');
+			expect(rows[0].name).toBe('Auckland');
 		});
 
 		it(`trims footer rows`, async () => {
@@ -109,21 +110,21 @@ describe(`analyser`, () => {
 			fileConfig.headerRows = 1;
 			fileConfig.footerRows = 1;
 
-			const { rows } = await analyser.loadFile(fileConfig);
+			const rows = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(8);
-			expect(rows[rows.length-1].NAME).toBe('Dunedin');
+			expect(rows[rows.length-1].name).toBe('Dunedin');
 		});
 
 		it(`trims ignored rows`, async() => {
 			const fileConfig = Object.assign({}, exampleAConfig);
-			fileConfig.ignoreRows = (row) => row.NAME === 'Auckland' || row.NAME === 'Tauranga';
+			fileConfig.ignoreRows = (row) => row.name === 'Auckland' || row.name === 'Tauranga';
 
-			const { rows } = await analyser.loadFile(fileConfig);
+			const rows = await analyser.loadFile(fileConfig);
 
 			expect(rows.length).toBe(7);
-			expect(rows[0].NAME).toBe('Taupō');
-			expect(rows[rows.length-1].NAME).toBe('Dunedin');
+			expect(rows[0].name).toBe('Taupō');
+			expect(rows[rows.length-1].name).toBe('Dunedin');
 		});
 	});
 });

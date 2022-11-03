@@ -4,8 +4,7 @@ import * as statistics from '../dist/statistics.js';
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
 
-import { exampleAConfig } from
-'./data/example.config.js';
+import { exampleAConfig } from './data/example.config.js';
 
 import { getChartData } from '../dist/charts/ChartData.js';
 
@@ -21,12 +20,11 @@ describe(`Scale`, () => {
 	let summary;
 
 	beforeEach(async () => {
-		const dataConfig = await analyser.loadFile(exampleAConfig);
-		rows = dataConfig.rows;
+		rows = await analyser.loadFile(exampleAConfig);
 
-		summary = rows.groupBy('NAME').summarise({
-			population: (rows) => statistics.sum(rows.map(({ POPULATION }) => POPULATION)),
-			pop_half: (rows) => statistics.sum(rows.map(({ POPULATION }) => POPULATION) / 2),
+		summary = rows.groupBy('name').summarise({
+			population: (rows) => statistics.sum(rows.map(({ population }) => population)),
+			pop_half: (rows) => statistics.sum(rows.map(({ population }) => population) / 2),
 		});
 	});
 

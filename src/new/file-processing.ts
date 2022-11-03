@@ -1,7 +1,6 @@
 import { parse as parseCSV } from '@cipscis/csv';
 
 import { FileConfig } from './FileConfig.js';
-import { ProcessedData } from './ProcessedData.js';
 import { Data } from './Data.js';
 import * as types from './types/index.js';
 
@@ -19,7 +18,7 @@ const defaultOptions: LoadFileOptions = {
  */
 export async function loadFile<
 	RowShape extends Record<string, unknown>,
->(fileConfig: FileConfig<keyof RowShape & string, RowShape>, options?: LoadFileOptions): Promise<ProcessedData<keyof RowShape & string, RowShape>> {
+>(fileConfig: FileConfig<keyof RowShape & string, RowShape>, options?: LoadFileOptions): Promise<Data<RowShape>> {
 	const optionsWithDefaults: LoadFileOptions = Object.assign({}, defaultOptions, options ?? {});
 
 	const response = await fetch(fileConfig.path);
@@ -41,7 +40,7 @@ export async function loadFile<
 function processData<
 	ColName extends string,
 	RowShape extends Record<ColName, unknown>,
->(rows: readonly string[][], fileConfig: FileConfig<ColName, RowShape>, options: LoadFileOptions): ProcessedData<ColName, RowShape> {
+>(rows: readonly string[][], fileConfig: FileConfig<ColName, RowShape>, options: LoadFileOptions): Data<RowShape> {
 	const dataRows = rows.map((row) => row.concat());
 
 	// Remove header rows
@@ -125,18 +124,9 @@ function processData<
 		}
 	}
 
-	const processedData: ProcessedData<ColName, RowShape> = {
-		rows: new Data(typedRows, fileConfig.aliases),
+	const data = new Data(typedRows, fileConfig.aliases);
 
-		matchAlias: (valueA, valueB) => matchWithAlias(valueA, valueB, fileConfig.aliases),
-	};
-
-	// Persist any aliases from the `fileConfig`
-	if (fileConfig.aliases) {
-		processedData.aliases = fileConfig.aliases;
-	}
-
-	return processedData;
+	return data;
 }
 
 /**
@@ -205,14 +195,18 @@ export function getColNumber(index: number | string): number | null {
 }
 
 /**
- * Checks is a single `matchValue` matches one or more `testValues`, optionally taking a set of aliases where groups of strings are treated as equal.
+ * Checks if one or more `matchValues` matche one or more `testValues`, optionally taking a set of aliases where groups of strings are treated as equal.
  */
-export function matchWithAlias(testValues: unknown, matchValue: unknown, aliases?: readonly string[][]): boolean {
-	if (Array.isArray(testValues)) {
-		return testValues.some((testValue) => matchWithAliasSingle(testValue, matchValue, aliases));
-	} else {
-		return matchWithAliasSingle(testValues, matchValue, aliases);
-	}
+export function matchWithAlias(testValue: unknown, matchValue: unknown, aliases?: readonly string[][]): boolean {
+	// Convert single values to arrays of length 1 to make them easier to work with consistently
+	const testValues: unknown[] = Array.isArray(testValue) ? testValue : [testValue];
+	const matchValues: unknown[] = Array.isArray(matchValue) ? matchValue : [matchValue];
+
+	return testValues.some(
+		(testValue) => matchValues.some(
+			(matchValue) => matchWithAliasSingle(testValue, matchValue, aliases)
+		)
+	);
 }
 
 /**
