@@ -1,178 +1,120 @@
-import {
-	loadFile,
-	matchWithAlias,
-	fileConfig,
-} from '@cipscis/analyser';
-import * as types from '@cipscis/analyser/types';
+import * as codebook from '@cipscis/codebook';
 
-const config = fileConfig({
-	path: '/assets/data/city example.csv',
+import * as csv from '@cipscis/csv';
+import * as analyser from '@cipscis/analyser';
 
-	cols: {
-		name:    ['A', types.string],
-		country: ['B', types.string],
-		pop:     ['C', types.number],
-	},
+const selectors = Object.freeze({
+	example: '.js-docs__example',
+	block: '.js-docs__example .js-codebook__block[contenteditable]',
+	run: '.js-docs__run',
+	log: '.js-docs__log',
 
-	aliases: [
-		['Aotearoa', 'New Zealand'],
-	],
+	codebookSet: '.js-codebook__set',
+} as const);
 
-	headerRows: 1,
-	ignoreRows: (row) => row.name === 'Total',
-});
+const dataAttributes = Object.freeze({
+	codebookSet: 'data-codebook-set',
+} as const);
 
-loadFile({
-	path: '/assets/data/city example.csv',
+const classes = Object.freeze({
+	error: 'docs-example__control--error',
+} as const);
 
-	cols: {
-		name:    ['A', types.string],
-		country: ['B', types.string],
-		pop:     ['C', types.number],
-	},
+let $currentBlock: HTMLElement | null = null;
 
-	aliases: [
-		['Aotearoa', 'New Zealand'],
-	],
+function init() {
+	_initEvents();
 
-	headerRows: 1,
-	ignoreRows: (row) => row.name === 'Total',
-}).then((rows) => {
-// loadFile(config).then((rows) => {
-	console.log(rows);
+	_runInitialSets();
+}
 
-	console.log(rows.filter(
-		(row) => matchWithAlias(row.country, 'New Zealand', rows.aliases)
-	));
+function _initEvents() {
+	const $runSetButtons = document.querySelectorAll<HTMLElement>(selectors.run);
+	$runSetButtons.forEach(($runSetButton) => {
+		$runSetButton.addEventListener('click', _runSetEvent);
+	});
 
-	rows.filter((row) => row.pop && row.pop > 50);
+	const $blocks = document.querySelectorAll<HTMLElement>(selectors.block);
+	$blocks.forEach(($block) => {
+		$block.addEventListener('blur', _clearCurrentBlock);
+		$block.addEventListener('input', _markAsCurrentBlock);
+		$block.addEventListener('keydown', _markAsCurrentBlockOnArrowDown);
+	});
+	document.addEventListener('keydown', _handleTabInsertion);
+}
 
-	const newRows = rows.addCol('test', () => 1);
-	console.log(newRows.map((({ test }) => test)));
-});
+function _runInitialSets() {
+	codebook.tidy();
 
+	codebook.runSet('example-data', { csv });
+}
 
+function _runSetEvent(this: HTMLElement, e: MouseEvent) {
+	const $runSetButton = this;
+	const $set = $runSetButton.closest(selectors.codebookSet);
+	const setName = $set?.getAttribute(dataAttributes.codebookSet);
 
+	$runSetButton.setAttribute('aria-busy', 'true');
 
+	const args = { csv, analyser };
+	const promise = setName ? codebook.runSet(setName, args) : codebook.runSet(args);
 
+	promise
+		.then(() => {
+			$runSetButton.classList.remove(classes.error);
+		})
+		.catch((reason) => {
+			$runSetButton.classList.add(classes.error);
+			const $example = $runSetButton.closest(selectors.example);
+			const $log = $example?.querySelector(selectors.log);
 
-// import * as codebook from '@cipscis/codebook';
+			if ($log) {
+				console.error(reason);
+				$log.innerHTML = String(reason);
+			}
+		})
+		.finally(() => {
+			$runSetButton.setAttribute('aria-busy', 'false');
+		});
+}
 
-// import * as csv from '@cipscis/csv';
-// import * as analyser from '@cipscis/analyser';
+function _markAsCurrentBlock(this: HTMLElement, e: Event) {
+	$currentBlock = this;
+}
 
-// const selectors = Object.freeze({
-// 	example: '.js-docs__example',
-// 	block: '.js-docs__example .js-codebook__block[contenteditable]',
-// 	run: '.js-docs__run',
-// 	log: '.js-docs__log',
+function _markAsCurrentBlockOnArrowDown(this: HTMLElement, e: KeyboardEvent) {
+	if (
+		e.key === 'ArrowUp' ||
+		e.key === 'ArrowRight' ||
+		e.key === 'ArrowDown' ||
+		e.key === 'ArrowLeft'
+	) {
+		_markAsCurrentBlock.call(this, e);
+	}
+}
 
-// 	codebookSet: '.js-codebook__set',
-// } as const);
+function _clearCurrentBlock(this: HTMLElement, e: FocusEvent) {
+	$currentBlock = null;
+}
 
-// const dataAttributes = Object.freeze({
-// 	codebookSet: 'data-codebook-set',
-// } as const);
+function _handleTabInsertion(this: Document, e: KeyboardEvent) {
+	if (e.key !== 'Tab') {
+		return;
+	}
 
-// const classes = Object.freeze({
-// 	error: 'docs-example__control--error',
-// } as const);
+	if ($currentBlock === null) {
+		return;
+	}
 
-// let $currentBlock: HTMLElement | null = null;
+	e.preventDefault();
 
-// function init() {
-// 	_initEvents();
+	const selection = this.getSelection();
+	const range = selection?.getRangeAt(0);
+	if (range) {
+		range.deleteContents();
+		range.insertNode(document.createTextNode('\t'));
+		range.collapse(false);
+	}
+}
 
-// 	_runInitialSets();
-// }
-
-// function _initEvents() {
-// 	const $runSetButtons = document.querySelectorAll<HTMLElement>(selectors.run);
-// 	$runSetButtons.forEach(($runSetButton) => {
-// 		$runSetButton.addEventListener('click', _runSetEvent);
-// 	});
-
-// 	const $blocks = document.querySelectorAll<HTMLElement>(selectors.block);
-// 	$blocks.forEach(($block) => {
-// 		$block.addEventListener('blur', _clearCurrentBlock);
-// 		$block.addEventListener('input', _markAsCurrentBlock);
-// 		$block.addEventListener('keydown', _markAsCurrentBlockOnArrowDown);
-// 	});
-// 	document.addEventListener('keydown', _handleTabInsertion);
-// }
-
-// function _runInitialSets() {
-// 	codebook.tidy();
-
-// 	codebook.runSet('example-data', { csv });
-// }
-
-// function _runSetEvent(this: HTMLElement, e: MouseEvent) {
-// 	const $runSetButton = this;
-// 	const $set = $runSetButton.closest(selectors.codebookSet);
-// 	const setName = $set?.getAttribute(dataAttributes.codebookSet);
-
-// 	$runSetButton.setAttribute('aria-busy', 'true');
-
-// 	const args = { csv, analyser };
-// 	const promise = setName ? codebook.runSet(setName, args) : codebook.runSet(args);
-
-// 	promise
-// 		.then(() => {
-// 			$runSetButton.classList.remove(classes.error);
-// 		})
-// 		.catch((reason) => {
-// 			$runSetButton.classList.add(classes.error);
-// 			const $example = $runSetButton.closest(selectors.example);
-// 			const $log = $example?.querySelector(selectors.log);
-
-// 			if ($log) {
-// 				console.error(reason);
-// 				$log.innerHTML = reason.toString();
-// 			}
-// 		})
-// 		.finally(() => {
-// 			$runSetButton.setAttribute('aria-busy', 'false');
-// 		});
-// }
-
-// function _markAsCurrentBlock(this: HTMLElement, e: Event) {
-// 	$currentBlock = this;
-// }
-
-// function _markAsCurrentBlockOnArrowDown(this: HTMLElement, e: KeyboardEvent) {
-// 	if (
-// 		e.key === 'ArrowUp' ||
-// 		e.key === 'ArrowRight' ||
-// 		e.key === 'ArrowDown' ||
-// 		e.key === 'ArrowLeft'
-// 	) {
-// 		_markAsCurrentBlock.call(this, e);
-// 	}
-// }
-
-// function _clearCurrentBlock(this: HTMLElement, e: FocusEvent) {
-// 	$currentBlock = null;
-// }
-
-// function _handleTabInsertion(this: Document, e: KeyboardEvent) {
-// 	if (e.key !== 'Tab') {
-// 		return;
-// 	}
-
-// 	if ($currentBlock === null) {
-// 		return;
-// 	}
-
-// 	e.preventDefault();
-
-// 	const selection = this.getSelection();
-// 	const range = selection?.getRangeAt(0);
-// 	if (range) {
-// 		range.deleteContents();
-// 		range.insertNode(document.createTextNode('\t'));
-// 		range.collapse(false);
-// 	}
-// }
-
-// init();
+init();

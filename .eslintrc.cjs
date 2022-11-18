@@ -28,7 +28,7 @@ module.exports = {
 		// Sometimes it's useful to leave a name for an unused argument,
 		// in case it might be used in the future
 		'@typescript-eslint/no-unused-vars': [
-			'warn',
+			'error',
 			{
 				vars: 'all',
 				args: 'none',
@@ -43,11 +43,23 @@ module.exports = {
 		// especially if a variable's default value might change in the future
 		'@typescript-eslint/no-inferrable-types': 'off',
 
+		// A function returning a `Promise<void>` should be able to go unchecked just
+		// like a function that returns `void`
+		'@typescript-eslint/no-misused-promises': [
+			'error',
+			{
+				checksVoidReturn: false,
+			},
+		],
+
 		// I like being able to use `'' + val` to coerce an unknown type to a string
 		'@typescript-eslint/restrict-plus-operands': 'off',
 
 		// I don't mind type coercion in string literal expressions
 		'@typescript-eslint/restrict-template-expressions': 'off',
+
+		// There are legitimate uses for empty functions
+		'@typescript-eslint/no-empty-function': 'off',
 
 		// Using `any[]` for rest arguments can sometimes be necessary
 		'@typescript-eslint/no-explicit-any': [
@@ -56,6 +68,9 @@ module.exports = {
 				ignoreRestArgs: true,
 			},
 		],
+
+		// There are plenty of times where it's safe to use a Promise without error handling
+		'@typescript-eslint/no-floating-promises': 'off',
 
 		////////////////////////
 		// Debugging warnings //
@@ -191,8 +206,14 @@ module.exports = {
 			'error',
 			'always',
 		],
-		'space-before-function-paren': [
-			'off',
+		'space-before-function-paren': 'off',
+		'@typescript-eslint/space-before-function-paren': [
+			'error',
+			{
+				anonymous: 'always',
+				named: 'never',
+				asyncArrow: 'always',
+			},
 		],
 		'space-in-parens': [
 			'error',
@@ -226,15 +247,6 @@ module.exports = {
 			'error',
 			{
 				assertionStyle: 'as',
-			},
-		],
-
-		'@typescript-eslint/space-before-function-paren': [
-			'error',
-			{
-				anonymous: 'always',
-				named: 'never',
-				asyncArrow: 'always',
 			},
 		],
 	}
