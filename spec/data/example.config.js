@@ -1,8 +1,7 @@
-// import { transformers } from '../../dist/analyser.js';
 import {
 	types,
 	fileConfig,
-} from '../../dist/new/index.js';
+} from '../../dist/index.js';
 
 const exampleAConfig = fileConfig({
 	path: 'city example.csv',

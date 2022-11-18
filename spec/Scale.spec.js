@@ -1,4 +1,4 @@
-import * as analyser from '../dist/new/index.js';
+import * as analyser from '../dist/index.js';
 import * as statistics from '../dist/statistics.js';
 
 import { fetch } from './mocks/fetch.mock.js';

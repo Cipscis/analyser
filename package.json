@@ -3,10 +3,10 @@
 	"version": "0.1.0",
 	"description": "For analysing data",
 	"private": true,
-	"browser": "./dist/analyser.js",
+	"browser": "./dist/index.js",
 	"exports": {
-		".": "./dist/analyser.js",
-		"./transformers": "./dist/transformers.js",
+		".": "./dist/index.js",
+		"./types": "./dist/types/index.js",
 		"./statistics": "./dist/statistics.js"
 	},
 	"type": "module",
@@ -14,7 +14,7 @@
 		"dist/**/*",
 		"chart.css"
 	],
-	"types": "dist/analyser.d.ts",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"server": "node server/server.js",
 		"build": "gulp build",

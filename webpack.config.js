@@ -24,8 +24,8 @@ const config = {
 			'.js': ['.ts', '.js'],
 		},
 		alias: {
-			'@cipscis/analyser$': `${srcPath}/analyser.ts`,
-			'@cipscis/analyser/transformers$': `${srcPath}/transformers.ts`,
+			'@cipscis/analyser$': `${srcPath}/index.ts`,
+			'@cipscis/analyser/types$': `${srcPath}/types/index.ts`,
 			'@cipscis/analyser/statistics$': `${srcPath}/statistics.ts`,
 		},
 	},

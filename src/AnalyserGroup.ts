@@ -1,17 +1,17 @@
-import { AnalyserRows } from './AnalyserRows.js';
+import { Data } from './Data.js';
 
 /**
  * A function for summarising a set of AnalyserRows
  */
-type AnalyserSummariser<T = unknown, G = unknown> = (rows: AnalyserRows, groupName: G) => T;
+type AnalyserSummariser<RowShape extends Record<string, unknown>, T = unknown, G = unknown> = (rows: Data<RowShape>, groupName: G) => T;
 
 /**
  * A group of AnalyserSummariser functions
  */
-type AnalyserSummarisers<SummaryName extends string> = Record<SummaryName, AnalyserSummariser>;
+type AnalyserSummarisers<RowShape extends Record<string, unknown>, SummaryName extends string> = Record<SummaryName, AnalyserSummariser<RowShape>>;
 
 const defaultSummarisers = {
-	Count: (rows: AnalyserRows) => rows.length,
+	Count<RowShape extends Record<string, unknown>>(rows: Data<RowShape>) { return rows.length; },
 } as const;
 type DefaultSummaryName = keyof typeof defaultSummarisers;
 
@@ -28,7 +28,7 @@ interface AnalyserGroupOptions {
 	discrete?: boolean,
 }
 
-export class AnalyserGroup extends Map<unknown, AnalyserRows> {
+export class AnalyserGroup<RowShape extends Record<string, unknown>> extends Map<unknown, Data<RowShape>> {
 	#discrete: boolean;
 
 	constructor(options?: AnalyserGroupOptions) {
@@ -45,8 +45,8 @@ export class AnalyserGroup extends Map<unknown, AnalyserRows> {
 	 * Create a 2D summary array that can be printed using console.table.
 	 */
 	summarise(): AnalyserSummary<DefaultSummaryName>
-	summarise<SummaryName extends string>(summarisers: AnalyserSummarisers<SummaryName>): AnalyserSummary<SummaryName>
-	summarise<SummaryName extends string>(summarisersArg?: AnalyserSummarisers<SummaryName>): AnalyserSummary<DefaultSummaryName> | AnalyserSummary<SummaryName> {
+	summarise<SummaryName extends string>(summarisers: AnalyserSummarisers<RowShape, SummaryName>): AnalyserSummary<SummaryName>
+	summarise<SummaryName extends string>(summarisersArg?: AnalyserSummarisers<RowShape, SummaryName>): AnalyserSummary<DefaultSummaryName> | AnalyserSummary<SummaryName> {
 		// If there was no argument, use a default value instead. This will affect the return type, as per the overloads
 		const summarisers = summarisersArg ?? defaultSummarisers;
 
@@ -57,7 +57,7 @@ export class AnalyserGroup extends Map<unknown, AnalyserRows> {
 		for (const [groupName, rows] of this.entries()) {
 			const summaryRow: [unknown, ...unknown[]] = [groupName];
 
-			for (const [, summariser] of Object.entries<AnalyserSummariser>(summarisers)) {
+			for (const [, summariser] of Object.entries<AnalyserSummariser<RowShape>>(summarisers)) {
 				const rowSummary = summariser(rows, groupName);
 				summaryRow.push(rowSummary);
 			}

@@ -1,5 +1,5 @@
-import * as analyser from '../dist/new/index.js';
-import { Data } from '../dist/new/Data.js';
+import * as analyser from '../dist/index.js';
+import { Data } from '../dist/Data.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;

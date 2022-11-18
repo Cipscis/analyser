@@ -1,4 +1,4 @@
-import * as analyser from '../dist/new/index.js';
+import * as analyser from '../dist/index.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;
@@ -7,9 +7,9 @@ import { exampleAConfig, exampleBConfig, exampleCConfig } from
 './data/example.config.js';
 
 describe(`type functions`, () => {
-	const testTransformer = function (transformer, expectedResults) {
+	const testTypeFn = function (typeFn, expectedResults) {
 		for (let [input, output] of expectedResults) {
-			expect(transformer(input)).toEqual(output);
+			expect(typeFn(input)).toEqual(output);
 		}
 	};
 
@@ -19,10 +19,10 @@ describe(`type functions`, () => {
 				['Bus,Train', ['Bus', 'Train']],
 			]);
 
-			testTransformer(analyser.types.array(','), expectedOutput);
+			testTypeFn(analyser.types.array(','), expectedOutput);
 		});
 
-		it(`can't be used directly as a transformer`, async () => {
+		it(`can't be used directly as a type function`, async () => {
 			const config = Object.assign({}, exampleAConfig);
 			config.cols.publicTransport[1] = analyser.types.array;
 
@@ -44,7 +44,7 @@ describe(`type functions`, () => {
 				['false', false],
 			]);
 
-			testTransformer(analyser.types.boolean, expectedResults);
+			testTypeFn(analyser.types.boolean, expectedResults);
 		});
 
 		it(`is case insensitive`, () => {
@@ -57,7 +57,7 @@ describe(`type functions`, () => {
 				['FaLsE', false],
 			]);
 
-			testTransformer(analyser.types.boolean, expectedResults);
+			testTypeFn(analyser.types.boolean, expectedResults);
 		});
 
 		it(`ignores leading or trailing whitespace`, () => {
@@ -70,7 +70,7 @@ describe(`type functions`, () => {
 				['	false	', false],
 			]);
 
-			testTransformer(analyser.types.boolean, expectedResults);
+			testTypeFn(analyser.types.boolean, expectedResults);
 		});
 
 		it(`throws an error if the value can't be converted`, () => {
@@ -78,7 +78,7 @@ describe(`type functions`, () => {
 				['another value', null],
 			]);
 
-			expect(() => testTransformer(analyser.types.boolean, expectedResults)).toThrowError();
+			expect(() => testTypeFn(analyser.types.boolean, expectedResults)).toThrowError();
 		});
 
 		it(`doesn't throw an error if the value can be converted`, () => {
@@ -91,7 +91,7 @@ describe(`type functions`, () => {
 				['	false	', false],
 			]);
 
-			expect(() => testTransformer(analyser.types.boolean, expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.boolean, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -103,7 +103,7 @@ describe(`type functions`, () => {
 			]);
 			const boolean = analyser.types.booleanCustom('customTrue', 'customFalse');
 
-			testTransformer(boolean, expectedResults);
+			testTypeFn(boolean, expectedResults);
 		});
 
 		it(`allows regular expressions to be used for custom truthy and falsey values`, () => {
@@ -115,7 +115,7 @@ describe(`type functions`, () => {
 			]);
 			const boolean = analyser.types.booleanCustom(/true$|YES/i, /False|No/);
 
-			testTransformer(boolean, expectedResults);
+			testTypeFn(boolean, expectedResults);
 		});
 
 		it(`uses raw values when testing against regular expressions`, () => {
@@ -125,7 +125,7 @@ describe(`type functions`, () => {
 			]);
 			const boolean = analyser.types.booleanCustom(/ ye\w/, /\sNO/);
 
-			testTransformer(boolean, expectedResults);
+			testTypeFn(boolean, expectedResults);
 		});
 
 		it(`throws an error if the value can't be converted`, () => {
@@ -134,7 +134,7 @@ describe(`type functions`, () => {
 				['NO', null],
 			]);
 
-			expect(() => testTransformer(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).toThrowError();
+			expect(() => testTypeFn(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).toThrowError();
 		});
 
 		it(`doesn't throw an error if the value can be converted`, () => {
@@ -143,7 +143,7 @@ describe(`type functions`, () => {
 				[' NO', false],
 			]);
 
-			expect(() => testTransformer(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.booleanCustom(/ ye\w/, /\sNO/), expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -155,7 +155,7 @@ describe(`type functions`, () => {
 				['+2.5', 2.5],
 			]);
 
-			testTransformer(analyser.types.number, expectedResults);
+			testTypeFn(analyser.types.number, expectedResults);
 		});
 
 		it(`ignores commas in number strings`, () => {
@@ -190,7 +190,7 @@ describe(`type functions`, () => {
 				['a81.23%', null],
 			]);
 
-			expect(() => testTransformer(analyser.types.number, expectedResults)).toThrowError();
+			expect(() => testTypeFn(analyser.types.number, expectedResults)).toThrowError();
 		});
 
 		it(`doesn't throw an error if the value can be converted`, () => {
@@ -201,7 +201,7 @@ describe(`type functions`, () => {
 				['81.23%', 0.8123],
 			]);
 
-			expect(() => testTransformer(analyser.types.number, expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.number, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -213,7 +213,7 @@ describe(`type functions`, () => {
 				[' false', false],
 			]);
 
-			testTransformer(analyser.types.value, expectedResults);
+			testTypeFn(analyser.types.value, expectedResults);
 		});
 
 		it(`extracts number values from strings, if present`, () => {
@@ -222,7 +222,7 @@ describe(`type functions`, () => {
 				['50.64%', 0.5064],
 			]);
 
-			testTransformer(analyser.types.value, expectedResults);
+			testTypeFn(analyser.types.value, expectedResults);
 		});
 
 		it(`throws an error if the value can't be converted`, () => {
@@ -232,7 +232,7 @@ describe(`type functions`, () => {
 				['', null],
 			]);
 
-			expect(() => testTransformer(analyser.types.value, expectedResults)).toThrowError();
+			expect(() => testTypeFn(analyser.types.value, expectedResults)).toThrowError();
 		});
 
 		it(`doesn't throw an error if the value can be converted`, () => {
@@ -244,7 +244,7 @@ describe(`type functions`, () => {
 				['50.64%', 0.5064],
 			]);
 
-			expect(() => testTransformer(analyser.types.value, expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.value, expectedResults)).not.toThrowError();
 		});
 	});
 
@@ -263,7 +263,7 @@ describe(`type functions`, () => {
 				[testEnum['1'], testEnum['1']],
 			]);
 
-			testTransformer(analyser.types.enumValue(testEnum), expectedResults);
+			testTypeFn(analyser.types.enumValue(testEnum), expectedResults);
 		});
 
 		it(`throws an error if the value doesn't exist in the passed enum`, () => {
@@ -271,7 +271,7 @@ describe(`type functions`, () => {
 				['another value', null],
 			]);
 
-			expect(() => testTransformer(analyser.types.enumValue(testEnum), expectedResults)).toThrowError();
+			expect(() => testTypeFn(analyser.types.enumValue(testEnum), expectedResults)).toThrowError();
 		});
 
 		it(`doesn't throw an error if the value exists in the passed enum`, () => {
@@ -281,7 +281,7 @@ describe(`type functions`, () => {
 				[testEnum['1'], testEnum['1']],
 			]);
 
-			expect(() => testTransformer(analyser.types.enumValue(testEnum), expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.enumValue(testEnum), expectedResults)).not.toThrowError();
 		});
 
 		it(`can transform values based on a recodeMap`, () => {
@@ -292,7 +292,7 @@ describe(`type functions`, () => {
 				['another value', testEnum.val],
 			]);
 
-			expect(() => testTransformer(analyser.types.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults)).not.toThrowError();
+			expect(() => testTypeFn(analyser.types.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults)).not.toThrowError();
 		});
 	});
 });

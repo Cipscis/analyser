@@ -1,5 +1,4 @@
-// import * as analyser from '../dist/analyser.js';
-import * as analyser from '../dist/new/index.js';
+import * as analyser from '../dist/index.js';
 
 import { fetch } from './mocks/fetch.mock.js';
 global.fetch = fetch;

@@ -1,15 +1,17 @@
-import { loadFile } from '../../../../src/new/index.js';
-import * as types from '../../../../src/new/types/index.js';
-
-import { fileConfig } from '../../../../src/new/FileConfig.js';
+import {
+	loadFile,
+	matchWithAlias,
+	fileConfig,
+} from '@cipscis/analyser';
+import * as types from '@cipscis/analyser/types';
 
 const config = fileConfig({
 	path: '/assets/data/city example.csv',
 
 	cols: {
-		name: ['A', types.string],
+		name:    ['A', types.string],
 		country: ['B', types.string],
-		pop: ['C', types.number],
+		pop:     ['C', types.number],
 	},
 
 	aliases: [
@@ -24,19 +26,23 @@ loadFile({
 	path: '/assets/data/city example.csv',
 
 	cols: {
-		name: ['A', types.string],
+		name:    ['A', types.string],
 		country: ['B', types.string],
-		pop: ['C', types.number],
+		pop:     ['C', types.number],
 	},
+
+	aliases: [
+		['Aotearoa', 'New Zealand'],
+	],
 
 	headerRows: 1,
 	ignoreRows: (row) => row.name === 'Total',
-}).then(({ rows, matchAlias }) => {
-// loadFile(config).then(({ rows, matchAlias }) => {
+}).then((rows) => {
+// loadFile(config).then((rows) => {
 	console.log(rows);
 
 	console.log(rows.filter(
-		(row) => matchAlias(row.country, 'New Zealand')
+		(row) => matchWithAlias(row.country, 'New Zealand', rows.aliases)
 	));
 
 	rows.filter((row) => row.pop && row.pop > 50);
