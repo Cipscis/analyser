@@ -20,7 +20,7 @@
 			<div class="content">
 				<h2>About this page</h2>
 
-				<p>This project is a rebuild of another data analysis library I created a few years ago called <a href="https://cipscis.github.io/charter/docs/" target="_blank">Charter</a>. Charter started as an attempt to create accessible graphs using HTML5 and CSS, and as I worked more on the code to generate those graphs it became more of a data analysis tool.</p>
+				<p>This project is a rebuild of another data analysis library I created a few years ago called <a href="https://cipscis.github.io/charter/app/docs/" target="_blank">Charter</a>. Charter started as an attempt to create accessible graphs using HTML5 and CSS, and as I worked more on the code to generate those graphs it became more of a data analysis tool.</p>
 
 				<p>Analyser is my attempt to rebuild this library in TypeScript, starting from the ground up with a clearer focus, after the lessons I've learned from using Charter to analyse complex data sets.</p>
 
@@ -42,10 +42,10 @@
 
 				<p>Some parts of Analyser can also be accessed via submodules.</p>
 
-				<p><a href="#usage-transformers">Transformer functions</a>:</p>
+				<p><a href="#usage-types">Type functions</a>:</p>
 
-				<code>import { transformers } from '@cipscis/analyser';</code><br />
-				<code>import * as transformers from '@cipscis/analyser/transformers';</code>
+				<code>import { types } from '@cipscis/analyser';</code><br />
+				<code>import * as types from '@cipscis/analyser/types';</code>
 
 				<p><a href="#statistics">Statistical helper functions</a>:</p>
 
@@ -81,7 +81,7 @@
 			</div>
 
 			<div class="content">
-				<p>The code examples in this documentation are editable, and run using <code><a href="cipscis.github.io/codebook" target="_blank">@cipscis/codebook</a></code>. Editable code is marked with a ✏️, and its output is marked with a 📝.</p>
+				<p>The code examples in this documentation are editable, and run using <a href="https://cipscis.github.io/codebook" target="_blank">@cipscis/codebook</a>. Editable code is marked with a ✏️, and its output is marked with a 📝.</p>
 
 				<p>To ensure the examples' <code>log</code> and <code>html</code> helper functions work correctly, make sure you use <code>await</code> so all asynchronous code finishes before reaching the end of the example.</p>
 			</div>
@@ -106,92 +106,119 @@
 			<div class="content">
 				<h2 id="usage">Usage <a class="anchor" href="#usage"></a></h2>
 
-				<p>The first step to analysing data with Analyser is loading it. The <code><a href="#methods-loadFile">loadFile</a></code> method can be used to load data from a CSV file, using <a href="https://cipscis.github.io/csv" target="_blank">@cipscis/csv</a> internally for parsing and <a href="#usage-transformers">transformers</a> to determine types and do any necessary cleaning or recoding.</p>
+				<p>The first step to analysing data with Analyser is loading it. The <code><a href="#methods-loadFile">loadFile</a></code> method can be used to load data from a CSV file, using <a href="https://cipscis.github.io/csv" target="_blank">@cipscis/csv</a> internally for parsing and <a href="#usage-types">type functions</a> to determine types and do any necessary cleaning or recoding.</p>
 
-				<p><code>loadFile</code> returns a <code><a href="#interfaces-DataConfig">DataConfig</a></code> object, which can be used to analyse the data using <a href="#usage-filtering">filtering</a> functions to filter the rows of data and <a href="#usage-grouping">grouping</a> functions to create summaries.</p>
+				<p><code>loadFile</code> returns a <code><a href="#interfaces-Data">Data</a></code> object, which can be used to analyse the data using <a href="#methods-matchWithAlias">filtering</a> functions to filter the rows of data and <a href="#interfaces-Data-groupBy">grouping</a> functions to create summaries.</p>
 
 				<p>Those summaries can then be used to <a href="#usage-graphs">create graphs</a>.</p>
 			</div>
 
 			<section>
 				<div class="content">
-					<h2 id="usage-transformers">Transformers <a class="anchor" href="#usage-transformers"></a></h2>
+					<h2 id="usage-types">Types <a class="anchor" href="#usage-types"></a></h2>
 
-					<p>Analyser provides a number of <a href="#interfaces-TransformerFn">transformer functions</a> for converting strings in CSV cells into common types. These can be imported from <code>'@cipscis/analyser/tranformers'</code>.</p>
+					<p>Analyser provides a number of <a href="#interfaces-TypeFn">type functions</a> for converting strings in CSV cells into common types. These can be imported from <code>'@cipscis/analyser/types'</code>.</p>
 
-					<p>There are also some utility functions provided here for creating custom some simple transformers.</p>
+					<p>There are also some utility functions provided here for creating custom some simple type functions.</p>
 
-					<p>Each of these functions can be accessed either via <code>analyser.transformers</code> or by importing them from the <code>@cipscis/analyser/transformers</code> submodule:</p>
+					<p>Each of these functions can be accessed either via <code>analyser.types</code> or by importing them from the <code>@cipscis/analyser/types</code> submodule:</p>
 
-					<code>import { transformers } from '@cipscis/analyser';</code><br />
-					<code>import * as transformers from '@cipscis/analyser/transformers';</code>
+					<code>import { types } from '@cipscis/analyser';</code><br />
+					<code>import * as types from '@cipscis/analyser/types';</code>
+
+					<p>If a type function is unable to transform a string value because it doesn't match its expectations, it will throw an error. When these errors are handled within <code><a href="#methods-loadFile">loadFile</a></code>, they will print a message to the console detailing the failure and its location within your data.</p>
 				</div>
 
-				<section class="js-codebook__set" data-codebook-set="usage-transformers-boolean">
+				<section class="js-codebook__set" data-codebook-set="usage-types-boolean">
 					<div class="content">
-						<h3 id="usage-transformers-boolean">boolean <a class="anchor" href="#usage-transformers-boolean"></a></h3>
+						<h3 id="usage-types-boolean">boolean <a class="anchor" href="#usage-types-boolean"></a></h3>
 
 						<p>If a value is <code>'true'</code> or <code>'false'</code>, ignoring case and any leading or trailing whitespace, then it is converted to the relevant boolean value.</p>
 
-						<p>If a cell has a value that doesn't match either of those strings, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
-
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-boolean" contenteditable spellcheck="false">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-boolean" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
 									path: '/analyser/assets/data/city example.csv',
 									cols: {
-										CAPITAL: 'D',
+										capital: ['D', analyser.types.boolean],
 									},
 									headerRows: 1,
 									footerRows: 1,
-									transform: {
-										CAPITAL: analyser.transformers.boolean,
-									}
 								});
 
-								const { rows, cols } = await analyser.loadFile(fileConfig);
-								log(rows.getCol(cols.CAPITAL));
+								const rows = await analyser.loadFile(fileConfig, { strict: false });
+								log(rows.map(({ capital }) => capital));
 							</script>
 
 							<div class="docs-example__controls">
 								<button class="docs-example__control js-docs__run">Run code</button>
 							</div>
 
-							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-boolean"></samp>
+							<samp class="docs-example__log js-docs__log" id="log-usage-types-boolean"></samp>
 						</div>
 					</div>
 				</section>
 
-				<section class="js-codebook__set" data-codebook-set="usage-transformers-number">
+				<section class="js-codebook__set" data-codebook-set="usage-types-booleanCustom">
 					<div class="content">
-						<h3 id="usage-transformers-number">number <a class="anchor" href="#usage-transformers-number"></a></h3>
+						<h3 id="usage-types-booleanCustom">booleanCustom <a class="anchor" href="#usage-types-booleanCustom"></a></h3>
+
+						<code>booleanCustom(truthy: string | RegExp, falsey: string | RegExp): <a href="#interfaces-TypeFn">TypeFn</a>&lt;boolean&gt;</code>
+
+						<p>The <code>booleanCustom</code> helper function can be used to create a custom <a href="#interfaces-TypeFn">type function</a> for converting a string into boolean values.</p>
+
+						<p>If a cell matches the string or regular expression in the <code>truthy</code> argument, it will be converted to <code>true</code>. Otherwise, if it matches the string or regular expression in the <code>falsey</code> argument, it will be converted to <code>false</code>.</p>
+
+						<p>If strings are specified, the matching will be exact. If you need your match to be case-insensitive, or to ignore leading or trailing whitespace, then use a regular expression instead.</p>
+					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-booleanCustom" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/analyser/assets/data/city example.csv',
+								cols: {
+									capital: ['D', analyser.types.booleanCustom('true', /^'No'$|^false$/)],
+								},
+								headerRows: 1,
+							});
+
+							const rows = await analyser.loadFile(fileConfig, { strict: false });
+							log(rows.map(({ capital }) => capital));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-usage-types-booleanCustom"></samp>
+					</div>
+				</section>
+
+				<section class="js-codebook__set" data-codebook-set="usage-types-number">
+					<div class="content">
+						<h3 id="usage-types-number">number <a class="anchor" href="#usage-types-number"></a></h3>
 
 						<p>If a cell's value looks like a number, it will be converted to a number. Analyser expects string representations of numbers to use the <code>'.'</code> character for a decimal point, and optionally the <code>','</code> character for separators within the number.</p>
 
 						<p>If a string looks like a number and also ends with a <code>'%'</code> character, it will be divided by <code>100</code> to convert it into a percentage.</p>
 
-						<p>If a cell has a value that doesn't look like a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
-
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-number" contenteditable spellcheck="false">
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-number" contenteditable spellcheck="false">
 								const fileConfig = analyser.fileConfig({
 									path: '/analyser/assets/data/city example.csv',
 									cols: {
-										POPULATION: 'C',
+										population: ['C', analyser.types.number],
 									},
 									headerRows: 1,
 									footerRows: 1,
-									transform: {
-										POPULATION: analyser.transformers.number,
-									}
 								});
 
-								const { rows, cols } = await analyser.loadFile(fileConfig);
-								log(rows.getCol(cols.POPULATION));
+								const rows = await analyser.loadFile(fileConfig);
+								log(rows.map(({ population }) => population));
 
 								log(
 									'Transforming a percentage:',
-									analyser.transformers.number('0.2%')
+									analyser.types.number('0.2%')
 								);
 							</script>
 
@@ -199,143 +226,96 @@
 								<button class="docs-example__control js-docs__run">Run code</button>
 							</div>
 
-							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-number"></samp>
+							<samp class="docs-example__log js-docs__log" id="log-usage-types-number"></samp>
 						</div>
 					</div>
 				</section>
 
-				<section class="js-codebook__set" data-codebook-set="usage-transformers-value">
+				<section class="js-codebook__set" data-codebook-set="usage-types-value">
 					<div class="content">
-						<h3 id="usage-transformers-value">value <a class="anchor" href="#usage-transformers-value"></a></h3>
+						<h3 id="usage-types-value">value <a class="anchor" href="#usage-types-value"></a></h3>
 
-						<p><code>value</code> combines the <a href="#usage-transformers-boolean">boolean</a> and <a href="#usage-transformers-number">number</a> transformers.</p>
+						<p><code>value</code> combines the <a href="#usage-types-boolean">boolean</a> and <a href="#usage-types-number">number</a> type functions.</p>
 
 						<p>If a cell looks like it contains a boolean, it will be converted to a boolean. Otherwise, if it looks like it contains a number, it will be converted to a number.</p>
-
-						<p>If a cell has a value but it doesn't look like a boolean or a number, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-value" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-value" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/analyser/assets/data/city example.csv',
 								cols: {
-									POPULATION: 'C',
-									CAPITAL: 'D',
+									population: ['C', analyser.types.value],
+									capital: ['D', analyser.types.value],
 								},
 								headerRows: 1,
-								transform: {
-									POPULATION: analyser.transformers.value,
-									CAPITAL: analyser.transformers.value,
-								}
 							});
 
-							const { rows, cols } = await analyser.loadFile(fileConfig);
-							log(rows.getCol(cols.POPULATION));
-							log(rows.getCol(cols.CAPITAL));
+							const rows = await analyser.loadFile(fileConfig, { strict: false });
+							log(rows.map(({ population }) => population));
+							log(rows.map(({ capital }) => capital));
 						</script>
 
 						<div class="docs-example__controls">
 							<button class="docs-example__control js-docs__run">Run code</button>
 						</div>
 
-						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-value"></samp>
+						<samp class="docs-example__log js-docs__log" id="log-usage-types-value"></samp>
 					</div>
 				</section>
 
-				<section class="js-codebook__set" data-codebook-set="usage-transformers-array">
+				<section class="js-codebook__set" data-codebook-set="usage-types-array">
 					<div class="content">
-						<h3 id="usage-transformers-array">array <a class="anchor" href="#usage-transformers-array"></a></h3>
+						<h3 id="usage-types-array">array <a class="anchor" href="#usage-types-array"></a></h3>
 
-						<code>array(separator: string | RegExp, limit?: number): <a href="#interfaces-transformerFn">TransformerFn</a>&lt;string[]&gt;</code>
+						<code>array(separator: string | RegExp, limit?: number): <a href="#interfaces-TypeFn">TypeFn</a>&lt;string[]&gt;</code>
 
-						<p>The <code>array</code> function provided by Analyser can be used to create a <a href="#interfaces-TransformerFn">transformer function</a> that converts a string into an array of strings.</p>
+						<p>The <code>array</code> function provided by Analyser can be used to create a <a href="#interfaces-TypeFn">type function</a> that converts a string into an array of strings.</p>
 
 						<p>The arguments taken by the <code>array</code> helper function are the same as those used by <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" target="_blank">String.prototype.split</a></code>.</p>
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-array" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-array" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/analyser/assets/data/city example.csv',
 								cols: {
-									PUBLIC_TRANSPORT: 'E',
+									publicTransport: ['E', analyser.types.array(',')],
 								},
 								headerRows: 1,
-								transform: {
-									PUBLIC_TRANSPORT: analyser.transformers.array(','),
-								}
 							});
 
-							const { rows, cols } = await analyser.loadFile(fileConfig);
-							log(rows.getCol(cols.PUBLIC_TRANSPORT));
+							const rows = await analyser.loadFile(fileConfig);
+							log(rows.map(({ publicTransport }) => publicTransport));
 						</script>
 
 						<div class="docs-example__controls">
 							<button class="docs-example__control js-docs__run">Run code</button>
 						</div>
 
-						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-array"></samp>
+						<samp class="docs-example__log js-docs__log" id="log-usage-types-array"></samp>
 					</div>
 				</section>
 
-				<section class="js-codebook__set" data-codebook-set="usage-transformers-booleanCustom">
+				<section class="js-codebook__set" data-codebook-set="usage-types--enumValue">
 					<div class="content">
-						<h3 id="usage-transformers-booleanCustom">booleanCustom <a class="anchor" href="#usage-transformers-booleanCustom"></a></h3>
+						<h3 id="usage-types-enumValue">enumValue <a class="anchor" href="#usage-types-enumValue"></a></h3>
 
-						<code>booleanCustom(truthy: string | RegExp = 'true', falsey: string | RegExp = 'false'): <a href="#interfaces-TransformerFn">TransformerFn</a>&lt;boolean&gt;</code>
+						<code>enumValue&lt;E extends string&gt;(enums: Record&lt;string, E&gt;, recodeMap?: Record&lt;string, E&gt; | Iterable&lt;[string, E]&gt;): <a href="#interfaces-TypeFn">TypeFn</a>&lt;E&gt;</code>
 
-						<p>The <code>booleanCustom</code> helper function can be used to create a custom <a href="#interfaces-TransformerFn">transformer function</a> for converting a string into boolean values.</p>
+						<p>The <code>enumValue</code> helper function can be used to create a custom <a href="#interfaces-TypeFn">type function</a> that ensures that the value of every cell in a column exists within an object like a string <a href="https://www.typescriptlang.org/docs/handbook/enums.html" target="_blank">TypeScript enum</a>.</p>
 
-						<p>If a cell matches the string or regular expression in the <code>truthy</code> argument, it will be converted to <code>true</code>. Otherwise, if it matches the string or regular expression in the <code>falsey</code> argument, it will be converted to <code>false</code>.</p>
+						<p>By default, this function doesn't transform the values passed into it. Instead, it acts as a check that they exist within the passed <code>enum</code>.</p>
 
-						<p>If strings are specified, the matching is case insensitive. Leading or trailing whitespace is also ignored. If case or leading or trailing whitespace should be treated as a warning, you can use a case insensitive regular expression such as <code>/^true$/</code> instead.</p>
+						<p>However, <code>enumValue</code> has an optional second parameter that can be used to transform strings that don't exist within the <code>enum</code> into strings that are members. These transformations are applied before the value's membership is checked.</p>
 
-						<p>If a cell has a value that matches neither argument, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
-					</div>
+						<p>If the <code>recodeMap</code> argument is an <code>Iterable&lt;[string, E]&gt;</code>, such as a <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a></code>, the only first matching entry will be used.</p>
 
-					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-booleanCustom" contenteditable spellcheck="false">
-							const fileConfig = analyser.fileConfig({
-								path: '/analyser/assets/data/city example.csv',
-								cols: {
-									CAPITAL: 'D',
-								},
-								headerRows: 1,
-								transform: {
-									CAPITAL: analyser.transformers.booleanCustom('true', /^'No'$|^false$/),
-								}
-							});
-
-							const { rows, cols } = await analyser.loadFile(fileConfig);
-							log(rows.getCol(cols.CAPITAL));
-						</script>
-
-						<div class="docs-example__controls">
-							<button class="docs-example__control js-docs__run">Run code</button>
-						</div>
-
-						<samp class="docs-example__log js-docs__log" id="log-usage-transformers-booleanCustom"></samp>
-					</div>
-				</section>
-
-				<section class="js-codebook__set" data-codebook-set="usage-transformers--enumValue">
-					<div class="content">
-						<h3 id="usage-transformers-enumValue">enumValue <a class="anchor" href="#usage-transformers-enumValue"></a></h3>
-
-						<code>enumValue(enums: Record&lt;string, string&gt;, recodeMap?: Record&lt;string, string&gt;): <a href="#interfaces-TransformerFn">TransformerFn</a>&lt;string&gt;</code>
-
-						<p>The <code>enumValue</code> helper function can be used to create a custom <a href="#interfaces-TransformerFn">transformer function</a> that ensures that the value of every cell in a column exists within a <a href="https://www.typescriptlang.org/docs/handbook/enums.html" target="_blank">TypeScript enum</a>.</p>
-
-						<p>If a cell has a value that already exists within the passed <code>enum</code>, then it will not be transformed.</p>
-
-						<p>However, if a cell has a value that is not within the <code>enum</code>, it will be converted to <code>null</code> and a warning will be written to the console specifying where the value exists within the data.</p>
-
-						<p><code>enumValue</code> has an optional second parameter that can be used to convert strings that don't exist within the <code>enum</code> into strings that are members. These transformations are applied before the value's membership is checked.</p>
+						<p>Using the <code>recodeMap</code> argument can be particularly useful for data cleaning.</p>
 
 						<div class="docs-example js-docs__example">
-							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-transformers-enumValue" contenteditable spellcheck="false">
-								// When working in TypeScript, this would be a string enum
+							<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-types-enumValue" contenteditable spellcheck="false">
+								// When working in TypeScript, this could be a string enum
 								const countries = {
 									Aotearoa: 'Aotearoa',
 									Australia: 'Australia',
@@ -349,185 +329,31 @@
 								const fileConfig = analyser.fileConfig({
 									path: '/analyser/assets/data/city example.csv',
 									cols: {
-										COUNTRY: 'B',
+										country: ['B', analyser.types.enumValue(countries, countriesMap)],
 									},
 									headerRows: 1,
 									footerRows: 1,
-									transform: {
-										COUNTRY: analyser.transformers.enumValue(countries, countriesMap),
-									}
 								});
 
-								const { rows, cols } = await analyser.loadFile(fileConfig);
-								log(rows.getCol(cols.COUNTRY));
+								const rows = await analyser.loadFile(fileConfig);
+								log(rows.map(({ country }) => country));
 							</script>
 
 							<div class="docs-example__controls">
 								<button class="docs-example__control js-docs__run">Run code</button>
 							</div>
 
-							<samp class="docs-example__log js-docs__log" id="log-usage-transformers-enumValue"></samp>
+							<samp class="docs-example__log js-docs__log" id="log-usage-types-enumValue"></samp>
 						</div>
 					</div>
 				</section>
-			</section>
-
-			<section class="js-codebook__set" data-codebook-set="usage-filtering">
-				<div class="content">
-					<h2 id="usage-filtering">Filtering <a class="anchor" href="#usage-filtering"></a></h2>
-
-					<p>The <code><a href="#interfaces-DataConfig">DataConfig</a></code> object exposes a function called <code><a href="#interfaces-DataConfig-by">by</a></code>, which is used for filtering the <code><a href="#interfaces-AnalyserRows">AnalyserRows</code></a> exposed in the <code>DataConfig</code>'s <code><a href="#interfaces-DataConfig-rows">rows</a></code> property.</p>
-
-					<p>This function effectively has any <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> baked in. It also provides a simplified way of filtering rows of data based on the values of specific columns, which allows for chaining to create more complex filters.</p>
-
-					<code>(colIndex: number, values: unknown): Function</code><br />
-					<code>(colIndex: number, values: unknown[]): Function</code><br />
-					<code>(colIndex: number, values: (value: unknown) => boolean): Function</code>
-
-					<p>There are three different ways to call <code>by</code>. Each involves first specifying a column index, typically taken from the <code><a href="#interfaces-DataConfig-cols">cols</a></code> or <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code> objects, then specifying some way of filtering based on the value of that column.</p>
-
-					<p>The simplest form simply specifies a single value to match. If a cell's value matches the specified value, or if the cell's value is an array containing the specified value, it will pass the filter. This matching process respects any specified <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
-
-					<p>The next form allows multiple values to be specified via an array. If a cell's value matches any of these values, or if the cell's value is an array containing any of them, it will pass the filter. Like the single value option, this matching process respects any specified <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
-
-					<p>The most complex form allows a function to be passed, which takes the value of the cell as its only argument and resolves to a boolean. If this function returns <code>true</code> for a particular row, it will pass the filter. This method of filtering will not automatically respect <code><a href="#interfaces-FileConfig-aliases">aliases</a></code>.</p>
-
-					<p>The function returned by <code>by</code> can be passed to <code>Array.prototype.filter</code>, but it also has two methods that can allow for chaining to create more complex filter functions. These methods both have the same signature as <code>by</code>, and are called <code>andBy</code> and <code>orBy</code>.</p>
-
-					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-filtering" contenteditable spellcheck="false">
-							const fileConfig = analyser.fileConfig({
-								path: '/analyser/assets/data/city example.csv',
-								cols: {
-									NAME: 'A',
-									COUNTRY: 'B',
-									POP: 'C',
-									CAPITAL: 'D',
-									PUBLIC_TRANSPORT: 'E',
-									MAYOR_2012: 'F',
-									MAYOR_2018: 'G',
-								},
-
-								headerRows: 1,
-								footerRows: 1,
-
-								aliases: [
-									['Aotearoa', 'New Zealand'],
-								],
-								transform: {
-									POP: analyser.transformers.number,
-									CAPITAL: analyser.transformers.booleanCustom('true', '\'No\''),
-									PUBLIC_TRANSPORT: analyser.transformers.array(','),
-									MAYOR_2018: analyser.transformers.array(','),
-									MAYOR_2012: analyser.transformers.array(','),
-								},
-							});
-
-							const { rows, cols, by } = await analyser.loadFile(fileConfig);
-
-							const germanCities = rows.filter(
-								by(cols.COUNTRY, 'Germany')
-							);
-							log('German cities:', germanCities.getCol(cols.NAME));
-
-							const largeCitiesWithTrainOrFerry = rows.filter(
-								by(cols.POP, (population) => population > 1000)
-								.andBy(cols.PUBLIC_TRANSPORT, ['Train', 'Ferry'])
-							);
-							log('Large cities with train or ferry services:', largeCitiesWithTrainOrFerry.getCol(cols.NAME));
-
-							const largeOrCapitalCities = rows.filter(
-								by(cols.CAPITAL, true)
-								.orBy(cols.POP, (population) => population > 1000)
-							);
-							log('Large or capital cities:', largeOrCapitalCities.getCol(cols.NAME));
-						</script>
-
-						<div class="docs-example__controls">
-							<button class="docs-example__control js-docs__run">Run code</button>
-						</div>
-
-						<samp class="docs-example__log js-docs__log" id="log-usage-filtering"></samp>
-					</div>
-				</div>
-			</section>
-
-			<section class="js-codebook__set" data-codebook-set="usage-grouping">
-				<div class="content">
-					<h2 id="usage-grouping">Grouping <a class="anchor" href="#usage-grouping"></a></h2>
-
-					<p>The <code><a href="#interfaces-DataConfig">DataConfig</a></code> object exposes a function called <code><a href="#interfaces-DataConfig-group">group</a></code>, which is used for grouping the <code><a href="#interfaces-AnalyserRows">AnalyserRows</a></code> exposed in the <code>DataConfig</code>'s <code><a href="#interfaces-DataConfig-rows">rows</a></code> property.</p>
-
-					<p>These groups can then be used to produce summaries of the data, which in turn can be used to create <a href="#usage-graphs">graphs</a>.</p>
-
-					<p>The <code>group</code> function effectively has any <a href="#interfaces-FileConfig-aliases">aliases</a> baked in, with any values in a set of aliases treated as though they were the first value in the set. That first value does not need to appear in the data, but it will always be used in any <code><a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code> created by <code>group</code>.</p>
-
-					<p><code>group</code> has three overrides:</p>
-
-					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code><br />
-					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number, numGroups: number, right: boolean = true): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code><br />
-					<code>(rows: <a href="#interrfaces-AnalyserRows">AnalyserRows</a>, colNum: number, splitPoints: number[], right: boolean = true): <a href="#interfaces-AnalyserGroup">AnalyserGroup</a></code>
-
-					<p>When grouping by discrete data, the first override should always be used. The other two overrides provide different methods for dividing continuous data into groups.</p>
-
-					<p>If the <code>numGroups</code> argument is provided with a number, <code>group</code> will split the continuous data into that many groups of the same range. For example, if the data ranges from <code>0</code> to <code>100</code> and the <code>numGroups</code> argument is <code>5</code>, the first group would contain data from <code>0</code> to <code>20</code>.</p>
-
-					<p>Otherwise, the <code>splitPoints</code> argument can be provided with an array of numbers, which will be used as the points where the groups will be split.</p>
-
-					<p>For both of the continuous data overloads, there is an optional <code>right</code> argument that determines which end of a group is open. If <code>right</code> is <code>true</code> (its default value), then values equal to the upper limit of a group will be included. Otherwise, values equal to a group's lower limit will be included instead.</p>
-
-					<p>However, the first and last group will always include values at their outer boundaries, since they will be determined based on the minimum and maximum values in the data set.</p>
-				</div>
-
-				<div class="docs-example js-docs__example">
-					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-usage-grouping" contenteditable spellcheck="false">
-						const fileConfig = analyser.fileConfig({
-							path: '/analyser/assets/data/city example.csv',
-							cols: {
-								NAME: 'A',
-								COUNTRY: 'B',
-								POP: 'C',
-							},
-
-							headerRows: 1,
-							footerRows: 1,
-
-							aliases: [
-								['Aotearoa', 'New Zealand'],
-							],
-							transform: {
-								POP: analyser.transformers.number,
-							},
-						});
-
-						const { rows, cols, group } = await analyser.loadFile(fileConfig);
-
-						const groupByCountry = group(rows, cols.COUNTRY);
-						log('Grouped by country:');
-						groupByCountry.forEach((groupRows, name) => log(name, groupRows.length));
-
-						const groupByPopulation = group(rows, cols.POP, 5);
-						log('Grouped by population:');
-						groupByPopulation.forEach((groupRows, name) => log(name, groupRows.length));
-
-						const groupByPopulationCustom = group(rows, cols.POP, [50, 200, 1000]);
-						log('Grouped by population (custom split points):');
-						groupByPopulationCustom.forEach((groupRows, name) => log(name, groupRows.length));
-					</script>
-
-					<div class="docs-example__controls">
-						<button class="docs-example__control js-docs__run">Run code</button>
-					</div>
-
-					<samp class="docs-example__log js-docs__log" id="log-usage-grouping"></samp>
-				</div>
 			</section>
 
 			<section>
 				<div class="content">
 					<h2 id="usage-graphs">Graphs <a class="anchor" href="#usage-graphs"></a></h2>
 
-					<p>Once data has been processed and analysed, Analyser is able to produce some forms of graphs from numerical summaries of data created through <code><a href="#interfaces-AnalyserGroup-summarise">AnalyserGroup.summarise()</a></code>.</p>
+					<p>Once data has been processed and analysed, Analyser is able to produce some forms of graphs from numerical summaries of data created through <code><a href="#interfaces-DataGroup-summarise">DataGroup.summarise()</a></code>.</p>
 
 					<p>These graphs are created using HTML and some SVG, and rely on Analyser's CSS to make them appear correctly. They are designed to be reasonably accessible to screen reader users. The base CSS for them is written in Sass, and can be found in <code>~/docs/assets/scss/_chart.scss</code>.</p>
 
@@ -580,17 +406,17 @@
 					<section>
 						<div class="content">
 							<h4 id="usage-graphs-ChartOptions-x"><code>x</code> <a class="anchor" href="#usage-graphs-ChartOptions-x"></a></h4>
-						</div>
 
-						<p>The configuration options for a graph's x axis might be quantitative or qualitative, depending on the type of chart. This option uses either the <code><a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a></code> or <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface depending on what is required by the graph.</p>
+							<p>The configuration options for a graph's x axis might be quantitative or qualitative, depending on the type of chart. This option uses either the <code><a href="#usage-graphs-AxisOptionsQualitative">AxisOptionsQualitative</a></code> or <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface depending on what is required by the graph.</p>
+						</div>
 					</section>
 
 					<section>
 						<div class="content">
 							<h4 id="usage-graphs-ChartOptions-y"><code>y</code> <a class="anchor" href="#usage-graphs-ChartOptions-y"></a></h4>
-						</div>
 
-						<p>A graph's y axis is always configured using the <code><a href="usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface.</p>
+							<p>A graph's y axis is always configured using the <code><a href="#usage-graphs-AxisOptionsQuantitative">AxisOptionsQuantitative</a></code> interface.</p>
+						</div>
 					</section>
 
 					<section>
@@ -647,7 +473,7 @@
 					<div class="content">
 						<h4 id="usage-graphs-AxisOptionsQualitative-labels"><code>labels</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-labels"></a></h4>
 
-						<p>The labels to display on the axis. If absent, these labels will be gathered automatically from the <a href="#interfaces-AnalyserGroup-summarise">summary</a> used to create the graph.</p>
+						<p>The labels to display on the axis. If absent, these labels will be gathered automatically from the <a href="#interfaces-DataGroup-summarise">summary</a> used to create the graph.</p>
 
 						<p>This property can be used to customise the order of the data, and to exclude certain items from appearing on the graph. If a label that doesn't exist in the data is added, empty data will be generated to be used for it.</p>
 					</div>
@@ -676,7 +502,7 @@
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-title"><code>title</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-title"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-title"><code>title</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-title"></a></h4>
 
 						<p>The axis title.</p>
 					</div>
@@ -684,7 +510,7 @@
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-numberFormat"><code>numberFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-numberFormat"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-numberFormat"><code>numberFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-numberFormat"></a></h4>
 
 						<p>If any of the axis's values are numbers, the <code>numberFormat</code> property will determine how those numbers are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" target="_blank">Intl.NumberFormat</a> object or by passing a custom function that takes in a number and returns a string.</p>
 					</div>
@@ -692,7 +518,7 @@
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-dateFormat"><code>dateFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-dateFormat"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-dateFormat"><code>dateFormat</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-dateFormat"></a></h4>
 
 						<p>If any of the axis's values are dates, the <code>dateFormat</code> property will determine how those dates are converted into strings. This can be done either via an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" target="_blank">Intl.DateTimeFormat</a> or by passing a custom function that takes in a <code>Date</code> and returns a string.</p>
 					</div>
@@ -700,7 +526,7 @@
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-values"><code>values</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-values"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-values"><code>values</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-values"></a></h4>
 
 						<p>This property can be used to specify the values that appear on a quantitative axis.</p>
 
@@ -716,29 +542,29 @@
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-gridlines"><code>gridlines</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-gridlines"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-gridlines"><code>gridlines</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-gridlines"></a></h4>
 
-						<p>The <code>gridlines</code> property works the same as the <code><a href="#usage-graphs-AxisOptionsQualitative-values">values</a></code> property, except instead of generating values to display on the axis it generates gridlines to extend from the axis.</p>
+						<p>The <code>gridlines</code> property works the same as the <code><a href="#usage-graphs-AxisOptionsQuantitative-values">values</a></code> property, except instead of generating values to display on the axis it generates gridlines to extend from the axis.</p>
 					</div>
 				</section>
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-max"><code>max</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-max"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-max"><code>max</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-max"></a></h4>
 
 						<p>Setting <code>max</code> to a <code>number</code> will override the maximum value of the axis.</p>
 
 						<p>Alternately, setting <code>max</code> to the string <code>'auto'</code> will allow Analyser to try to intelligently determine the maximum value. It does this by rounding the maximum value in the data up to the nearest multiple of the largest power of 10 beneath it. So, for example, <code>13</code> would round up to <code>20</code> whereas <code>723</code> would round up to <code>800</code>.</p>
 
-						<p>If both <code>max</code> and <code><a href="#usage-graphs-AxisOptionsQualitative-min">min</a></code> are absent, the maximum and minimum values in the data will be used. However, if either one of them is set then the other will default to <code>'auto'</code> behaviour.</p>
+						<p>If both <code>max</code> and <code><a href="#usage-graphs-AxisOptionsQuantitative-min">min</a></code> are absent, the maximum and minimum values in the data will be used. However, if either one of them is set then the other will default to <code>'auto'</code> behaviour.</p>
 					</div>
 				</section>
 
 				<section>
 					<div class="content">
-						<h4 id="usage-graphs-AxisOptionsQualitative-min"><code>min</code> <a class="anchor" href="#usage-graphs-AxisOptionsQualitative-min"></a></h4>
+						<h4 id="usage-graphs-AxisOptionsQuantitative-min"><code>min</code> <a class="anchor" href="#usage-graphs-AxisOptionsQuantitative-min"></a></h4>
 
-						<p>Like the <code><a href="#usage-graphs-AxisOptionsQualitative-max">max</a></code> property, <code>min</code> can be used to override the minimum value of an axis. If set to <code>'auto'</code> Analyser will determine a sensible minimum value in the same way as with <code>max</code>, except it will instead start with the minimum value in the data and round down.</p>
+						<p>Like the <code><a href="#usage-graphs-AxisOptionsQuantitative-max">max</a></code> property, <code>min</code> can be used to override the minimum value of an axis. If set to <code>'auto'</code> Analyser will determine a sensible minimum value in the same way as with <code>max</code>, except it will instead start with the minimum value in the data and round down.</p>
 					</div>
 				</section>
 			</section>
@@ -757,25 +583,23 @@
 						const fileConfig = analyser.fileConfig({
 							path: '/analyser/assets/data/city example.csv',
 							cols: {
-								COUNTRY: 'B',
-								POPULATION: 'C',
+								country: ['B', analyser.types.string],
+								population: ['C', analyser.types.number],
 							},
 							headerRows: 1,
 							footerRows: 1,
-							transform: {
-								POPULATION: analyser.transformers.number,
-							},
+
 							aliases: [
 								['Aotearoa', 'New Zealand'],
 							],
 						});
 
-						const { rows, cols, group } = await analyser.loadFile(fileConfig);
+						const rows = await analyser.loadFile(fileConfig);
 
-						const countryGroup = group(rows, cols.COUNTRY);
+						const countryGroup = rows.groupBy('country');
 
 						const meanPopulationSummary = countryGroup.summarise({
-							mean: (rows) => analyser.statistics.mean(rows.getCol(cols.POPULATION)),
+							mean: (rows) => analyser.statistics.mean(rows.map(({ population }) => population)),
 						});
 						log('Mean city population by country:', meanPopulationSummary);
 
@@ -852,14 +676,13 @@
 					<code class="code--block js-codebook__inert">
 					{
 						<a href="#interfaces-FileConfig-path">path</a>: string,
-						<a href="#interfaces-FileConfig-cols">cols</a>: Record&lt;string, string | number&gt;,
+						<a href="#interfaces-FileConfig-cols">cols</a>: Record&lt;string, [string | number, <a href="#interfaces-TypeFn">TypeFn</a>]&gt;,
 
 						<a href="#interfaces-FileConfig-headerRows">headerRows</a>?: number,
 						<a href="#interfaces-FileConfig-footerRows">footerRows</a>?: number,
-						<a href="#interfaces-FileConfig-ignoreRows">ignoreRows</a>?: (row: string[], cols: Record&lt;string, number&gt;) => boolean,
+						<a href="#interfaces-FileConfig-ignoreRows">ignoreRows</a>?: (row: RowShape, cols: Record&lt;string, number&gt;) => boolean,
 
 						<a href="#interfaces-FileConfig-aliases">aliases</a>?: string[][],
-						<a href="#interfaces-FileConfig-transform">transform</a>?: Record&lt;string, <a href="#interfaces-TransformerFn">TransformerFn</a>&gt;,
 					}
 					</code>
 
@@ -873,13 +696,13 @@
 						const fileConfig = analyser.fileConfig({
 							path: '/analyser/assets/data/city example.csv',
 							cols: {
-								NAME: 'A',
-								COUNTRY: 'B',
-								POP: 'C',
-								CAPITAL: 'D',
-								PUBLIC_TRANSPORT: 'E',
-								MAYOR_2012: 'F',
-								MAYOR_2018: 'G',
+								name: ['A', analyser.types.string],
+								country: ['B', analyser.types.string],
+								population: ['C', analyser.types.number],
+								capital: ['D', analyser.types.booleanCustom('true', '\'No\'')],
+								publicTransport: ['E', analyser.types.array(',')],
+								mayor2012: ['F', analyser.types.array(',')],
+								mayor2018: ['G', analyser.types.array(',')],
 							},
 
 							headerRows: 1,
@@ -888,16 +711,9 @@
 							aliases: [
 								['Aotearoa', 'New Zealand'],
 							],
-							transform: {
-								POP: analyser.transformers.number,
-								CAPITAL: analyser.transformers.booleanCustom('true', '\'No\''),
-								PUBLIC_TRANSPORT: analyser.transformers.array(','),
-								MAYOR_2018: analyser.transformers.array(','),
-								MAYOR_2012: analyser.transformers.array(','),
-							},
 						});
 
-						const { rows } = await analyser.loadFile(fileConfig);
+						const rows = await analyser.loadFile(fileConfig, { strict: false });
 
 						log('First row:', rows[0]);
 					</script>
@@ -921,9 +737,9 @@
 					<div class="content">
 						<h4 id="interfaces-FileConfig-cols"><code>cols</code> <a class="anchor" href="#interfaces-FileConfig-cols"></a></h4>
 
-						<p>The <code>cols</code> object specifies the names of each column to be processed. Not every column present in the file needs to be specified, but you should specify each column that you wish to access.</p>
+						<p>The <code>cols</code> object specifies the names and locations of each column to be processed, as well as what type it should have. Not every column present in the file needs to be specified, but you should specify each column that you wish to access.</p>
 
-						<p>If the value assigned to a column here is a string, it will be passed through <code><a href="#methods-getColNumber">getColNumber</a></code> to convert it into a number.</p>
+						<p>If the a column's location is specified as a string, it will be passed through <code><a href="#methods-getColNumber">getColNumber</a></code> to convert it into a number.</p>
 					</div>
 				</section>
 
@@ -947,7 +763,7 @@
 					<div class="content">
 						<h4 id="interfaces-FileConfig-ignoreRows"><code>ignoreRows</code> <a class="anchor" href="#interfaces-FileConfig-ignoreRows"></a></h4>
 
-						<p>An optional function that should return <code>true</code> when it's passed any row that should be ignored. These rows are removed before any of the <a href="#interfaces-FileConfig-transformers">transformers</a> are applied, so all elements of the row at this point will be strings. An <code>ignoreRows</code> function will also have access to the transformed <code>cols</code> object, so it can be used to index the <code>row</code> argument.</p>
+						<p>An optional function that should return <code>true</code> when it's passed any row that should be ignored.</p>
 					</div>
 				</section>
 
@@ -955,247 +771,193 @@
 					<div class="content">
 						<h4 id="interfaces-FileConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-FileConfig-aliases"></a></h4>
 
-						<p>When <a href="#usage-filtering">filtering</a> and <a href="#usage-grouping">grouping</a> data, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
+						<p>When <a href="#methods-matchWithAlias">filtering</a> and <a href="#interfaces-Data-groupBy">grouping</a> data, it can be useful to treat different values as if they were the same, particularly if the source data is inconsistent.</p>
 
 						<p>Each element in the <code>aliases</code> array is an array of strings, where each string is treated as being equal to each other string in the array when filtering the data.</p>
 					</div>
 				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-Data">Data <a class="anchor" href="#interfaces-Data"></a></h3>
+
+					<p>The <code>Data</code> class extends the native <code>Array</code> class. For most purposes, it can be treated the same as any regular <code>Array</code>, for example by calling methods such as <code>Array.prototype.filter</code>.</p>
+
+					<p>The key difference between <code>Data</code> and a native <code>Array</code> is that, if the data was processed with a set of <a href="#interfaces-FileConfig-aliases">aliases</a>, these aliases will be preserved in the <code><a href="#interfaces-Data-aliases">aliases</a></code> property.</p>
+
+					<p>An <code>Data</code> object is returned by <code><a href="#methods-loadFile">loadFile</a></code>.</p>
+				</div>
 
 				<section>
 					<div class="content">
-						<h4 id="interfaces-FileConfig-transform"><code>transform</code> <a class="anchor" href="#interfaces-FileConfig-transform"></a></h4>
+						<h4 id="interfaces-Data-aliases">aliases <a class="anchor" href="#interfaces-Data-aliases"></a></h4>
 
-						<p>The <code>transform</code> object instructs Analyser on what type of data each row contains.</p>
-
-						<p>It can have a property for each property in the <code>cols</code> object, and the value of each of these properties must match the <code><a href="#interfaces-TransformerFn">TransformerFn</a></code> interface.</p>
-
-						<p>Any column without a transformer function will be treated as an array of strings.</p>
+						<p>If <code><a href="#methods-loadFile">loadFile</a></code> was called with a <code><a href="#interfaces-FileConfig">FileConfig</a></code> that contained a <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> property, those aliases are preserved here. This makes them available to be used with the <code><a href="#methods-matchWithAlias">matchWithAlias</a></code> method.</p>
 					</div>
 				</section>
-			</section>
 
-			<section>
-				<div class="content">
-					<h3 id="interfaces-DataConfig">DataConfig <a class="anchor" href="#interfaces-DataConfig"></a></h3>
-
-					<code class="code--block js-codebook__inert">
-						{
-							rows: <a href="#interfaces-AnalyserRows">AnalyserRows</a>,
-
-							cols: Record&lt;string, number&gt;,
-							addedCols: Record&lt;string, number&gt;,
-
-							by: <a href="#usage-filtering">Filterer</a>,
-							group: <a href="usage-grouping">Grouper</a>,
-
-							aliases?: string[][],
-						}
-					</code>
-
-					<p>A <code>DataConfig</code> object is returned by <code><a href="#methods-loadFile">loadFile</a></code> when its <code>Promise</code> resolves. It exposes several properties that can be used to read and analyse the processed data.</p>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-rows"><code>rows</code> <a class="anchor" href="#interfaces-DataConfig-rows"></a></h4>
-
-							<p>The <code>rows</code> object is an <code><a href="#interfaces-AnalyserRows">AnalyserRows</a></code>, which contains all the data processed by <code><a href="#methods-loadFile">loadFile</a></code>.</p>
-						</div>
-					</section>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-cols"><code>cols</code> <a class="anchor" href="#interfaces-DataConfig-cols"></a></h4>
-
-							<p>The <code>cols</code> object maps the column names specified in your <code><a href="#interfaces-FileConfig">FileConfig</a></code> configuration, and maps them onto numbers used to index elements of the <code>rows</code> object.</p>
-						</div>
-					</section>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-addedCols"><code>addedCols</code> <a class="anchor" href="#interfaces-DataConfig-addedCols"></a></h4>
-
-							<p>The <code>addedCols</code> object is available as a helper when working with TypeScript. It is intended to store the indexes of new columns created via <code><a href="#interfaces-AnalyserRows-addCol">addCol</a></code>.</p>
-
-							<p>This is possible with the <code>cols</code> object in JavaScript, but in TypeScript it has a more specific type to allow configured column names to be autocompleted, so the more generic <code>addedCols</code> object is available to allow storage of new columns without losing that autocompletion of <code>cols</code>.</p>
-						</div>
-					</section>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-by"><code>by</code> <a class="anchor" href="#interfaces-DataConfig-by"></a></h4>
-
-							<p>The <code>by</code> function is used for <a href="#usage-filtering">filtering</a>, with any specified aliases baked in.</p>
-						</div>
-					</section>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-group"><code>group</code> <a class="anchor" href="#interfaces-DataConfig-group"></a></h4>
-
-							<p>The <code>group</code> function is used for <a href="#usage-grouping">grouping</a>, with any specified aliases based in.</p>
-						</div>
-					</section>
-
-					<section>
-						<div class="content">
-							<h4 id="interfaces-DataConfig-aliases"><code>aliases</code> <a class="anchor" href="#interfaces-DataConfig-aliases"></a></h4>
-
-							<p>If the <code><a href="#interfaces-FileConfig">FileConfig</a></code> had its <code><a href="#interfaces-FileConfig-aliases">aliases</a></code> property specified, a copy is also made available here.</p>
-						</div>
-					</section>
-				</div>
-			</section>
-
-			<section>
-				<div class="content">
-					<h3 id="interfaces-AnalyserRows">AnalyserRows <a class="anchor" href="#interfaces-AnalyserRows"></a></h3>
-
-					<p>The <code>AnalyserRows</code> class extends the native <code>Array</code> class by adding two additional methods. Aside from these methods, it can be treated the same as any regular <code>Array</code>, for example by calling methods such as <code>Array.prototype.filter</code>.</p>
-
-					<p>An <code>AnalyserRows</code> object is exposed on the <code><a href="#interfaces-DataConfig">DataConfig</a></code> object returned by <code><a href="#methods-loadFile">loadFile</a></code>, and is typically used alongside the <code><a href="#interfaces-DataConfig-cols">cols</a></code> object exposed alongside it.</p>
-				</div>
-
-				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserRows-getCol">
+				<section class="js-codebook__set" data-codebook-set="interfaces-Data-addCol">
 					<div class="content">
-						<h4 id="interfaces-AnalyserRows-getCol">getCol <a class="anchor" href="#interfaces-AnalyserRows-getCol"></a></h4>
+						<h4 id="interfaces-Data-addCol">addCol <a class="anchor" href="#interfaces-Data-addCol"></a></h4>
 
-						<code>getCol(colNum: number): unknown[]</code>
+						<code>addCol&lt;T&gt;(colName: string, creator: (row: RowShape, index: number, data: Data) => T): Data</code><br />
+						<code>addCol&lt;T&gt;(colName: string, newRow: T[]): Data</code><br />
 
-						<p>The <code>getCol</code> function returns one of an <code>AnalyserRows</code>'s columns as an array. Its return value is typed as <code>unknown[]</code>, so when working with TypeScript you will need to apply typeguards or use type assertions based on the <a href="#usage-transformers">transformers</a> you used when processing the data.</p>
+						<p>The <code>addCol</code> method is used to add a new row to an <code>Data</code> object.</p>
 
-						<p>Typically, its <code>colNum</code> argument will be retrieved from either the <code><a href="#interfaces-DataConfig-cols">cols</a></code> or the <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code> properties of the <code><a href="#interfaces-DataConfig">DataConfig</a></code> where the <code>AnalyserRows</code> originated.</p>
+						<p>To ensure proper type inference when working with TypeScript, this results in a new <code>Data</code> object that contains the new column.</p>
+
+						<p>There are two methods of calling <code>addCol</code>. The primary method relies on a <code>creator</code> function, which works similarly to a function passed to <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" target="_blank">Array.prototype.map</a></code>. This <code>creator</code> function takes a single row object and that row's index, and creates the value that row should have in the new column.</p>
+
+						<p>The second method of calling <code>addCol</code> simply passes a newly constructed column in entirely, as an array. This array must be of the same length as the <code>Data</code> being added to.</p>
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-getCol" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-Data-addCol" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/analyser/assets/data/city example.csv',
 								cols: {
-									NAME: 'A',
-									POPULATION: 'C',
+									popThousands: ['C', analyser.types.number],
+									publicTransport: ['E', analyser.types.array(',')],
 								},
 								headerRows: 1,
 								footerRows: 1,
-								transform: {
-									POPULATION: analyser.transformers.number,
-								}
 							});
 
-							const { rows, cols } = await analyser.loadFile(fileConfig);
-							log(rows.getCol(cols.NAME));
-							log(rows.getCol(cols.POPULATION));
+							const rows = await analyser.loadFile(fileConfig);
+
+							const rowsWithPop = rows.addCol('pop', (row) => row.popThousands * 1000);
+							log(rowsWithPop.map(({ pop }) => pop));
+
+							const hasTrainCol = rowsWithPop.map((row) => row.publicTransport.includes('Train'));
+							const rowsWithHasTrain = rowsWithPop.addCol('hasTrain', hasTrainCol);
+							log(rowsWithHasTrain.map(({ hasTrain }) => hasTrain));
 						</script>
 
 						<div class="docs-example__controls">
 							<button class="docs-example__control js-docs__run">Run code</button>
 						</div>
 
-						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserRows-getCol"></samp>
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-Data-addCol"></samp>
 					</div>
 				</section>
 
-				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserRows-addCol">
+				<section class="js-codebook__set" data-codebook-set="interfaces-Data-groupBy">
 					<div class="content">
-						<h4 id="interfaces-AnalyserRows-addCol">addCol <a class="anchor" href="#interfaces-AnalyserRows-addCol"></a></h4>
+						<h4 id="interfaces-Data-groupBy">groupBy <a class="anchor" href="#interfaces-Data-groupBy"></a></h4>
 
-						<code>addCol&lt;T&gt;(creator: (row: unknown[], index: number) => T): number</code><br />
-						<code>addCol&lt;T&gt;(newRow: T[]): number</code><br />
+						<p>The <code>groupBy</code> method is used for grouping rows in a <code>Data</code> object.</p>
 
-						<p>The <code>addCol</code> method is used to add a new row to an <code>AnalyserRows</code> object.</p>
+						<p>These groups can then be used to produce summaries of the data, which in turn can be used to create <a href="#usage-graphs">graphs</a>.</p>
 
-						<p>To ensure the <code>AnalyserRows</code> continues to contain rows all of the same length, it is recommended that this method only be called on an original <code>AnalyserRows</code> object, not on one that has been created by <a href="#usage-filtering">filtering</a>.</p>
+						<p>The <code>groupBy</code> function effectively has any <a href="#interfaces-FileConfig-aliases">aliases</a> baked in, with any values in a set of aliases treated as though they were the first value in the set. That first value does not need to appear in the data, but it will always be used in any <code><a href="#interfaces-DataGroup">DataGroup</a></code> created by <code>group</code>.</p>
 
-						<p>There are two methods of calling <code>addCol</code>. The primary method relies on a <code>creator</code> function, which works similarly to a function passed to <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" target="_blank">Array.prototype.map</a></code>. This <code>creator</code> function takes a single row (as an array of cells) and that row's index, and creates the value that row should have in the new column.</p>
+						<p><code>group</code> has three overrides:</p>
 
-						<p>The second method of calling <code>addCol</code> simply passes a newly constructed column in entirely, as an array. This array must be of the same length as the <code>AnalyserRows</code> being added to.</p>
+						<code>(colName: string): <a href="#interfaces-DataGroup">DataGroup</a></code><br />
+						<code>(colName: string, numGroups: number, right: boolean = true): <a href="#interfaces-DataGroup">DataGroup</a></code><br />
+						<code>(colName: string, splitPoints: number[], right: boolean = true): <a href="#interfaces-DataGroup">DataGroup</a></code>
 
-						<p>Regardless which was called, <code>addCol</code> returns the index of the new column. This can be stored in the <code><a href="#interfaces-DataConfig-cols">cols</a></code> object or, when working with TypeScript, in the <code><a href="#interfaces-DataConfig-addedCols">addedCols</a></code>.</p>
+						<p>When grouping by discrete data, the first override should always be used. The other two overrides provide different methods for dividing continuous data into groups.</p>
+
+						<p>If the <code>numGroups</code> argument is provided with a number, <code>group</code> will split the continuous data into that many groups of the same range. For example, if the data ranges from <code>0</code> to <code>100</code> and the <code>numGroups</code> argument is <code>5</code>, the first group would contain data from <code>0</code> to <code>20</code>.</p>
+
+						<p>Otherwise, the <code>splitPoints</code> argument can be provided with an array of numbers, which will be used as the points where the groups will be split.</p>
+
+						<p>For both of the continuous data overloads, there is an optional <code>right</code> argument that determines which end of a group is open. If <code>right</code> is <code>true</code> (its default value), then values equal to the upper limit of a group will be included. Otherwise, values equal to a group's lower limit will be included instead.</p>
+
+						<p>However, the first and last group will always include values at their outer boundaries, since they will be determined based on the minimum and maximum values in the data set.</p>
 					</div>
 
 					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserRows-addCol" contenteditable spellcheck="false">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-Data-groupBy" contenteditable spellcheck="false">
 							const fileConfig = analyser.fileConfig({
 								path: '/analyser/assets/data/city example.csv',
 								cols: {
-									POP_THOUSANDS: 'C',
-									PUBLIC_TRANSPORT: 'E',
+									name: ['A', analyser.types.string],
+									country: ['B', analyser.types.string],
+									pop: ['C', analyser.types.number],
 								},
+
 								headerRows: 1,
 								footerRows: 1,
-								transform: {
-									POP_THOUSANDS: analyser.transformers.number,
-									PUBLIC_TRANSPORT: analyser.transformers.array(','),
-								}
-							});
 
-							const { rows, cols, addedCols } = await analyser.loadFile(fileConfig);
-
-							addedCols.POP = rows.addCol((row) => row[cols.POP_THOUSANDS] * 1000);
-							log(rows.getCol(addedCols.POP));
-
-							const hasTrainCol = rows.map((row) => row[cols.PUBLIC_TRANSPORT].includes('Train'));
-							addedCols.HAS_TRAIN = rows.addCol(hasTrainCol);
-							log(rows.getCol(addedCols.HAS_TRAIN));
-						</script>
-
-						<div class="docs-example__controls">
-							<button class="docs-example__control js-docs__run">Run code</button>
-						</div>
-
-						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserRows-addCol"></samp>
-					</div>
-				</section>
-			</section>
-
-			<section>
-				<div class="content">
-					<h3 id="interfaces-AnalyserGroup">AnalyserGroup <a class="anchor" href="#interfaces-AnalyserGroup"></a></h3>
-
-					<p>The <code>AnalyserGroup</code> class extends the native <code>Map</code> class to add an additional method. It is primarily intended to be interacted with only through this method.</p>
-				</div>
-
-				<section class="js-codebook__set" data-codebook-set="interfaces-AnalyserGroup-summarise">
-					<div class="content">
-						<h4 id="interfaces-AnalyserGroup-summarise">summarise <a class="anchor" href="#interfaces-AnalyserGroup-summarise"></a></h4>
-
-						<code>summarise(summarisers?: Record&lt;string, (rows: AnalyserRows, groupName: unknown) => unknown&gt;): unknown[][]</code>
-
-						<p>The <code>summarise</code> method converts an <code>AnalyserGroup</code> into a specially formatted 2D array made for easy viewing. The first row is a header row, giving the name of each summary, and the first column gives the name of each group from the <code>AnalyserGroup</code> used to create it. The other cells each contain a particular summary of that group.</p>
-
-						<p>By default, if not passed a <code>summarisers</code> argument, the default "Count" summary will be used, which calculates the number of rows in each group.</p>
-
-						<p>More complex summaries can be passed to the <code>summarise</code> function as an object where each property is a function that takes an <code>AnalyserRows</code> and the name of its group and produces some result.</p>
-
-						<p>Summaries that all produce numeric results can then be used to <a href="#usage-graphs">create graphs</a>.</p>
-					</div>
-
-					<div class="docs-example js-docs__example">
-						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-AnalyserGroup-summarise" contenteditable spellcheck="false">
-							const fileConfig = analyser.fileConfig({
-								path: '/analyser/assets/data/city example.csv',
-								cols: {
-									COUNTRY: 'B',
-									POPULATION: 'C',
-								},
-								headerRows: 1,
-								footerRows: 1,
-								transform: {
-									POPULATION: analyser.transformers.number,
-								},
 								aliases: [
 									['Aotearoa', 'New Zealand'],
 								],
 							});
 
-							const { rows, cols, group } = await analyser.loadFile(fileConfig);
+							const rows = await analyser.loadFile(fileConfig);
 
-							const countryGroup = group(rows, cols.COUNTRY);
+							const groupByCountry = rows.groupBy('country');
+							log('Grouped by country:');
+							groupByCountry.forEach((groupRows, name) => log(name, groupRows.length));
+
+							const groupByPopulation = rows.groupBy('pop', 5);
+							log('Grouped by population:');
+							groupByPopulation.forEach((groupRows, name) => log(name, groupRows.length));
+
+							const groupByPopulationCustom = rows.groupBy('pop', [50, 200, 1000]);
+							log('Grouped by population (custom split points):');
+							groupByPopulationCustom.forEach((groupRows, name) => log(name, groupRows.length));
+						</script>
+
+						<div class="docs-example__controls">
+							<button class="docs-example__control js-docs__run">Run code</button>
+						</div>
+
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-Data-groupBy"></samp>
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-DataGroup">DataGroup <a class="anchor" href="#interfaces-DataGroup"></a></h3>
+
+					<p>The <code>DataGroup</code> class extends the native <code>Map</code> class to add an additional method. It is primarily intended to be interacted with only through this method.</p>
+				</div>
+
+				<section class="js-codebook__set" data-codebook-set="interfaces-DataGroup-summarise">
+					<div class="content">
+						<h4 id="interfaces-DataGroup-summarise">summarise <a class="anchor" href="#interfaces-DataGroup-summarise"></a></h4>
+
+						<code>summarise(summarisers?: Record&lt;string, (rows: Data, groupName: unknown) => unknown&gt;): unknown[][]</code>
+
+						<p>The <code>summarise</code> method converts a <code>DataGroup</code> into a specially formatted 2D array made for easy viewing. The first row is a header row, giving the name of each summary, and the first column gives the name of each group from the <code>DataGroup</code> used to create it. The other cells each contain a particular summary of that group.</p>
+
+						<p>By default, if not passed a <code>summarisers</code> argument, the default "Count" summary will be used, which calculates the number of rows in each group.</p>
+
+						<p>More complex summaries can be passed to the <code>summarise</code> function as an object where each property is a function that takes an <code>Data</code> and the name of its group and produces some result.</p>
+
+						<p>Summaries that all produce numeric results can then be used to <a href="#usage-graphs">create graphs</a>.</p>
+					</div>
+
+					<div class="docs-example js-docs__example">
+						<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-interfaces-DataGroup-summarise" contenteditable spellcheck="false">
+							const fileConfig = analyser.fileConfig({
+								path: '/analyser/assets/data/city example.csv',
+								cols: {
+									country: ['B', analyser.types.string],
+									population: ['C', analyser.types.number],
+								},
+								headerRows: 1,
+								footerRows: 1,
+								aliases: [
+									['Aotearoa', 'New Zealand'],
+								],
+							});
+
+							const rows = await analyser.loadFile(fileConfig);
+
+							const countryGroup = rows.groupBy('country');
 
 							const countSummary = countryGroup.summarise();
 							log('Count of cities by country:', countSummary);
 
 							const meanPopulationSummary = countryGroup.summarise({
-								mean: (rows, groupName) => analyser.statistics.mean(rows.getCol(cols.POPULATION)),
+								mean: (rows, groupName) => analyser.statistics.mean(rows.map(({ population }) => population)),
 							});
 							log('Mean city population by country:', meanPopulationSummary);
 						</script>
@@ -1204,29 +966,50 @@
 							<button class="docs-example__control js-docs__run">Run code</button>
 						</div>
 
-						<samp class="docs-example__log js-docs__log" id="log-interfaces-AnalyserGroup-summarise"></samp>
+						<samp class="docs-example__log js-docs__log" id="log-interfaces-DataGroup-summarise"></samp>
 					</div>
 				</section>
 			</section>
 
 			<section>
 				<div class="content">
-					<h3 id="interfaces-TransformerFn">TransformerFn <a class="anchor" href="#interfaces-TransformerFn"></a></h3>
+					<h3 id="interfaces-LoadFileOptions">LoadFileOptions <a class="anchor" href="#interfaces-LoadFileOptions"></a></h3>
 
-					<code>TransformerFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends unknown[] ? T : (T | null)</code>
+					<code class="code--block js-codebook__inert">
+					{
+						<a href="#interfaces-LoadFileOptions-strict">strict</a>?: boolean = true,
+					}
+					</code>
 
-					<p>Transformer functions are used to convert strings in a CSV file into typed data that can be further analysed.</p>
+					<p>The <code>LoadFileOptions</code> interfaces can be used to configure the behaviour of <code><a href="#methods-loadFile">loadFile</a></code>.</p>
+				</div>
 
-					<p>For most types, you can use one of the <a href="#usage-transformers">transformers</a> provided by Analyser.</p>
+				<section>
+					<div class="content">
+						<h4 id="interfaces-LoadFileOptions-strict">strict <a class="anchor" href="#interfaces-LoadFileOptions-strict"></a></h4>
 
-					<p>For more complex data, though, you may need to create a custom transformer function. These functions always take a string argument and return either:</p>
+						<p>This property controls how <code><a href="#methods-loadFile">loadFile</a></code> deals with errors being thrown by type functions.</p>
 
-					<ul>
-						<li>An array, which may be empty</li>
-						<li>A non-array value, or null if the data did not match the anticipated format</li>
-					</ul>
+						<p>By default, these errors will not be handled within Analyser, and they will print an error to the console detailing where the value that caused the error exists in your data.</p>
 
-					<p>In some circumstances, Analyser will also pass a <code>locationIdentifier</code> string that can be used when logging an error in order to identify where in the data that error occurred.</p>
+						<p>However, if <code>strict</code> is set to <code>false</code>, then instead these errors will result in a warning being passed to the console, and the value that caused the error will be converted to <code>null</code>.</p>
+
+						<p>This non-strict mode should only be used when initially determining how a data set should be processed, as the conversion of data to <code>null</code> is not type safe.</p>
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<div class="content">
+					<h3 id="interfaces-TypeFn">TypeFn <a class="anchor" href="#interfaces-TypeFn"></a></h3>
+
+					<code>TypeFn&lt;T&gt; (value: string, locationIdentifier?: string): T extends unknown[] ? T : (T | null)</code>
+
+					<p>Type functions are used to convert strings in a CSV file into typed data that can be further analysed.</p>
+
+					<p>For most types, you can use one of the <a href="#usage-types">type functions</a> provided by Analyser.</p>
+
+					<p>For more complex data, though, you may need to create a custom type function. These functions always take a string argument, and should throw an error if that string doesn't match whatever requirements it might have to correctly convert it to the desired type.
 				</div>
 			</section>
 		</section>
@@ -1255,8 +1038,8 @@
 						const fileConfig = analyser.fileConfig({
 							path: '/analyser/assets/data/city example.csv',
 							cols: {
-								CITY: 'A',
-								COUNTRY: 'B',
+								city: ['A', analyser.types.string],
+								country: ['B', analyser.types.string],
 							},
 						});
 
@@ -1268,40 +1051,6 @@
 					</div>
 
 					<samp class="docs-example__log js-docs__log" id="log-methods-fileConfig"></samp>
-				</div>
-			</section>
-
-			<section class="js-codebook__set" data-codebook-set="methods-loadFile">
-				<div class="content">
-					<h3 id="methods-loadFile">loadFile <a class="anchor" href="#methods-loadFile"></a></h3>
-
-					<code>loadFile(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>): Promise&lt;<a href="#interfaces-DataConfig">DataConfig</a>&gt;</code>
-
-					<p>The <code>loadFile</code> method loads a single CSV file configured with a <a href="#interfaces-FileConfig">FileConfig</a> object.</p>
-
-					<p>If the file is loaded and processed successfully, the <code>Promise</code> returned by <code>loadFile</code> will resolve to a <a href="#interfaces-DataConfig">DataConfig</a> object.</p>
-				</div>
-
-				<div class="docs-example js-docs__example">
-					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-loadFile" contenteditable spellcheck="false">
-						const fileConfig = analyser.fileConfig({
-							path: '/analyser/assets/data/city example.csv',
-							cols: {
-								CITY: 'A',
-								COUNTRY: 'B',
-							},
-						});
-
-						const dataConfig = await analyser.loadFile(fileConfig);
-
-						log(Object.keys(dataConfig));
-					</script>
-
-					<div class="docs-example__controls">
-						<button class="docs-example__control js-docs__run">Run code</button>
-					</div>
-
-					<samp class="docs-example__log js-docs__log" id="log-methods-loadFile"></samp>
 				</div>
 			</section>
 
@@ -1343,7 +1092,7 @@
 				<div class="content">
 					<h3 id="methods-getColNumbers">getColNumbers <a class="anchor" href="#methods-getColNumbers"></a></h3>
 
-					<code>getColNumbers(colsConfig: Record&lt;string, number | string&gt;): Record&lt;string, number&gt;</code>
+					<code>getColNumbers(colsConfig: Record&lt;string, [string | number, ...unknown[]]&gt;): Record&lt;string, number&gt;</code>
 
 					<p><code>getColNumbers</code> takes in a map of column names like the one that can be provided as part of a <code><a href="#interfaces-FileConfig">FileConfig</a></code> object, and transforms each property according to the same rules as <code><a href="#methods-getColNumber">getColNumber</a></code>.</p>
 
@@ -1353,13 +1102,13 @@
 				<div class="docs-example js-docs__example">
 					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-getColNumbers" contenteditable spellcheck="false">
 						log(analyser.getColNumbers({
-							'A': 'A',
-							'ZE': 'ZE',
-							0: 0,
-							12: 12,
-							'-1': -1,
-							'1.5': 1.5,
-							'invalid string': 'invalid string',
+							'A': ['A'],
+							'ZE': ['ZE'],
+							0: [0],
+							12: [12],
+							'-1': [-1],
+							'1.5': [1.5],
+							'invalid string': ['invalid string'],
 						}));
 					</script>
 
@@ -1368,6 +1117,101 @@
 					</div>
 
 					<samp class="docs-example__log js-docs__log" id="log-methods-getColNumbers"></samp>
+				</div>
+			</section>
+
+			<section class="js-codebook__set" data-codebook-set="methods-loadFile">
+				<div class="content">
+					<h3 id="methods-loadFile">loadFile <a class="anchor" href="#methods-loadFile"></a></h3>
+
+					<code>loadFile(fileConfig: <a href="#interfaces-FileConfig">FileConfig</a>, options?: <a href="#interfaces-LoadFileOptions">LoadFileOptions</a>): Promise&lt;<a href="#interfaces-Data">Data</a>&gt;</code>
+
+					<p>The <code>loadFile</code> method loads a single CSV file configured with a <a href="#interfaces-FileConfig">FileConfig</a> object.</p>
+
+					<p>If the file is loaded and processed successfully, the <code>Promise</code> returned by <code>loadFile</code> will resolve to a <a href="#interfaces-Data">Data</a> object.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-loadFile" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/analyser/assets/data/city example.csv',
+							cols: {
+								city: ['A', analyser.types.string],
+								country: ['B', analyser.types.string],
+							},
+						});
+
+						const data = await analyser.loadFile(fileConfig);
+
+						log('Properties:', Object.keys(data).filter((key) => isNaN(Number(key))));
+						log('Rows:', data);
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-loadFile"></samp>
+				</div>
+			</section>
+
+			<section class="js-codebook__set" data-codebook-set="methods-matchByAlias">
+				<div class="content">
+					<h3 id="methods-matchWithAlias">matchWithAlias <a class="anchor" href="#methods-matchWithAlias"></a></h3>
+
+					<code>matchWithAlias(testValue: unknown, matchValue: unknown, aliases?: readonly string[][]): boolean</code>
+
+					<p>The <code>matchWithAlias</code> function allows <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array.prototype.filter</a></code> to be used on a <code><a href="#interfaces-Data">Data</a></code> object while respecting a data set's aliases.</p>
+
+					<p><code>matchWithAlias</code> takes two arguments, which can each be either a single value or an array of values. If any value in both of these arguments is either a direct match or are aliases of one another, then <code>matchWithAlias</code> will return <code>true</code>. Otherwise, it will return <code>false</code>.</p>
+
+					<p>Filtering can also be done without using <code>matchWithAlias</code>, when working with data that has no aliases or filtering by columns that don't contain string values.</p>
+				</div>
+
+				<div class="docs-example js-docs__example">
+					<script type="text/plain" class="docs-example__code js-codebook__block" data-codebook-log="log-methods-matchByAlias" contenteditable spellcheck="false">
+						const fileConfig = analyser.fileConfig({
+							path: '/analyser/assets/data/city example.csv',
+							cols: {
+								name: ['A', analyser.types.string],
+								country: ['B', analyser.types.string],
+								population: ['C', analyser.types.number],
+								capital: ['D', analyser.types.booleanCustom('true', '\'No\'')],
+								publicTransport: ['E', analyser.types.array(',')],
+							},
+
+							headerRows: 1,
+							footerRows: 1,
+
+							aliases: [
+								['Aotearoa', 'New Zealand'],
+							],
+						});
+
+						const rows = await analyser.loadFile(fileConfig, { strict: false });
+
+						const germanCities = rows.filter(({ country }) => {
+							return analyser.matchWithAlias(country, 'Germany', rows.aliases);
+						});
+						log('German cities:', germanCities.map(({ name }) => name));
+
+						const largeCitiesWithTrainOrFerry = rows.filter(({ population, publicTransport }) => {
+							return population > 1000 && analyser.matchWithAlias(publicTransport, ['Train', 'Ferry'], rows.aliases);
+						});
+						log('Large cities with train or ferry services:', largeCitiesWithTrainOrFerry.map(({ name }) => name));
+
+						const largeOrCapitalCities = rows.filter(({ capital, population }) => {
+							return capital === true || population > 1000;
+						});
+						log('Large or capital cities:', largeOrCapitalCities.map(({ name }) => name));
+					</script>
+
+					<div class="docs-example__controls">
+						<button class="docs-example__control js-docs__run">Run code</button>
+					</div>
+
+					<samp class="docs-example__log js-docs__log" id="log-methods-matchByAlias"></samp>
+				</div>
 				</div>
 			</section>
 		</section>

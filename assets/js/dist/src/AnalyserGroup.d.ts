@@ -1,14 +1,14 @@
-import { AnalyserRows } from './AnalyserRows.js';
+import { Data } from './Data.js';
 /**
  * A function for summarising a set of AnalyserRows
  */
-declare type AnalyserSummariser<T = unknown, G = unknown> = (rows: AnalyserRows, groupName: G) => T;
+declare type AnalyserSummariser<RowShape extends Record<string, unknown>, T = unknown, G = unknown> = (rows: Data<RowShape>, groupName: G) => T;
 /**
  * A group of AnalyserSummariser functions
  */
-declare type AnalyserSummarisers<SummaryName extends string> = Record<SummaryName, AnalyserSummariser>;
+declare type AnalyserSummarisers<RowShape extends Record<string, unknown>, SummaryName extends string> = Record<SummaryName, AnalyserSummariser<RowShape>>;
 declare const defaultSummarisers: {
-    readonly Count: (rows: AnalyserRows) => number;
+    readonly Count: <RowShape extends Record<string, unknown>>(rows: Data<RowShape>) => number;
 };
 declare type DefaultSummaryName = keyof typeof defaultSummarisers;
 /**
@@ -22,13 +22,13 @@ export declare type AnalyserSummary<SummaryName extends string> = [[unknown, ...
 interface AnalyserGroupOptions {
     discrete?: boolean;
 }
-export declare class AnalyserGroup extends Map<unknown, AnalyserRows> {
+export declare class AnalyserGroup<RowShape extends Record<string, unknown>> extends Map<unknown, Data<RowShape>> {
     #private;
     constructor(options?: AnalyserGroupOptions);
     /**
      * Create a 2D summary array that can be printed using console.table.
      */
     summarise(): AnalyserSummary<DefaultSummaryName>;
-    summarise<SummaryName extends string>(summarisers: AnalyserSummarisers<SummaryName>): AnalyserSummary<SummaryName>;
+    summarise<SummaryName extends string>(summarisers: AnalyserSummarisers<RowShape, SummaryName>): AnalyserSummary<SummaryName>;
 }
 export {};

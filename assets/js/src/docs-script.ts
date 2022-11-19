@@ -70,7 +70,7 @@ function _runSetEvent(this: HTMLElement, e: MouseEvent) {
 
 			if ($log) {
 				console.error(reason);
-				$log.innerHTML = reason.toString();
+				$log.innerHTML = String(reason);
 			}
 		})
 		.finally(() => {
