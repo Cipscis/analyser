@@ -35,6 +35,13 @@ describe(`type functions`, () => {
 
 			expect(errorThrown).toBe(true);
 		});
+
+		it(`returns an empty array if passed an empty string`, async () => {
+			const result = analyser.types.array(',')('');
+
+			expect(Array.isArray(result)).toBe(true);
+			expect(result.length).toBe(0);
+		});
 	});
 
 	describe(`boolean`, () => {
@@ -284,7 +291,7 @@ describe(`type functions`, () => {
 			expect(() => testTypeFn(analyser.types.enumValue(testEnum), expectedResults)).not.toThrowError();
 		});
 
-		it(`can transform values based on a recodeMap`, () => {
+		it(`can transform values based on a recodeMap object`, () => {
 			const expectedResults = new Map([
 				[testEnum.test, testEnum.test],
 				[testEnum.val, testEnum.val],
@@ -293,6 +300,17 @@ describe(`type functions`, () => {
 			]);
 
 			expect(() => testTypeFn(analyser.types.enumValue(testEnum, { 'another value': testEnum.val }), expectedResults)).not.toThrowError();
+		});
+
+		it(`can transform values based on an iterable recodeMap`, () => {
+			const expectedResults = new Map([
+				[testEnum.test, testEnum.test],
+				[testEnum.val, testEnum.val],
+				[testEnum['1'], testEnum['1']],
+				['another value', testEnum.val],
+			]);
+
+			expect(() => testTypeFn(analyser.types.enumValue(testEnum, new Map([['another value', testEnum.val]])), expectedResults)).not.toThrowError();
 		});
 	});
 });

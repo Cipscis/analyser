@@ -13,19 +13,9 @@ import { InnerType } from './util.js';
   */
 type Summarisers<SummaryName extends string, RowShape extends Record<string, unknown>> = Record<SummaryName, Summariser<RowShape>>;
 
-/**
- * A utility function used for inferring the generic types of `Summarisers`
- */
-function summarisers<SummaryName extends string, RowShape extends Record<string, unknown>>(summarisers: Summarisers<SummaryName, RowShape>): Summarisers<SummaryName, RowShape> {
-	return summarisers;
-}
-
-// TODO: I'm not sure why this is erroring. Maybe I can't be quite this tidy with its types?
-// const defaultSummarisers = summarisers({
-// 	Count: (rows) => rows.length,
-// });
+// TODO: Should satisfy `Summarisers<string, Record<string, unknown>>`
 const defaultSummarisers = {
-	Count: (rows: unknown[]) => rows.length,
+	Count: ((rows: unknown[]) => rows.length),
 } as const;
 type DefaultSummaryName = keyof typeof defaultSummarisers;
 

@@ -195,7 +195,7 @@ export function getColNumber(index: number | string): number | null {
 }
 
 /**
- * Checks if one or more `matchValues` matche one or more `testValues`, optionally taking a set of aliases where groups of strings are treated as equal.
+ * Checks if one or more `matchValues` matches one or more `testValues`, optionally taking a set of aliases where groups of strings are treated as equal.
  */
 export function matchWithAlias(testValue: unknown, matchValue: unknown, aliases?: readonly string[][]): boolean {
 	// Convert single values to arrays of length 1 to make them easier to work with consistently

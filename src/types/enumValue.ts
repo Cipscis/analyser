@@ -1,4 +1,5 @@
 import { TypeFn } from './TypeFn.js';
+import { isIterable } from '../util.js';
 
 /**
  * Checks that the value, if it exists, is a member of an enum.
@@ -7,7 +8,7 @@ import { TypeFn } from './TypeFn.js';
  *
  * If the value exists but it is not a member of the enum and cannot be recoded, a warning will be generated.
  */
-export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?: Record<string, E>): TypeFn<E> {
+export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?: Record<string, E> | Iterable<[string, E]>): TypeFn<E> {
 	const enumValues = Object.values(enums);
 
 	function isEnumMember(val: unknown): val is E {
@@ -24,9 +25,17 @@ export function enumValue<E extends string>(enums: Record<string, E>, recodeMap?
 			return value;
 		}
 
-		if (recodeMap && value in recodeMap) {
-			const recodedValue = recodeMap[value];
-			return recodedValue;
+		if (recodeMap) {
+			if (isIterable(recodeMap)) {
+				for (const [testValue, recodedValue] of recodeMap) {
+					if (testValue === value) {
+						return recodedValue;
+					}
+				}
+			} else {
+				const recodedValue = recodeMap[value];
+				return recodedValue;
+			}
 		}
 
 		throw new Error(`Value '${value}' does not exist within ${enumValues.join(', ')}`);
