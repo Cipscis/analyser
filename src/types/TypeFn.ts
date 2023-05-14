@@ -8,7 +8,7 @@ import type { value } from './value';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import type { array } from './array';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-import type { enumValue } from './boolean';
+import type { enumValue } from './enumValue';
 
 /**
  * Type functions are used to convert strings in a CSV file into typed data
