@@ -1,7 +1,9 @@
 import { TypeFn } from './TypeFn.js';
 
 /**
- * Splits a string into an array of strings using `String.prototype.split`
+ * Used to create a {@linkcode TypeFn type function} that converts a string into an array of strings.
+ *
+ * The arguments are the same as those used by {@linkcode String.prototype.split}.
  */
 export function array(separator: string | RegExp, limit?: number): TypeFn<string[]> {
 	return (value) => {

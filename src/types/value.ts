@@ -4,9 +4,10 @@ import { boolean } from './boolean.js';
 import { number } from './number.js';
 
 /**
- * Extracts boolean or number values from string representations if appropriate.
+ * Combines the {@linkcode boolean} and {@linkcode number} {@linkcode TypeFn type functions}.
  *
- * No warnings will be generated if the value doesn't appear like a boolean or number.
+ * If a value looks like it contains a boolean, it will be converted to a boolean.
+ * Otherwise, if it looks like it contains a number, it will be convered to a number.
  */
 export const value: TypeFn<boolean | number> = function value(value) {
 	try {

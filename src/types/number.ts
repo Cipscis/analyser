@@ -25,9 +25,12 @@ function appearsPercentage(value: string): boolean {
 }
 
 /**
- * Converts a string representing a number into a number. Supports ',' separators and percentages.
+ * If a value looks like a number, it will be converted to a number.
+ * String representations of numbers are expected to usue the `'.'` character for a
+ * decimal point, and optionally the `','` character for separators within the number.
  *
- * If the value doesn't appear like it represents a number, a warning will be generated.
+ * If a string looks like a number and also ends with a `'%'` character, it will be
+ * divided by `100` to convert it into a percentage.
  */
 export const number: TypeFn<number> = function number(value) {
 	if (appearsNumber(value)) {
