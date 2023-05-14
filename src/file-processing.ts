@@ -168,16 +168,12 @@ export function getColNumbers<ColName extends string>(colsConfig: Record<ColName
 	const entries = Object.entries<typeof colsConfig[keyof typeof colsConfig]>(colsConfig);
 
 	const mappedEntries = entries.map(([name, [index]]) => {
-		if (typeof index === 'number') {
-			return [name, index] as const;
-		} else {
-			const colNumber = getColNumber(index);
+		const colNumber = getColNumber(index);
 
-			if (colNumber !== null) {
-				return [name, colNumber] as const;
-			} else {
-				return null;
-			}
+		if (colNumber !== null) {
+			return [name, colNumber] as const;
+		} else {
+			return null;
 		}
 	}).filter((el): el is NonNullable<typeof el> => Boolean(el));
 

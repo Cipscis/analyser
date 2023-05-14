@@ -69,6 +69,24 @@ describe(`analyser`, () => {
 		});
 	});
 
+	describe(`getColNumbers`, () => {
+		it(`excludes columns with invalid identifiers`, () => {
+			const colNames = {
+				A: ['A'],
+				B: ['Ā'],
+				C: [-1],
+				D: [1.5],
+				E: [null],
+			};
+
+			const colNumbers = analyser.getColNumbers(colNames);
+
+			expect(colNumbers).toEqual({
+				A: 0,
+			});
+		});
+	});
+
 	describe(`loadFile`, () => {
 		it(`resolves to a single object when loading a single file`, async () => {
 			const fileConfig = {
