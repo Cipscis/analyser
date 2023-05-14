@@ -1,4 +1,4 @@
-export declare type InnerType<T> = T extends Array<infer E> ? E : T;
+export type InnerType<T> = T extends Array<infer E> ? E : T;
 /**
  * Check if an object is iterable
  */

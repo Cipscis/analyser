@@ -3,15 +3,15 @@ import { InnerType } from './util.js';
 /**
  * A function for summarising a set of `Data`
  */
-declare type Summariser<RowShape extends Record<string, unknown>, G = unknown, T = unknown> = (rows: Data<RowShape>, groupName: G) => T;
+type Summariser<RowShape extends Record<string, unknown>, G = unknown, T = unknown> = (rows: Data<RowShape>, groupName: G) => T;
 /**
   * A group of `Summariser` functions
   */
-declare type Summarisers<SummaryName extends string, RowShape extends Record<string, unknown>> = Record<SummaryName, Summariser<RowShape>>;
+type Summarisers<SummaryName extends string, RowShape extends Record<string, unknown>> = Record<SummaryName, Summariser<RowShape>>;
 declare const defaultSummarisers: {
     readonly Count: (rows: unknown[]) => number;
 };
-declare type DefaultSummaryName = keyof typeof defaultSummarisers;
+type DefaultSummaryName = keyof typeof defaultSummarisers;
 /**
 * A 2D array of the results of Summariser functions applied to an AnalyserGroup of Data,
 * able to be printed to the console using `console.table`.
@@ -19,7 +19,7 @@ declare type DefaultSummaryName = keyof typeof defaultSummarisers;
 * After the first header row, each row represents a set of Data grouped by the value given in the first cell.
 * After the first column, each column represents a summary of a group of Data. The name of the summary is given in the first cell.
 */
-export declare type Summary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[unknown, ...unknown[]][]];
+export type Summary<SummaryName extends string> = [[unknown, ...SummaryName[]], ...[unknown, ...unknown[]][]];
 interface DataGroupOptions {
     discrete?: boolean;
 }

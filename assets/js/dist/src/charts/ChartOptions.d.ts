@@ -6,8 +6,8 @@ export interface BaseChartOptions<GroupName extends string = string, XAxisType e
     x?: XAxisType;
     y?: AxisOptionsQuantitative;
 }
-export declare type BarChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQualitative> & {
+export type BarChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQualitative> & {
     stacked?: boolean;
 };
-export declare type LineChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQuantitative>;
-export declare type ChartOptions<GroupName extends string = string> = BarChartOptions<GroupName> | LineChartOptions<GroupName>;
+export type LineChartOptions<GroupName extends string> = BaseChartOptions<GroupName, AxisOptionsQuantitative>;
+export type ChartOptions<GroupName extends string = string> = BarChartOptions<GroupName> | LineChartOptions<GroupName>;

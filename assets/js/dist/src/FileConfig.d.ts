@@ -1,5 +1,5 @@
 import { TypeFn } from './types/TypeFn.js';
-declare type ColConfig<RowShape extends Record<string, unknown>> = {
+type ColConfig<RowShape extends Record<string, unknown>> = {
     [Col in keyof RowShape]: [string | number, TypeFn<RowShape[Col]>];
 };
 /**
@@ -10,7 +10,7 @@ declare type ColConfig<RowShape extends Record<string, unknown>> = {
  * when working with TypeScript in order to improve both type checking when creating the object and
  * autocompletion prompts for column names after the file has been processed.
  */
-export declare type FileConfig<ColName extends string, RowShape extends Record<ColName, unknown>> = {
+export type FileConfig<ColName extends string, RowShape extends Record<ColName, unknown>> = {
     /** This string is used to {@linkcode fetch} the CSV file to be processed. */
     path: string;
     /**

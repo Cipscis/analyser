@@ -53,8 +53,8 @@ h1, h2, h3, h4, h5, h6 {
 
 @media print {
   a[href^=http]:after,
-a[href^=mailto]:after,
-a[href^=tel]:after {
+  a[href^=mailto]:after,
+  a[href^=tel]:after {
     content: " [" attr(href) "]";
     overflow-wrap: break-word;
   }

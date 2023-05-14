@@ -12,5 +12,5 @@ export interface AxisOptionsQuantitative extends AxisOptionsBase {
     max?: number | 'auto';
     min?: number | 'auto';
 }
-export declare type AxisOptions = AxisOptionsQualitative | AxisOptionsQuantitative;
+export type AxisOptions = AxisOptionsQualitative | AxisOptionsQuantitative;
 export {};
