@@ -23,11 +23,54 @@ export declare type Summary<SummaryName extends string> = [[unknown, ...SummaryN
 interface DataGroupOptions {
     discrete?: boolean;
 }
+/**
+ * This class extends the native {@linkcode Map} class to add an additional method. It is primarily intended
+ * to be interacted with only through this {@linkcode DataGroup.summarise summarise} method.
+ */
 export declare class DataGroup<RowShape extends Record<string, unknown>, ColName extends keyof RowShape> extends Map<InnerType<RowShape[ColName]>, Data<RowShape>> {
     #private;
     constructor(options?: DataGroupOptions);
     /**
-     * Create a 2D summary array that can be printed using console.table.
+     * This method converts a {@linkcode DataGroup} into a specially formatted 2D array made for easy viewing.
+     * The first row is a header row, giving the name of each summary, and the first column gives the name of
+     * each group from the {@linkcode DataGroup} used to create it. The other cells each contain a particular
+     * summary of that group.
+     *
+     * By default, if not passed a `summarisers` argument, the default "Count" summary will be used. This summary
+     * counts the number of rows in each group.
+     *
+     * More complex summaries can be passed as an object where each property is a function that takes a {@linkcode Data}
+     * object and the name of its group, and produces some result.
+     *
+     * Summaries that produce numeric results can then be used to create graphs.
+     *
+     * @example
+     * ```typescript
+     * const fileConfig = analyser.fileConfig({
+     *     path: '/analyser/assets/data/city example.csv',
+     *     cols: {
+     *         country: ['B', analyser.types.string],
+     *         population: ['C', analyser.types.number],
+     *     },
+     *     headerRows: 1,
+     *     footerRows: 1,
+     *     aliases: [
+     *         ['Aotearoa', 'New Zealand'],
+     *     ],
+     * });
+     *
+     * const rows = await analyser.loadFile(fileConfig);
+     *
+     * const countryGroup = rows.groupBy('country');
+     *
+     * const countSummary = countryGroup.summarise();
+     * log('Count of cities by country:', countSummary);
+     *
+     * const meanPopulationSummary = countryGroup.summarise({
+     *     mean: (rows, groupName) => analyser.statistics.mean(rows.map(({ population }) => population)),
+     * });
+     * log('Mean city population by country:', meanPopulationSummary);
+     * ```
      */
     summarise(): Summary<DefaultSummaryName>;
     summarise<SummaryName extends string>(summarisers: Summarisers<SummaryName, RowShape>): Summary<SummaryName>;
