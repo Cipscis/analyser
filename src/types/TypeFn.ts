@@ -9,6 +9,8 @@ import type { value } from './value';
 import type { array, ExtendableArrayTypeFn } from './array';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import type { enumValue } from './enumValue';
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+import type { withDefault } from './withDefault';
 
 /**
  * Type functions are used to convert strings in a CSV file into typed data
@@ -35,5 +37,6 @@ import type { enumValue } from './enumValue';
  * @see {@linkcode array}
  * @see {@linkcode ExtendableArrayTypeFn.of|array().of}
  * @see {@linkcode enumValue}
+ * @see {@linkcode withDefault}
  */
 export type TypeFn<T> = (value: string) => T;

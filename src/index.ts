@@ -6,6 +6,7 @@ export {
 } from './file-processing.js';
 
 export * as types from './types/index.js';
+export type { TypeFn } from './types/TypeFn.js';
 
 export * as statistics from './statistics.js';
 

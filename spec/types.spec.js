@@ -334,4 +334,17 @@ describe(`type functions`, () => {
 			expect(() => testTypeFn(types.enumValue(testEnum, new Map([['another value', testEnum.val]])), expectedResults)).not.toThrowError();
 		});
 	});
+
+	describe(`withDefault`, () => {
+		it(`can be combined with another type function, while converting empty strings to a default value`, () => {
+			const expectedResults = new Map([
+				['', null],
+				['1000', 1000],
+				['-3', -3],
+				['+2.5', 2.5],
+			]);
+
+			testTypeFn(types.withDefault(null, types.number), expectedResults);
+		});
+	});
 });

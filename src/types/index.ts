@@ -4,3 +4,4 @@ export { boolean, booleanCustom } from './boolean.js';
 export { value } from './value.js';
 export { array } from './array.js';
 export { enumValue }  from './enumValue.js';
+export { withDefault }  from './withDefault.js';
